@@ -1,0 +1,55 @@
+.profile-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.profile-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+}
+.profile-card {
+  position: relative; background: var(--gray-900);
+  border: 1px solid var(--gray-800); border-radius: 16px;
+  padding: 28px; max-width: 360px; width: 100%;
+  animation: fadeIn 0.2s ease;
+}
+.profile-close {
+  position: absolute; top: 14px; right: 14px;
+  background: none; border: none; color: var(--gray-600);
+  font-size: 1rem; cursor: pointer;
+}
+.profile-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+.profile-avatar {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: var(--gray-800); display: flex;
+  align-items: center; justify-content: center;
+  border: 2px solid;
+}
+.profile-name { font-size: 1.1rem; font-weight: 700; color: var(--white); }
+.profile-status { font-size: 0.68rem; color: var(--gray-600); }
+.profile-status.public { color: var(--green); }
+.profile-bio {
+  font-size: 0.82rem; color: var(--gray-400);
+  line-height: 1.5; margin-bottom: 18px; font-style: italic;
+}
+.profile-exploring {
+  background: var(--gray-800); border-radius: 10px;
+  padding: 14px; margin-bottom: 14px;
+}
+.profile-exploring-label {
+  font-size: 0.55rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--gray-500); margin-bottom: 6px;
+}
+.profile-exploring-content { display: flex; align-items: center; gap: 10px; }
+.profile-exploring-icon { font-size: 1.2rem; }
+.profile-exploring-lens { font-size: 0.88rem; font-weight: 600; }
+.profile-exploring-vibe { font-size: 0.72rem; color: var(--gray-400); font-style: italic; }
+.profile-view-btn {
+  width: 100%; padding: 10px 16px;
+  border: 1px solid; border-radius: 8px;
+  font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; font-family: inherit; background: transparent;
+}
+.profile-private {
+  text-align: center; padding: 10px; color: var(--gray-600);
+  font-size: 0.75rem; border: 1px dashed var(--gray-800); border-radius: 8px;
+}

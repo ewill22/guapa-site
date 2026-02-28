@@ -1,0 +1,5 @@
+Add your image files here:
+- guapa_logo_dark.png
+- lockup_light.png
+- tshirt-pink.webp
+- tshirt-grey.webp

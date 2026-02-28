@@ -1,0 +1,9 @@
+.top-banner {
+  background: var(--yellow);
+  color: var(--black);
+  text-align: center;
+  padding: 10px var(--space-md);
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: 0.95rem;
+}

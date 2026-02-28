@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | Guapa</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="shop.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="/" class="nav-logo">
+            <img src="/assets/guapa_logo_dark.png" alt="Guapa" class="logo-img">
+            <span class="logo-text">GUAPA</span>
+        </a>
+        
+        <div class="nav-links">
+            <a href="music.html">Music</a>
+            <a href="coffee.html">Coffee</a>
+            
+        </div>
+
+        <div class="nav-actions">
+            <a href="https://instagram.com/guapa_skate" target="_blank" rel="noopener" class="nav-social">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+            <a href="shop.html" class="nav-cart">Shop →</a>
+        </div>
+
+        <button class="nav-toggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <main class="shop-page">
+        <!-- Page Header -->
+        <header class="shop-header">
+            <h1>Shop</h1>
+            <p>Merch from the collective</p>
+        </header>
+
+        <!-- Coming Soon Banner -->
+        <div class="coming-soon-banner">
+            <span>Coming Soon</span> — DM <a href="https://instagram.com/guapa_skate" target="_blank" rel="noopener">@guapa_skate</a> to pre-order
+        </div>
+
+        <!-- Products Grid -->
+        <section class="shop-products">
+            <div class="container">
+                <div class="products-grid">
+                    <!-- Pink Tee -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="/assets/tshirt-pink.webp" alt="Guapa Skate Tee - Pink" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <h3>Guapa Skate Tee</h3>
+                            <p class="product-variant">Pink</p>
+                            <p class="product-price">$30.00</p>
+                        </div>
+                    </div>
+
+                    <!-- Grey Tee -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="/assets/tshirt-grey.webp" alt="Guapa Skate Tee - Grey" class="product-img">
+                        </div>
+                        <div class="product-info">
+                            <h3>Guapa Skate Tee</h3>
+                            <p class="product-variant">Grey</p>
+                            <p class="product-price">$30.00</p>
+                        </div>
+                    </div>
+
+                    <!-- Sweatshirt -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-placeholder">
+                                <span>Sweatshirt</span>
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Guapa Sweatshirt</h3>
+                            <p class="product-variant">Coming Soon</p>
+                            <p class="product-price">$55.00</p>
+                        </div>
+                    </div>
+
+                    <!-- Stickers -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            <div class="product-placeholder sticker-placeholder">
+                                <img src="/assets/guapa_logo_dark.png" alt="Guapa Sticker" class="sticker-preview">
+                            </div>
+                        </div>
+                        <div class="product-info">
+                            <h3>Guapa Sticker</h3>
+                            <p class="product-variant">Die-cut vinyl</p>
+                            <p class="product-price">$5.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="/assets/lockup_light.png" alt="Guapa" class="footer-logo">
+                    <p>A creative collective for friends who make things.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Shop</h4>
+                    <a href="shop.html">All Products</a>
+                    
+                </div>
+                <div class="footer-links">
+                    <h4>Info</h4>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Follow</h4>
+                    <a href="https://instagram.com/guapa_skate" target="_blank" rel="noopener">Instagram</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 Guapa Collective</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile nav toggle
+        const navToggle = document.querySelector('.nav-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        navToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('nav-links--open');
+            navToggle.classList.toggle('nav-toggle--open');
+        });
+    </script>
+</body>
+</html>
