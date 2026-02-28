@@ -289,7 +289,7 @@ export default function App() {
           <div className="container">
             <div className="about-grid">
               <div className="about-image">
-                <img src="/assets/guapa_logo_dark.png" alt="Guapa" className="about-logo" />
+                <img src={`${import.meta.env.BASE_URL}assets/guapa_logo_dark.png`} alt="Guapa" className="about-logo" />
               </div>
               <div className="about-content">
                 <h2>About Guapa</h2>

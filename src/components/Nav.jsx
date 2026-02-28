@@ -5,17 +5,18 @@ import './Nav.css';
 export default function Nav({ currentUser, onTogglePublic, onPlugIn, showLogin }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const base = import.meta.env.BASE_URL;
+
   return (
     <nav className="nav">
-      <a href="/" className="nav-logo">
-        <span className="logo-text">
-          GUAPA <span className="logo-sub">inc</span>
-        </span>
+      <a href={base} className="nav-logo">
+        <img src={`${base}assets/guapa_logo_dark.png`} className="logo-img" alt="Guapa" />
+        <span className="logo-text">GUAPA</span>
       </a>
 
       <div className={`nav-links ${mobileOpen ? 'nav-links--open' : ''}`}>
-        <a href="/music.html" onClick={() => setMobileOpen(false)}>Music</a>
-        <a href="/coffee.html" onClick={() => setMobileOpen(false)}>Coffee</a>
+        <a href={`${base}music.html`} onClick={() => setMobileOpen(false)}>Music</a>
+        <a href={`${base}coffee.html`} onClick={() => setMobileOpen(false)}>Coffee</a>
       </div>
 
       <div className="nav-actions">
@@ -26,7 +27,7 @@ export default function Nav({ currentUser, onTogglePublic, onPlugIn, showLogin }
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
           </svg>
         </a>
-        <a href="/shop.html" className="nav-cart">Shop →</a>
+        <a href={`${base}shop.html`} className="nav-cart">Shop →</a>
 
         {currentUser ? (
           <div className="nav-user">
