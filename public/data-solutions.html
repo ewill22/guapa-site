@@ -161,23 +161,23 @@
                         <p>Whether you need a custom analytics build or want to get early access to the real estate tool — fill out the form and we'll be in touch.</p>
 
                         <!--
-                            SALESFORCE WEB-TO-LEAD INTEGRATION
-                            1. Go to Setup > Marketing > Lead Management > Web-to-Lead
-                            2. Generate Web-to-Lead HTML
-                            3. Copy your Organization ID and replace YOUR_ORG_ID below
-                            4. Update retURL to match your live domain when custom domain is added
+                            FORMSPREE INTEGRATION
+                            1. Sign up at formspree.io (free)
+                            2. Create a new form — copy your form ID (looks like xabcdefg)
+                            3. Replace YOUR_FORMSPREE_ID below with your form ID
+                            LATER: swap action for Salesforce Web-to-Lead when ready
                         -->
                         <form
                             id="ds-lead-form"
-                            action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+                            action="https://formspree.io/f/YOUR_FORMSPREE_ID"
                             method="POST"
                             class="ds-form"
                             novalidate
                         >
-                            <!-- Salesforce required fields -->
-                            <input type="hidden" name="oid" value="YOUR_ORG_ID">
-                            <input type="hidden" name="retURL" value="https://ewill22.github.io/guapa-site/data-solutions.html?submitted=1">
-                            <input type="hidden" name="lead_source" value="Web - Data Solutions">
+                            <!-- Formspree config fields -->
+                            <input type="hidden" name="_next" value="https://ewill22.github.io/guapa-site/data-solutions.html?submitted=1">
+                            <input type="hidden" name="_subject" value="New Lead — Guapa Data Solutions">
+                            <input type="text" name="_gotcha" style="display:none">
 
                             <div class="ds-form-row">
                                 <div class="ds-form-group">
