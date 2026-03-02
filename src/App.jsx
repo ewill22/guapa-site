@@ -175,7 +175,7 @@ export default function App() {
         <section className="front-page">
           <div className="front-page-masthead">
             <div className="masthead-rule" />
-            <span className="masthead-label">From the Collective</span>
+            <span className="masthead-label">From Guapa Inc</span>
             <div className="masthead-rule" />
           </div>
 
@@ -212,7 +212,7 @@ export default function App() {
               </div>
               <div className="about-content">
                 <h2>About Guapa</h2>
-                <p>Guapa is a creative collective based in New Jersey. We're a group of friends who skate, make things, and share what we love.</p>
+                <p>Guapa Inc is based in New Jersey. We're a group of friends who skate, make things, and share what we love.</p>
                 <p>This is a space for our creative projects—music, data, and whatever else we get into. No pressure, just making stuff.</p>
                 <div className="about-links">
                   <a href="https://instagram.com/guapa_skate" target="_blank" rel="noopener" className="btn btn-outline">
@@ -237,7 +237,7 @@ export default function App() {
           <div className="container">
             <div className="newsletter-content">
               <h2>Stay in the loop</h2>
-              <p>Get updates on new drops and collective projects.</p>
+              <p>Get updates on new drops and Guapa Inc projects.</p>
               <div className="newsletter-form">
                 <input type="email" placeholder="your@email.com" />
                 <button className="btn btn-primary">Subscribe</button>
