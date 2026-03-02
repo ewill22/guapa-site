@@ -14,6 +14,7 @@ export default function Footer() {
             <h4>Explore</h4>
             <a href={`${base}music.html`}>Music</a>
             <a href={`${base}coffee.html`}>Coffee</a>
+            <a href={`${base}data-solutions.html`}>Data Solutions</a>
           </div>
           <div className="footer-links">
             <h4>Info</h4>
