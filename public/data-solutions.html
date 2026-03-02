@@ -150,13 +150,88 @@
             </div>
         </section>
 
-        <!-- CTA -->
+        <!-- Contact Form -->
         <section class="ds-cta">
             <div class="container">
                 <div class="ds-cta-inner">
-                    <h2>Let's talk.</h2>
-                    <p>Whether you need a custom analytics build or want to stay in the loop on the real estate tool — reach out.</p>
-                    <a href="https://www.instagram.com/erycwill/" target="_blank" rel="noopener" class="ds-cta-btn">DM @erycwill on Instagram</a>
+
+                    <!-- Form (hidden after submission) -->
+                    <div id="ds-form-container">
+                        <h2>Let's talk.</h2>
+                        <p>Whether you need a custom analytics build or want to get early access to the real estate tool — fill out the form and we'll be in touch.</p>
+
+                        <!--
+                            SALESFORCE WEB-TO-LEAD INTEGRATION
+                            1. Go to Setup > Marketing > Lead Management > Web-to-Lead
+                            2. Generate Web-to-Lead HTML
+                            3. Copy your Organization ID and replace YOUR_ORG_ID below
+                            4. Update retURL to match your live domain when custom domain is added
+                        -->
+                        <form
+                            id="ds-lead-form"
+                            action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8"
+                            method="POST"
+                            class="ds-form"
+                            novalidate
+                        >
+                            <!-- Salesforce required fields -->
+                            <input type="hidden" name="oid" value="YOUR_ORG_ID">
+                            <input type="hidden" name="retURL" value="https://ewill22.github.io/guapa-site/data-solutions.html?submitted=1">
+                            <input type="hidden" name="lead_source" value="Web - Data Solutions">
+
+                            <div class="ds-form-row">
+                                <div class="ds-form-group">
+                                    <label for="first_name">First Name <span class="ds-required">*</span></label>
+                                    <input type="text" id="first_name" name="first_name" placeholder="Jane" required>
+                                </div>
+                                <div class="ds-form-group">
+                                    <label for="last_name">Last Name <span class="ds-required">*</span></label>
+                                    <input type="text" id="last_name" name="last_name" placeholder="Smith" required>
+                                </div>
+                            </div>
+
+                            <div class="ds-form-group">
+                                <label for="email">Email <span class="ds-required">*</span></label>
+                                <input type="email" id="email" name="email" placeholder="jane@company.com" required>
+                            </div>
+
+                            <div class="ds-form-row">
+                                <div class="ds-form-group">
+                                    <label for="company">Company</label>
+                                    <input type="text" id="company" name="company" placeholder="Acme Corp">
+                                </div>
+                                <div class="ds-form-group">
+                                    <label for="phone">Phone</label>
+                                    <input type="tel" id="phone" name="phone" placeholder="(555) 555-5555">
+                                </div>
+                            </div>
+
+                            <div class="ds-form-group">
+                                <label for="ds-interest">Interested In</label>
+                                <select id="ds-interest">
+                                    <option value="">Select a product or service</option>
+                                    <option value="Marketing Analytics Consulting">Marketing Analytics Consulting</option>
+                                    <option value="Real Estate Analytics (Early Access)">Real Estate Analytics — Early Access</option>
+                                    <option value="Natural Wine Assistant">Natural Wine Assistant</option>
+                                    <option value="General Inquiry">General Inquiry</option>
+                                </select>
+                            </div>
+
+                            <div class="ds-form-group">
+                                <label for="description">Message</label>
+                                <textarea id="description" name="description" rows="4" placeholder="Tell us what you're working on..."></textarea>
+                            </div>
+
+                            <button type="submit" class="ds-submit-btn">Send Inquiry</button>
+                        </form>
+                    </div>
+
+                    <!-- Thank you (shown after Salesforce redirects back with ?submitted=1) -->
+                    <div id="ds-thanks" class="ds-thanks" style="display:none;">
+                        <h2>Thanks — we'll be in touch.</h2>
+                        <p>Your inquiry was received. We'll follow up shortly.</p>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -192,12 +267,27 @@
     </footer>
 
     <script>
+        // Mobile nav toggle
         const navToggle = document.querySelector('.nav-toggle');
         const navLinks = document.querySelector('.nav-links');
-
         navToggle.addEventListener('click', () => {
             navLinks.classList.toggle('nav-links--open');
             navToggle.classList.toggle('nav-toggle--open');
+        });
+
+        // Show thank you message if Salesforce redirected back after submission
+        if (new URLSearchParams(window.location.search).get('submitted') === '1') {
+            document.getElementById('ds-form-container').style.display = 'none';
+            document.getElementById('ds-thanks').style.display = 'block';
+        }
+
+        // Prepend "Interested In" selection to description before submit
+        document.getElementById('ds-lead-form').addEventListener('submit', function () {
+            const interest = document.getElementById('ds-interest').value;
+            const desc = document.getElementById('description');
+            if (interest) {
+                desc.value = 'Interested in: ' + interest + (desc.value ? '\n\n' + desc.value : '');
+            }
         });
     </script>
 </body>

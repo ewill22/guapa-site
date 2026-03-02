@@ -156,16 +156,15 @@
     flex-shrink: 0;
 }
 
-/* CTA Section */
+/* CTA / Contact Form Section */
 .ds-cta {
     padding: var(--space-xl) 0;
     border-top: 1px solid var(--gray-800);
 }
 
 .ds-cta-inner {
-    max-width: 560px;
+    max-width: 680px;
     margin: 0 auto;
-    text-align: center;
 }
 
 .ds-cta h2 {
@@ -182,20 +181,118 @@
     line-height: 1.7;
 }
 
-.ds-cta-btn {
+/* Lead Form */
+.ds-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.ds-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+}
+
+.ds-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ds-form-group label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray-400);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ds-required {
+    color: var(--pink);
+}
+
+.ds-form-group input,
+.ds-form-group select,
+.ds-form-group textarea {
+    background: var(--gray-900);
+    border: 1px solid var(--gray-800);
+    border-radius: var(--radius-md);
+    color: var(--white);
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    padding: 10px var(--space-sm);
+    transition: border-color var(--transition);
+    outline: none;
+    width: 100%;
+}
+
+.ds-form-group input::placeholder,
+.ds-form-group textarea::placeholder {
+    color: var(--gray-600);
+}
+
+.ds-form-group input:focus,
+.ds-form-group select:focus,
+.ds-form-group textarea:focus {
+    border-color: var(--pink);
+}
+
+.ds-form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    cursor: pointer;
+}
+
+.ds-form-group select option {
+    background: var(--gray-900);
+    color: var(--white);
+}
+
+.ds-form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.ds-submit-btn {
     display: inline-block;
     background: var(--pink);
     color: var(--black);
+    font-family: var(--font-main);
     font-weight: 600;
     font-size: 0.9rem;
     padding: var(--space-sm) var(--space-lg);
     border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
     transition: background var(--transition), transform var(--transition);
+    align-self: flex-start;
 }
 
-.ds-cta-btn:hover {
+.ds-submit-btn:hover {
     background: var(--pink-hover);
     transform: translateY(-1px);
+}
+
+/* Thank you state */
+.ds-thanks {
+    text-align: center;
+    padding: var(--space-xl) 0;
+}
+
+.ds-thanks h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: var(--space-sm);
+}
+
+.ds-thanks p {
+    color: var(--gray-400);
+    font-size: 1rem;
 }
 
 /* Responsive */
@@ -213,5 +310,14 @@
 
     .ds-fact-label {
         min-width: 90px;
+    }
+
+    .ds-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-submit-btn {
+        width: 100%;
+        text-align: center;
     }
 }
