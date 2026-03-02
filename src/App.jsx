@@ -1,16 +1,13 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Nav from './components/Nav';
 import Banner from './components/Banner';
 import Footer from './components/Footer';
-import Ticker from './components/Ticker';
-import ProfileModal from './components/ProfileModal';
 import GuapaAvatar from './components/GuapaAvatar';
 import {
   TIMELINE, LENS_COLORS, LENS_ICONS, LENS_LABELS, FULL_LABELS,
   getEvent, hashStr,
 } from './data/timeline';
 import { getTaxonomy } from './data/taxonomy';
-import { MOCK_USERS } from './data/users';
 import './App.css';
 
 // ============ TAXONOMY BRANCH ============
@@ -54,44 +51,19 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [lens, setLens] = useState('world');
   const [year, setYear] = useState(2026);
-  const [profile, setProfile] = useState(null);
-  const [users, setUsers] = useState(MOCK_USERS);
   const [showLogin, setShowLogin] = useState(false);
   const [loginName, setLoginName] = useState('');
 
-  // Simulate users moving around
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setUsers(prev => prev.map(u => {
-        if (u.id === 999 || Math.random() > 0.9) return u;
-        const ls = Object.keys(LENS_COLORS);
-        return Math.random() > 0.6
-          ? { ...u, lens: ls[Math.floor(Math.random() * ls.length)], year: 1960 + Math.floor(Math.random() * 66) }
-          : { ...u, year: Math.max(1960, Math.min(2026, u.year + Math.floor(Math.random() * 11) - 5)) };
-      }));
-    }, 4000);
-    return () => clearInterval(iv);
-  }, []);
-
-  // Sync current user's position
-  useEffect(() => {
-    if (currentUser) setUsers(p => p.map(u => u.id === 999 ? { ...u, lens, year } : u));
-  }, [lens, year, currentUser]);
-
   const doLogin = () => {
     if (!loginName.trim()) return;
-    const u = { id: 999, name: loginName.trim(), lens, year, pub: true, bio: '' };
-    setCurrentUser(u);
-    setUsers(p => [u, ...p]);
+    setCurrentUser({ name: loginName.trim(), lens, year, pub: true });
     setShowLogin(false);
     setLoginName('');
   };
 
   const togglePub = () => {
     if (!currentUser) return;
-    const u = { ...currentUser, pub: !currentUser.pub };
-    setCurrentUser(u);
-    setUsers(p => p.map(x => x.id === 999 ? u : x));
+    setCurrentUser(u => ({ ...u, pub: !u.pub }));
   };
 
   const lc = LENS_COLORS[lens];
@@ -120,8 +92,6 @@ export default function App() {
       />
 
       <Banner />
-
-      <Ticker users={users} onUserClick={setProfile} />
 
       {/* Login Panel */}
       {showLogin && !currentUser && (
@@ -340,7 +310,6 @@ export default function App() {
       <Footer />
 
       {/* Profile Modal */}
-      {profile && <ProfileModal user={profile} onClose={() => setProfile(null)} />}
     </>
   );
 }
