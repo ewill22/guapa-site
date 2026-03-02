@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <img src={`${base}assets/lockup_light.png`} alt="Guapa" className="footer-logo" />
+            <img src={`${base}assets/guapa_inc_logo.png`} alt="Guapa Inc" className="footer-logo" />
           </div>
           <div className="footer-links">
             <h4>Explore</h4>
