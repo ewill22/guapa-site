@@ -244,7 +244,7 @@ export default function App() {
             )}
 
             <div className="taxonomy-cta">
-              <span>The Guapa Aggregated Taxonomy — a living index of the world. </span>
+              <p>This is the Guapa Aggregated Taxonomy — a living index of the world.</p>
               <span className="taxonomy-cta-link">Explore the full archive →</span>
             </div>
           </div>
