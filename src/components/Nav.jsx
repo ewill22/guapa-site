@@ -25,7 +25,7 @@ export default function Nav() {
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
           </svg>
         </a>
-        <a href={`${base}shop.html`} className="nav-cart">Shop →</a>
+        <a href={`${base}shop.html`} className="nav-cart">Merch →</a>
       </div>
 
       <button

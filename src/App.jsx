@@ -195,10 +195,10 @@ export default function App() {
             </a>
 
             <a href={`${base}shop.html`} className="fp-card">
-              <p className="fp-section">Shop</p>
+              <p className="fp-section">Merch</p>
               <h3 className="fp-headline">Merch from the crew. Tees, stickers, and more.</h3>
               <p className="fp-dek">Everything is made in small runs. DM to pre-order.</p>
-              <span className="fp-link">Visit the Shop →</span>
+              <span className="fp-link">Browse Merch →</span>
             </a>
           </div>
         </section>
