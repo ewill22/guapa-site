@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import GuapaAvatar from './GuapaAvatar';
 import './Nav.css';
 
-export default function Nav({ currentUser, onTogglePublic, onPlugIn, showLogin }) {
+export default function Nav() {
   const [mobileOpen, setMobileOpen] = useState(false);
-
   const base = import.meta.env.BASE_URL;
 
   return (
@@ -28,25 +26,6 @@ export default function Nav({ currentUser, onTogglePublic, onPlugIn, showLogin }
           </svg>
         </a>
         <a href={`${base}shop.html`} className="nav-cart">Shop →</a>
-
-        {currentUser ? (
-          <div className="nav-user">
-            <GuapaAvatar name={currentUser.name} size={18} />
-            <div className="nav-user-info">
-              <span className="nav-user-name">{currentUser.name}</span>
-              <button onClick={onTogglePublic} className={`nav-user-status ${currentUser.pub ? 'public' : ''}`}>
-                {currentUser.pub ? '● public' : '○ private'} · toggle
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={onPlugIn}
-            className={`nav-plug-in ${showLogin ? 'active' : ''}`}
-          >
-            Plug In
-          </button>
-        )}
       </div>
 
       <button

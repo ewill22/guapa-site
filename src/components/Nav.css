@@ -28,26 +28,6 @@
 }
 .nav-cart:hover { background: var(--pink-hover); }
 
-.nav-plug-in {
-  padding: 6px 14px; background: transparent;
-  color: var(--gray-400); border: 1px solid var(--gray-800);
-  border-radius: 6px; font-size: 0.75rem; font-weight: 600;
-  cursor: pointer; transition: all 0.2s;
-}
-.nav-plug-in.active { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
-
-.nav-user {
-  display: flex; align-items: center; gap: 10px;
-  padding: 4px 12px; background: var(--gray-900);
-  border: 1px solid var(--gray-800); border-radius: 10px;
-}
-.nav-user-name { font-size: 0.72rem; font-weight: 600; color: var(--white); display: block; }
-.nav-user-status {
-  background: none; border: none; padding: 0;
-  font-size: 0.58rem; color: var(--gray-600);
-  cursor: pointer; font-family: inherit;
-}
-.nav-user-status.public { color: var(--green); }
 
 .nav-toggle {
   display: none; flex-direction: column; gap: 5px;

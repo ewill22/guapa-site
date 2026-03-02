@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import Nav from './components/Nav';
 import Banner from './components/Banner';
 import Footer from './components/Footer';
-import GuapaAvatar from './components/GuapaAvatar';
 import {
   TIMELINE, LENS_COLORS, LENS_ICONS, LENS_LABELS, FULL_LABELS,
   getEvent, hashStr,
@@ -48,30 +47,13 @@ function TaxBranch({ branch, defaultOpen }) {
 
 // ============ APP ============
 export default function App() {
-  const [currentUser, setCurrentUser] = useState(null);
   const [lens, setLens] = useState('world');
   const [year, setYear] = useState(2026);
-  const [showLogin, setShowLogin] = useState(false);
-  const [loginName, setLoginName] = useState('');
 
-  const doLogin = () => {
-    if (!loginName.trim()) return;
-    setCurrentUser({ name: loginName.trim(), lens, year, pub: true });
-    setShowLogin(false);
-    setLoginName('');
-  };
-
-  const togglePub = () => {
-    if (!currentUser) return;
-    setCurrentUser(u => ({ ...u, pub: !u.pub }));
-  };
-
+  const base = import.meta.env.BASE_URL;
   const lc = LENS_COLORS[lens];
   const ev = getEvent(lens, year);
   const tax = getTaxonomy(lens, year);
-  const headerLabel = currentUser
-    ? `The World According to ${currentUser.name}`
-    : FULL_LABELS[lens];
 
   const bars = useMemo(() => {
     const ey = Object.keys(TIMELINE[lens]).map(Number);
@@ -84,45 +66,14 @@ export default function App() {
 
   return (
     <>
-      <Nav
-        currentUser={currentUser}
-        onTogglePublic={togglePub}
-        onPlugIn={() => setShowLogin(!showLogin)}
-        showLogin={showLogin}
-      />
+      <Nav />
 
       <Banner />
-
-      {/* Login Panel */}
-      {showLogin && !currentUser && (
-        <div className="login-wrapper">
-          <div className="login-panel">
-            <h4>Plug in to the coffeeshop</h4>
-            <p>Your Guapa figure is generated from your name.</p>
-            <div className="login-preview">
-              <GuapaAvatar name={loginName || 'preview'} size={36} />
-              <span>{loginName ? 'Your avatar' : 'Type a name to preview'}</span>
-            </div>
-            <div className="login-form">
-              <input
-                type="text" value={loginName}
-                onChange={e => setLoginName(e.target.value)}
-                placeholder="your_name" maxLength={16}
-                onKeyDown={e => { if (e.key === 'Enter') doLogin(); }}
-              />
-              <button onClick={doLogin} disabled={!loginName.trim()}
-                className={loginName.trim() ? 'active' : ''}>
-                Join
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <main>
         {/* Dashboard Hero */}
         <section className="dashboard-hero">
-          <p className="dashboard-label">{headerLabel}</p>
+          <p className="dashboard-label">{FULL_LABELS[lens]}</p>
 
           {/* Lens Selector */}
           <div className="lens-selector">
@@ -220,39 +171,37 @@ export default function App() {
           </div>
         </section>
 
-        {/* Category Cards */}
-        <section className="category-section">
-          <p className="section-label">Go Deeper</p>
-          <div className="category-grid">
-            <a href="/music.html" className="category-card">
-              <span className="category-icon">♫</span>
-              <h3>Music</h3>
-              <p>Journey through sound</p>
+        {/* Front Page — Newspaper sections */}
+        <section className="front-page">
+          <div className="front-page-masthead">
+            <div className="masthead-rule" />
+            <span className="masthead-label">From the Collective</span>
+            <div className="masthead-rule" />
+          </div>
+
+          <div className="front-page-grid">
+            <a href={`${base}music.html`} className="fp-card fp-card--lead">
+              <p className="fp-section">Music</p>
+              <h3 className="fp-headline">A journey through sound, genre by genre, decade by decade.</h3>
+              <p className="fp-dek">Curated listening, artist timelines, and the Guapa score — a composite ranking built from real data.</p>
+              <span className="fp-link">Explore Music →</span>
             </a>
-            <a href="/coffee.html" className="category-card">
-              <span className="category-icon">☕</span>
-              <h3>Coffee</h3>
-              <p>Origins & roasters</p>
+
+            <a href={`${base}coffee.html`} className="fp-card">
+              <p className="fp-section">Coffee</p>
+              <h3 className="fp-headline">Origins, roasters, and what makes a great cup.</h3>
+              <p className="fp-dek">A timeline of coffee culture from the first wave to the present.</p>
+              <span className="fp-link">Explore Coffee →</span>
             </a>
-            <a href="/shop.html" className="category-card">
-              <span className="category-icon">🛹</span>
-              <h3>Shop</h3>
-              <p>Merch from the collective</p>
+
+            <a href={`${base}shop.html`} className="fp-card">
+              <p className="fp-section">Shop</p>
+              <h3 className="fp-headline">Merch from the crew. Tees, stickers, and more.</h3>
+              <p className="fp-dek">Everything is made in small runs. DM to pre-order.</p>
+              <span className="fp-link">Visit the Shop →</span>
             </a>
           </div>
         </section>
-
-        {/* Coffeeshop CTA */}
-        {!currentUser && (
-          <section className="coffeeshop-cta">
-            <div className="coffeeshop-cta-inner">
-              <div className="coffeeshop-cta-icon">☕</div>
-              <h3>The Guapa Virtual Coffeeshop</h3>
-              <p>Plug in to see who's exploring. Click someone to see the world through their eyes.</p>
-              <button onClick={() => setShowLogin(true)} className="btn btn-primary">Plug In →</button>
-            </div>
-          </section>
-        )}
 
         {/* Featured Banner */}
         <section className="featured-banner">
@@ -268,7 +217,7 @@ export default function App() {
           <div className="container">
             <div className="about-grid">
               <div className="about-image">
-                <img src={`${import.meta.env.BASE_URL}assets/guapa_logo_dark.png`} alt="Guapa" className="about-logo" />
+                <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="about-logo" />
               </div>
               <div className="about-content">
                 <h2>About Guapa</h2>
@@ -308,8 +257,6 @@ export default function App() {
       </main>
 
       <Footer />
-
-      {/* Profile Modal */}
     </>
   );
 }
