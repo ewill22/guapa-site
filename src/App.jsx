@@ -203,15 +203,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* Featured Banner */}
-        <section className="featured-banner">
-          <div className="featured-banner-inner">
-            <p className="featured-banner-label">The Collective</p>
-            <h2 className="featured-banner-headline">Music. Coffee. Culture. New Jersey.</h2>
-            <a href="https://instagram.com/guapa_skate" target="_blank" rel="noopener" className="featured-banner-btn">Follow Along →</a>
-          </div>
-        </section>
-
         {/* About */}
         <section id="about" className="about">
           <div className="container">
