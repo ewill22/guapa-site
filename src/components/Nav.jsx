@@ -9,7 +9,7 @@ export default function Nav() {
     <nav className="nav">
       <a href={base} className="nav-logo">
         <img src={`${base}assets/guapa_logo_dark.png`} className="logo-img" alt="Guapa" />
-        <span className="logo-text">GUAPA</span>
+        <span className="logo-text">GUAPA <span className="logo-sub">inc</span></span>
       </a>
 
       <div className={`nav-links ${mobileOpen ? 'nav-links--open' : ''}`}>

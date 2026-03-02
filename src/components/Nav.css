@@ -12,7 +12,8 @@
 
 .nav-logo { flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
 .logo-img { height: 28px; width: auto; display: block; }
-.logo-text { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.05em; color: var(--white); }
+.logo-text { font-size: 1.8rem; font-weight: 700; letter-spacing: 0.05em; color: var(--white); }
+.logo-sub { font-size: 0.6rem; font-weight: 400; color: var(--gray-600); vertical-align: middle; }
 
 .nav-links { display: flex; gap: 3rem; font-size: 0.9rem; font-weight: 500; }
 .nav-links a { color: var(--gray-400); transition: color 0.2s; }
