@@ -156,6 +156,21 @@
     flex-shrink: 0;
 }
 
+/* Card Link */
+.ds-card-link {
+    display: inline-block;
+    margin-top: var(--space-md);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--yellow);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.ds-card-link:hover {
+    color: var(--pink);
+}
+
 /* CTA / Contact Form Section */
 .ds-cta {
     padding: var(--space-xl) 0;
