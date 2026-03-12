@@ -830,61 +830,19 @@
                     </div>
                 </section>
 
-                <!-- Posts / Reviews Section -->
-                <section class="music-posts">
-                    <div class="posts-header">
-                        <h2>Recent Posts</h2>
+                <!-- Discography Section (shown when artist selected) -->
+                <section class="discography-section" id="discographySection" style="display: none;">
+                    <div class="discography-header">
+                        <div class="discography-artist-info">
+                            <span class="discography-icon" id="discoIcon"></span>
+                            <div>
+                                <h2 id="discoArtistName">Artist Name</h2>
+                                <p class="discography-bio" id="discoBio"></p>
+                            </div>
+                        </div>
+                        <button class="discography-close" id="discoClose">Back to browse</button>
                     </div>
-                    
-                    <div class="posts-grid">
-                        <article class="post-card">
-                            <div class="post-image">
-                                <div class="post-placeholder"></div>
-                            </div>
-                            <div class="post-content">
-                                <span class="post-tag">Album Review</span>
-                                <h3>Album Title Goes Here</h3>
-                                <p>A short description or excerpt from the review. What made this album worth talking about...</p>
-                                <span class="post-date">Jan 10, 2025</span>
-                            </div>
-                        </article>
-
-                        <article class="post-card">
-                            <div class="post-image">
-                                <div class="post-placeholder"></div>
-                            </div>
-                            <div class="post-content">
-                                <span class="post-tag">Discovery</span>
-                                <h3>New Artist We're Into</h3>
-                                <p>Found this one digging through crates. Here's why you should check them out...</p>
-                                <span class="post-date">Jan 8, 2025</span>
-                            </div>
-                        </article>
-
-                        <article class="post-card">
-                            <div class="post-image">
-                                <div class="post-placeholder"></div>
-                            </div>
-                            <div class="post-content">
-                                <span class="post-tag">Playlist</span>
-                                <h3>January Rotation</h3>
-                                <p>What's been on repeat this month. A mix of old favorites and new finds...</p>
-                                <span class="post-date">Jan 5, 2025</span>
-                            </div>
-                        </article>
-
-                        <article class="post-card">
-                            <div class="post-image">
-                                <div class="post-placeholder"></div>
-                            </div>
-                            <div class="post-content">
-                                <span class="post-tag">Live</span>
-                                <h3>Show Recap</h3>
-                                <p>Caught a great show last week. Here's what went down...</p>
-                                <span class="post-date">Jan 2, 2025</span>
-                            </div>
-                        </article>
-                    </div>
+                    <div class="discography-list" id="discoList"></div>
                 </section>
             </div>
         </div>
@@ -1610,12 +1568,14 @@
             }).join('');
         }
 
-        function makeArtistCard(artist) {
+        function makeArtistCard(artist, genreId, subId) {
             const hasCurrentYearAlbum = artist.albums.some(a => a.year === currentYear);
             const card = document.createElement('div');
             card.className = 'album-card';
+            card.style.cursor = 'pointer';
             if (hasCurrentYearAlbum) card.style.borderColor = 'var(--yellow)';
             card.innerHTML = `<div style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px;"><span style="font-size: 1.5rem;">${artist.icon}</span><div><h4 style="margin: 0; font-size: 0.9rem; color: var(--yellow);">${artist.name}</h4><p style="margin: 4px 0 0 0; font-size: 0.75rem; color: var(--gray-400); line-height: 1.4;">${artist.description}</p></div></div><div class="albums-list">${makeAlbumHtml(artist)}</div>`;
+            card.addEventListener('click', () => showDiscography(artist, genreId, subId));
             return card;
         }
 
@@ -1628,7 +1588,7 @@
             document.getElementById('artistSubgenre').textContent = `${genre.name} · ${currentYear} · ${status.toUpperCase()}`;
             const albumGrid = document.getElementById('albumGrid');
             albumGrid.innerHTML = '';
-            Object.values(subgenre.artists).forEach(artist => albumGrid.appendChild(makeArtistCard(artist)));
+            Object.values(subgenre.artists).forEach(artist => albumGrid.appendChild(makeArtistCard(artist, genreId, subgenreId)));
             artistPanel.classList.add('visible');
             document.getElementById('rankingsSection').style.display = 'none';
         }
@@ -1666,10 +1626,10 @@
                     subgenreHeader.style.cssText = 'grid-column: 1 / -1; padding: 12px 0 8px 0; border-bottom: 1px solid var(--gray-800); margin-bottom: 8px;';
                     subgenreHeader.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 1.2rem;">${subgenre.icon}</span><span style="font-size: 0.85rem; font-weight: 600; color: var(--pink);">${subgenre.name}</span><span style="font-size: 0.65rem; color: var(--gray-600); text-transform: uppercase;">${status} · ${currentYear}</span></div>`;
                     albumGrid.appendChild(subgenreHeader);
-                    Object.values(subgenre.artists).forEach(artist => albumGrid.appendChild(makeArtistCard(artist)));
+                    Object.values(subgenre.artists).forEach(artist => albumGrid.appendChild(makeArtistCard(artist, genreId, subId)));
                 });
             }
-            
+
             artistPanel.classList.add('visible');
             document.getElementById('rankingsSection').style.display = 'none';
         }
@@ -1866,6 +1826,75 @@
             renderRankings();
         });
 
+        // Discography section
+        const discoSection = document.getElementById('discographySection');
+        const discoList = document.getElementById('discoList');
+        let activeDiscoArtist = null;
+
+        function showDiscography(artist, genreId, subId) {
+            activeDiscoArtist = { artist, genreId, subId };
+            document.getElementById('discoIcon').textContent = artist.icon;
+            document.getElementById('discoArtistName').textContent = artist.name;
+            document.getElementById('discoBio').textContent = artist.description;
+
+            // Sort albums newest first
+            const albums = [...artist.albums].sort((a, b) => b.year - a.year);
+
+            discoList.innerHTML = albums.map((album, idx) => {
+                // Generate placeholder tracks (we'll connect real data later)
+                const trackCount = 8 + Math.floor(Math.abs(hashCode(album.title)) % 6);
+                const tracks = Array.from({ length: trackCount }, (_, i) => {
+                    const mins = 2 + Math.floor(Math.abs(hashCode(album.title + i)) % 4);
+                    const secs = Math.floor(Math.abs(hashCode(album.title + i + 's')) % 60);
+                    return { num: i + 1, title: `Track ${i + 1}`, duration: `${mins}:${secs.toString().padStart(2, '0')}` };
+                });
+
+                return `
+                    <div class="disco-album ${idx === 0 ? 'disco-album--latest' : ''}">
+                        <div class="disco-album-header">
+                            <div class="disco-album-art"></div>
+                            <div class="disco-album-info">
+                                <span class="disco-album-year">${album.year}</span>
+                                <h3 class="disco-album-title">${album.title}</h3>
+                                <div class="disco-album-actions">
+                                    <a href="#" class="disco-link disco-link--spotify">Spotify</a>
+                                    <a href="#" class="disco-link disco-link--buy">Buy Vinyl</a>
+                                    <a href="#" class="disco-link disco-link--wiki">Wiki</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="disco-tracklist">
+                            ${tracks.map(t => `
+                                <div class="disco-track">
+                                    <span class="disco-track-num">${t.num}</span>
+                                    <span class="disco-track-title">${t.title}</span>
+                                    <span class="disco-track-duration">${t.duration}</span>
+                                    <span class="disco-track-data">—</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            discoSection.style.display = 'block';
+            setTimeout(() => discoSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+        }
+
+        function hideDiscography() {
+            discoSection.style.display = 'none';
+            activeDiscoArtist = null;
+        }
+
+        document.getElementById('discoClose').addEventListener('click', hideDiscography);
+
+        // Simple hash for generating consistent placeholder data
+        function hashCode(str) {
+            let h = 0;
+            for (let i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+            return h;
+        }
+
         // Handle ?artist= param from main page links
         function handleArtistParam() {
             const params = new URLSearchParams(window.location.search);
@@ -1884,16 +1913,16 @@
         }
 
         function activateArtist(match) {
-            // Find the latest album year for this artist to set the timeline
+            // Find the specific artist object and their latest album year
             let targetYear = match.year;
+            let artistObj = null;
             const genre = musicData[match.genreId];
             if (genre) {
                 const subgenre = genre.subgenres[match.subId];
                 if (subgenre) {
-                    // Find the specific artist and get their latest album year
-                    const artist = Object.values(subgenre.artists).find(a => a.name === match.name);
-                    if (artist && artist.albums.length > 0) {
-                        const latestAlbum = artist.albums.reduce((latest, a) => a.year > latest.year ? a : latest, artist.albums[0]);
+                    artistObj = Object.values(subgenre.artists).find(a => a.name === match.name);
+                    if (artistObj && artistObj.albums.length > 0) {
+                        const latestAlbum = artistObj.albums.reduce((latest, a) => a.year > latest.year ? a : latest, artistObj.albums[0]);
                         targetYear = latestAlbum.year;
                     }
                 }
@@ -1911,10 +1940,16 @@
             showArtistsPanel(match.genreId, match.subId);
             renderGenreGroups();
 
-            // Scroll to the artist panel after a short delay for rendering
-            setTimeout(() => {
-                artistPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
+            // Also open the discography for this specific artist
+            if (artistObj) {
+                setTimeout(() => {
+                    showDiscography(artistObj, match.genreId, match.subId);
+                }, 150);
+            } else {
+                setTimeout(() => {
+                    artistPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
 
             return true;
         }
