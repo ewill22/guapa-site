@@ -25,24 +25,24 @@ export const BLURBS = {
       { type: 'release', text: '{Radiohead} reissues OK Computer on vinyl with unreleased B-sides from the original sessions.' },
     ],
     2023: [
-      { type: 'trending', text: '{Olivia Rodrigo} dominates with GUTS — "vampire" becomes the most-streamed song of the summer.' },
+      { type: 'trending', text: 'Olivia Rodrigo dominates with GUTS — "vampire" becomes the most-streamed song of the summer.' },
       { type: 'news', text: 'AI music generation explodes. Grimes open-sources her voice. {Drake} deepfakes go viral.' },
       { type: 'metric', label: 'Global Streams', value: '4T+', change: 'Spotify hits 600M users' },
-      { type: 'release', text: '{Boygenius} releases "the record" — {Phoebe Bridgers}, {Lucy Dacus}, and {Julien Baker} deliver indie rock album of the year.' },
+      { type: 'release', text: 'Boygenius releases "the record" — Phoebe Bridgers, Lucy Dacus, and Julien Baker deliver indie rock album of the year.' },
       { type: 'trending', text: '{Travis Scott} headlines Coachella. The production budget reportedly exceeds $10M.' },
     ],
     2020: [
-      { type: 'news', text: 'Lockdowns turn bedrooms into studios. {Phoebe Bridgers} releases Punisher to universal acclaim.' },
+      { type: 'news', text: 'Lockdowns turn bedrooms into studios. Phoebe Bridgers releases Punisher to universal acclaim.' },
       { type: 'trending', text: '{The Weeknd} drops After Hours. "Blinding Lights" becomes the #1 Billboard song of all time.' },
       { type: 'metric', label: 'Concert Revenue', value: '-$30B', change: 'Live music collapses' },
-      { type: 'release', text: '{Fiona Apple} returns with Fetch the Bolt Cutters — recorded entirely at home. Perfect 10 from Pitchfork.' },
+      { type: 'release', text: 'Fiona Apple returns with Fetch the Bolt Cutters — recorded entirely at home. Perfect 10 from Pitchfork.' },
       { type: 'news', text: 'TikTok becomes the primary music discovery platform. {Fleetwood Mac} re-enters the charts via a skateboarding video.' },
     ],
     2015: [
       { type: 'trending', text: '{Kendrick Lamar} releases To Pimp a Butterfly — a jazz-rap masterpiece that redefines the genre.' },
       { type: 'news', text: '{Taylor Swift} pulls her catalog from Spotify, then returns. The streaming economics debate rages.' },
       { type: 'metric', label: 'Streaming', value: '68M', change: 'Paid subscribers globally' },
-      { type: 'release', text: '{Adele} drops 25 — "Hello" breaks every streaming record that existed at the time.' },
+      { type: 'release', text: 'Adele drops 25 — "Hello" breaks every streaming record that existed at the time.' },
       { type: 'trending', text: '{D\'Angelo} finally returns with Black Messiah after a 14-year absence. Worth the wait.' },
     ],
     2008: [
@@ -53,14 +53,14 @@ export const BLURBS = {
     ],
     1994: [
       { type: 'release', text: '{Nas} drops Illmatic — 10 tracks, 39 minutes, one of the greatest hip-hop albums ever made.' },
-      { type: 'trending', text: '{Notorious B.I.G.} releases Ready to Die. East Coast hip-hop has its king.' },
-      { type: 'news', text: '{Kurt Cobain} dies at 27. Grunge loses its reluctant spokesman. An era ends.' },
-      { type: 'release', text: '{Outkast} drops Southernplayalisticadillacmuzik — Atlanta enters the hip-hop conversation.' },
+      { type: 'trending', text: '{The Notorious B.I.G.} releases Ready to Die. East Coast hip-hop has its king.' },
+      { type: 'news', text: 'Kurt Cobain dies at 27. Grunge loses its reluctant spokesman. An era ends.' },
+      { type: 'release', text: '{OutKast} drops Southernplayalisticadillacmuzik — Atlanta enters the hip-hop conversation.' },
     ],
     1991: [
       { type: 'release', text: '{Nirvana} drops Nevermind. "Smells Like Teen Spirit" kills hair metal overnight.' },
       { type: 'trending', text: '{A Tribe Called Quest} releases The Low End Theory — jazz samples meet hip-hop perfection.' },
-      { type: 'release', text: '{My Bloody Valentine} drops Loveless. Shoegaze peaks. Kevin Shields nearly bankrupts Creation Records.' },
+      { type: 'release', text: 'My Bloody Valentine drops Loveless. Shoegaze peaks. Kevin Shields nearly bankrupts Creation Records.' },
       { type: 'metric', label: 'CD Sales', value: '$7.8B', change: 'CDs overtake cassettes' },
     ],
     1977: [
