@@ -1684,11 +1684,7 @@
 
         yearSlider.addEventListener('input', (e) => updateYear(e.target.value));
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft' && currentYear > MIN_YEAR) { yearSlider.value = currentYear - 1; updateYear(currentYear - 1); }
-            if (e.key === 'ArrowRight' && currentYear < MAX_YEAR) { yearSlider.value = currentYear + 1; updateYear(currentYear + 1); }
-            if (e.key === 'Escape') closeArtistPanel();
-        });
+        // Keyboard removed here — consolidated in single listener below
 
         // Mobile nav toggle
         const navToggle = document.querySelector('.nav-toggle');
@@ -1858,10 +1854,10 @@
             if (e.target === artistPopupOverlay) closeArtistPopup();
         });
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeArtistPopup();
+            if (e.key === 'Escape') { closeArtistPopup(); closeArtistPanel(); }
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            if (e.key === 'ArrowLeft') updateYear(Math.max(1960, currentYear - 1));
-            if (e.key === 'ArrowRight') updateYear(Math.min(2025, currentYear + 1));
+            if (e.key === 'ArrowLeft' && currentYear > MIN_YEAR) { yearSlider.value = currentYear - 1; updateYear(currentYear - 1); }
+            if (e.key === 'ArrowRight' && currentYear < MAX_YEAR) { yearSlider.value = currentYear + 1; updateYear(currentYear + 1); }
         });
 
         // Clear year filter
@@ -1870,11 +1866,67 @@
             renderRankings();
         });
 
+        // Handle ?artist= param from main page links
+        function handleArtistParam() {
+            const params = new URLSearchParams(window.location.search);
+            const artistQuery = params.get('artist');
+            if (!artistQuery) return false;
+
+            const q = artistQuery.toLowerCase();
+            const match = searchIndex.find(item => item.name.toLowerCase() === q);
+            if (!match) {
+                // Try partial match
+                const partial = searchIndex.find(item => item.name.toLowerCase().includes(q));
+                if (!partial) return false;
+                return activateArtist(partial);
+            }
+            return activateArtist(match);
+        }
+
+        function activateArtist(match) {
+            // Find the latest album year for this artist to set the timeline
+            let targetYear = match.year;
+            const genre = musicData[match.genreId];
+            if (genre) {
+                const subgenre = genre.subgenres[match.subId];
+                if (subgenre) {
+                    // Find the specific artist and get their latest album year
+                    const artist = Object.values(subgenre.artists).find(a => a.name === match.name);
+                    if (artist && artist.albums.length > 0) {
+                        const latestAlbum = artist.albums.reduce((latest, a) => a.year > latest.year ? a : latest, artist.albums[0]);
+                        targetYear = latestAlbum.year;
+                    }
+                }
+            }
+
+            // Navigate to that year
+            if (targetYear && targetYear >= MIN_YEAR && targetYear <= MAX_YEAR) {
+                yearSlider.value = targetYear;
+                updateYear(targetYear);
+            }
+
+            // Open the subgenre panel
+            selectedGenre = match.genreId;
+            selectedSubgenre = match.subId;
+            showArtistsPanel(match.genreId, match.subId);
+            renderGenreGroups();
+
+            // Scroll to the artist panel after a short delay for rendering
+            setTimeout(() => {
+                artistPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+
+            return true;
+        }
+
         // Initial render
         updateDecadeButtons();
         renderAlbumBars();
         renderGenreGroups();
         renderRankings();
+
+        // Check for artist deep link
+        handleArtistParam();
     </script>
 </body>
 </html>
