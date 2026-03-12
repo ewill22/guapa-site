@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import Nav from './components/Nav';
 import Banner from './components/Banner';
 import Footer from './components/Footer';
@@ -62,9 +62,20 @@ export default function App() {
 
   const blurbData = getBlurbs(lens, year);
 
-  const navYear = (dir) => {
+  const navYear = useCallback((dir) => {
     setYear(y => Math.max(1960, Math.min(2026, y + dir)));
-  };
+  }, []);
+
+  // Arrow key navigation
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowLeft') navYear(-1);
+      if (e.key === 'ArrowRight') navYear(1);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [navYear]);
 
   return (
     <>
@@ -131,7 +142,7 @@ export default function App() {
           </div>
 
           {/* Blurbs */}
-          {blurbData && (
+          {blurbData ? (
             <div className="blurbs-section">
               <div className="blurbs-header">
                 {isGuapa ? (
@@ -166,6 +177,8 @@ export default function App() {
                 ))}
               </div>
             </div>
+          ) : (
+            <div className="blurbs-placeholder" />
           )}
 
         </section>

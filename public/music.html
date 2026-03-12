@@ -1859,6 +1859,9 @@
         });
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeArtistPopup();
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') updateYear(Math.max(1960, currentYear - 1));
+            if (e.key === 'ArrowRight') updateYear(Math.min(2025, currentYear + 1));
         });
 
         // Clear year filter

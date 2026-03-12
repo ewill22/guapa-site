@@ -112,6 +112,15 @@
 }
 .lens-pill:hover { border-color: var(--gray-600); color: var(--gray-400); }
 
+/* Blurbs Placeholder */
+.blurbs-placeholder {
+  margin-top: var(--space-lg);
+  min-height: 300px;
+  background: var(--gray-900);
+  border: 1px dashed var(--gray-800);
+  border-radius: var(--radius-lg);
+}
+
 /* ========================================
    BLURBS SECTION
 ======================================== */
