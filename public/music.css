@@ -177,6 +177,7 @@
 .discography-section {
     border-top: 1px solid var(--gray-800);
     padding-top: var(--space-lg);
+    margin-top: var(--space-lg);
 }
 
 .discography-header {
@@ -184,7 +185,9 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-md);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--gray-800);
 }
 
 .discography-artist-info {
@@ -194,15 +197,17 @@
 }
 
 .discography-icon {
-    font-size: 2rem;
+    font-size: 2.2rem;
     flex-shrink: 0;
+    line-height: 1;
 }
 
 .discography-artist-info h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--yellow);
-    margin: 0 0 4px;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
 }
 
 .discography-bio {
@@ -210,6 +215,8 @@
     color: var(--gray-400);
     line-height: 1.5;
     margin: 0;
+    font-family: var(--font-serif);
+    font-style: italic;
 }
 
 .discography-close {
@@ -219,7 +226,7 @@
     color: var(--gray-400);
     font-size: 0.75rem;
     font-weight: 600;
-    padding: 6px 12px;
+    padding: 6px 14px;
     cursor: pointer;
     font-family: inherit;
     transition: all 0.2s;
@@ -228,21 +235,31 @@
 }
 
 .discography-close:hover {
-    border-color: var(--gray-600);
-    color: var(--white);
+    border-color: var(--pink);
+    color: var(--pink);
+}
+
+/* Album count label */
+.discography-count {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--gray-600);
+    margin-bottom: var(--space-md);
 }
 
 .discography-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-lg);
+    gap: var(--space-md);
 }
 
 /* Album entry */
 .disco-album {
     background: var(--gray-900);
     border: 1px solid var(--gray-800);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     overflow: hidden;
     transition: border-color 0.2s;
 }
@@ -252,40 +269,45 @@
 }
 
 .disco-album--latest {
-    border-color: rgba(240, 192, 20, 0.25);
+    border-color: rgba(240, 192, 20, 0.2);
 }
 
 .disco-album--latest:hover {
-    border-color: rgba(240, 192, 20, 0.5);
+    border-color: rgba(240, 192, 20, 0.4);
 }
 
 .disco-album-header {
     display: flex;
     gap: var(--space-md);
-    padding: var(--space-md);
-    border-bottom: 1px solid var(--gray-800);
+    padding: var(--space-md) var(--space-md) var(--space-sm);
 }
 
 .disco-album-art {
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
     background: var(--gray-800);
     border-radius: var(--radius-sm);
     flex-shrink: 0;
+    border: 1px solid var(--gray-800);
+}
+
+.disco-album--latest .disco-album-art {
+    border-color: rgba(240, 192, 20, 0.15);
 }
 
 .disco-album-info {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
+    gap: 5px;
+    min-width: 0;
 }
 
 .disco-album-year {
-    font-size: 0.65rem;
-    font-weight: 600;
+    font-size: 0.62rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     color: var(--gray-500);
 }
 
@@ -294,100 +316,150 @@
 }
 
 .disco-album-title {
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: var(--white);
     margin: 0;
     line-height: 1.2;
+    letter-spacing: -0.01em;
 }
 
 .disco-album-actions {
     display: flex;
-    gap: var(--space-sm);
-    margin-top: 4px;
+    gap: 6px;
+    margin-top: 2px;
 }
 
 .disco-link {
-    font-size: 0.6rem;
+    font-size: 0.58rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     text-decoration: none;
-    padding: 2px 6px;
+    padding: 3px 8px;
     border-radius: 3px;
+    border: 1px solid transparent;
     transition: all 0.2s;
 }
 
 .disco-link--spotify {
     color: #1DB954;
-    background: rgba(29, 185, 84, 0.1);
+    background: rgba(29, 185, 84, 0.08);
+    border-color: rgba(29, 185, 84, 0.15);
 }
 
 .disco-link--spotify:hover {
-    background: rgba(29, 185, 84, 0.2);
+    background: rgba(29, 185, 84, 0.18);
+    border-color: rgba(29, 185, 84, 0.3);
 }
 
 .disco-link--buy {
     color: var(--pink);
-    background: rgba(232, 160, 176, 0.1);
+    background: rgba(232, 160, 176, 0.08);
+    border-color: rgba(232, 160, 176, 0.15);
 }
 
 .disco-link--buy:hover {
-    background: rgba(232, 160, 176, 0.2);
+    background: rgba(232, 160, 176, 0.18);
+    border-color: rgba(232, 160, 176, 0.3);
 }
 
 .disco-link--wiki {
     color: var(--gray-400);
-    background: rgba(156, 163, 175, 0.1);
+    background: rgba(156, 163, 175, 0.06);
+    border-color: rgba(156, 163, 175, 0.12);
 }
 
 .disco-link--wiki:hover {
-    background: rgba(156, 163, 175, 0.2);
+    background: rgba(156, 163, 175, 0.14);
+    border-color: rgba(156, 163, 175, 0.25);
 }
 
 /* Tracklist */
 .disco-tracklist {
-    padding: 0 var(--space-md) var(--space-sm);
+    padding: 0;
 }
+
+.disco-tracklist-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 0 var(--space-md);
+    margin-bottom: 2px;
+}
+
+.disco-tracklist-header span {
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gray-600);
+}
+
+.disco-tracklist-header .th-num { width: 28px; text-align: right; }
+.disco-tracklist-header .th-title { flex: 1; }
+.disco-tracklist-header .th-duration { width: 44px; text-align: right; }
+.disco-tracklist-header .th-data { min-width: 100px; text-align: right; }
 
 .disco-track {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
-    padding: 8px 0;
-    border-bottom: 1px solid var(--gray-800);
+    padding: 9px var(--space-md);
+    transition: background 0.15s;
 }
 
-.disco-track:last-child {
-    border-bottom: none;
+.disco-track:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.disco-track:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .disco-track-num {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     color: var(--gray-600);
-    width: 20px;
+    width: 28px;
     text-align: right;
     flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
 }
 
 .disco-track-title {
     font-size: 0.85rem;
     color: var(--gray-400);
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.disco-track:hover .disco-track-title {
+    color: var(--white);
 }
 
 .disco-track-duration {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--gray-600);
+    width: 44px;
+    text-align: right;
     flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
 }
 
 .disco-track-data {
-    font-size: 0.7rem;
-    color: var(--gray-800);
-    min-width: 80px;
+    font-size: 0.68rem;
+    color: var(--gray-700);
+    min-width: 100px;
     text-align: right;
     flex-shrink: 0;
+    font-style: italic;
+}
+
+.disco-track:hover .disco-track-data {
+    color: var(--gray-600);
 }
 
 /* Responsive */
@@ -446,8 +518,13 @@
         height: 60px;
     }
 
-    .disco-track-data {
+    .disco-track-data,
+    .disco-tracklist-header .th-data {
         display: none;
+    }
+
+    .discography-header {
+        flex-direction: column;
     }
     
     .music-embeds-grid {

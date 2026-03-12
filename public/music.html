@@ -1696,18 +1696,35 @@
             searchResults.querySelectorAll('.search-result-item').forEach((el, i) => {
                 el.addEventListener('click', () => {
                     const match = matches[i];
-                    if (match.year && match.year >= MIN_YEAR && match.year <= MAX_YEAR) {
-                        yearSlider.value = match.year;
-                        updateYear(match.year);
+                    // Find the specific artist object
+                    const genre = musicData[match.genreId];
+                    const subgenre = genre?.subgenres[match.subId];
+                    const artistObj = subgenre ? Object.values(subgenre.artists).find(a => a.name === match.name) : null;
+
+                    // Navigate to their latest album year
+                    let targetYear = match.year;
+                    if (artistObj && artistObj.albums.length > 0) {
+                        const latestAlbum = artistObj.albums.reduce((latest, a) => a.year > latest.year ? a : latest, artistObj.albums[0]);
+                        targetYear = latestAlbum.year;
                     }
+                    if (targetYear && targetYear >= MIN_YEAR && targetYear <= MAX_YEAR) {
+                        yearSlider.value = targetYear;
+                        updateYear(targetYear);
+                    }
+
                     selectedGenre = match.genreId;
                     selectedSubgenre = match.subId;
                     showArtistsPanel(match.genreId, match.subId);
                     renderGenreGroups();
                     searchInput.value = '';
                     searchResults.classList.remove('open');
-                    // Scroll to the panel
-                    artistPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                    // Open discography for the specific artist
+                    if (artistObj) {
+                        setTimeout(() => showDiscography(artistObj, match.genreId, match.subId), 100);
+                    } else {
+                        artistPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
                 });
             });
         });
@@ -1839,8 +1856,9 @@
 
             // Sort albums newest first
             const albums = [...artist.albums].sort((a, b) => b.year - a.year);
+            const yearSpan = albums.length > 1 ? `${albums[albums.length - 1].year} – ${albums[0].year}` : `${albums[0].year}`;
 
-            discoList.innerHTML = albums.map((album, idx) => {
+            discoList.innerHTML = `<div class="discography-count">${albums.length} album${albums.length !== 1 ? 's' : ''} · ${yearSpan}</div>` + albums.map((album, idx) => {
                 // Generate placeholder tracks (we'll connect real data later)
                 const trackCount = 8 + Math.floor(Math.abs(hashCode(album.title)) % 6);
                 const tracks = Array.from({ length: trackCount }, (_, i) => {
@@ -1854,7 +1872,7 @@
                         <div class="disco-album-header">
                             <div class="disco-album-art"></div>
                             <div class="disco-album-info">
-                                <span class="disco-album-year">${album.year}</span>
+                                <span class="disco-album-year">${idx === 0 ? 'Latest · ' : ''}${album.year}</span>
                                 <h3 class="disco-album-title">${album.title}</h3>
                                 <div class="disco-album-actions">
                                     <a href="#" class="disco-link disco-link--spotify">Spotify</a>
@@ -1864,12 +1882,18 @@
                             </div>
                         </div>
                         <div class="disco-tracklist">
+                            <div class="disco-tracklist-header">
+                                <span class="th-num">#</span>
+                                <span class="th-title">Title</span>
+                                <span class="th-duration">Time</span>
+                                <span class="th-data">Data</span>
+                            </div>
                             ${tracks.map(t => `
                                 <div class="disco-track">
                                     <span class="disco-track-num">${t.num}</span>
                                     <span class="disco-track-title">${t.title}</span>
                                     <span class="disco-track-duration">${t.duration}</span>
-                                    <span class="disco-track-data">—</span>
+                                    <span class="disco-track-data">coming soon</span>
                                 </div>
                             `).join('')}
                         </div>
