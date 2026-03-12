@@ -1572,7 +1572,7 @@
             const card = document.createElement('div');
             card.className = 'album-card';
             card.style.cursor = 'pointer';
-            card.innerHTML = `<div style="display: flex; align-items: flex-start; gap: 10px;"><span style="font-size: 1.5rem;">${artist.icon}</span><div><h4 style="margin: 0; font-size: 0.9rem; color: var(--yellow);">${artist.name}</h4><p style="margin: 4px 0 0 0; font-size: 0.75rem; color: var(--gray-400); line-height: 1.4;">${artist.description}</p><span style="font-size: 0.65rem; color: var(--gray-600); margin-top: 4px; display: inline-block;">${artist.albums.length} album${artist.albums.length !== 1 ? 's' : ''}</span></div></div>`;
+            card.innerHTML = `<div style="display: flex; align-items: flex-start; gap: 10px;"><span style="font-size: 1.5rem;">${artist.icon}</span><div><h4 style="margin: 0; font-size: 0.9rem; color: var(--yellow);">${artist.name}</h4><p style="margin: 4px 0 0 0; font-size: 0.75rem; color: var(--gray-400); line-height: 1.4;">${artist.description}</p><div style="display: flex; gap: 6px; margin-top: 6px; align-items: center;"><span style="font-size: 0.65rem; color: var(--gray-600);">${artist.albums.length} album${artist.albums.length !== 1 ? 's' : ''}</span><a href="#" class="album-link spotify" onclick="event.stopPropagation()">SPOTIFY</a><a href="#" class="album-link wiki" onclick="event.stopPropagation()">WIKI</a></div></div></div>`;
             card.addEventListener('click', () => showDiscography(artist, genreId, subId));
             return card;
         }
