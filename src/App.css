@@ -119,6 +119,11 @@
   background: var(--gray-900);
   border: 1px dashed var(--gray-800);
   border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center;
+}
+.blurbs-placeholder-logo {
+  width: 180px; opacity: 0.25;
+  transition: filter 0.4s ease;
 }
 
 /* ========================================

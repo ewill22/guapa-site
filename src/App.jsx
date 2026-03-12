@@ -178,7 +178,9 @@ export default function App() {
               </div>
             </div>
           ) : (
-            <div className="blurbs-placeholder" />
+            <div className="blurbs-placeholder">
+              <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="blurbs-placeholder-logo" style={{ filter: `hue-rotate(${hashStr(year + lens) % 360}deg)` }} />
+            </div>
           )}
 
         </section>
