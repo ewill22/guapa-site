@@ -2,6 +2,9 @@
 // Used for event bar heights — years with entries get taller bars
 
 export const TIMELINE = {
+  guapa: {
+    2024: true, 2025: true, 2026: true,
+  },
   music: {
     1960: true, 1964: true, 1969: true, 1973: true, 1977: true,
     1982: true, 1991: true, 1994: true, 1999: true, 2008: true,

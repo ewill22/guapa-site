@@ -40,12 +40,15 @@ function getBlurbs(lens, year) {
   return null;
 }
 
+const GUAPA_COLOR = '#f0c014';
+
 export default function App() {
-  const [lens, setLens] = useState(null);
+  const [lens, setLens] = useState('guapa');
   const [year, setYear] = useState(2026);
 
   const base = import.meta.env.BASE_URL;
-  const lc = lens ? LENS_COLORS[lens] : '#f0c014';
+  const isGuapa = lens === 'guapa';
+  const lc = isGuapa ? GUAPA_COLOR : LENS_COLORS[lens];
 
   const bars = useMemo(() => {
     const src = lens || 'music';
@@ -57,7 +60,7 @@ export default function App() {
     });
   }, [lens]);
 
-  const blurbData = lens ? getBlurbs(lens, year) : null;
+  const blurbData = getBlurbs(lens, year);
 
   const navYear = (dir) => {
     setYear(y => Math.max(1960, Math.min(2026, y + dir)));
@@ -93,11 +96,9 @@ export default function App() {
                   />
                 ))}
               </div>
-              {year === 2026 && (
-                <span className="live-badge">
-                  <span className="live-dot" />Live
-                </span>
-              )}
+              <button className={`live-badge ${year === 2026 ? 'live-badge--active' : ''}`} onClick={() => setYear(2026)}>
+                <span className="live-dot" />Live
+              </button>
             </div>
 
             {/* Slider */}
@@ -122,20 +123,26 @@ export default function App() {
                 <button key={l}
                   className={`lens-pill ${lens === l ? 'active' : ''}`}
                   style={lens === l ? { color: LENS_COLORS[l], borderColor: LENS_COLORS[l], background: `${LENS_COLORS[l]}10` } : {}}
-                  onClick={() => setLens(lens === l ? null : l)}>
+                  onClick={() => setLens(lens === l ? 'guapa' : l)}>
                   <span>{LENS_ICONS[l]}</span>{LENS_LABELS[l]}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Blurbs — only show when a lens is selected */}
-          {lens && blurbData && (
+          {/* Blurbs */}
+          {blurbData && (
             <div className="blurbs-section">
               <div className="blurbs-header">
-                <span className="blurbs-lens-tag" style={{ color: lc, borderColor: `${lc}40`, background: `${lc}10` }}>
-                  {LENS_ICONS[lens]} {LENS_LABELS[lens]}
-                </span>
+                {isGuapa ? (
+                  <span className="blurbs-lens-tag" style={{ color: GUAPA_COLOR, borderColor: `${GUAPA_COLOR}40`, background: `${GUAPA_COLOR}10` }}>
+                    Guapa Inc
+                  </span>
+                ) : (
+                  <span className="blurbs-lens-tag" style={{ color: lc, borderColor: `${lc}40`, background: `${lc}10` }}>
+                    {LENS_ICONS[lens]} {LENS_LABELS[lens]}
+                  </span>
+                )}
                 {blurbData.year !== year && (
                   <span className="blurbs-nearest">Showing {blurbData.year} — nearest data to {year}</span>
                 )}
@@ -158,13 +165,6 @@ export default function App() {
                   </div>
                 ))}
               </div>
-            </div>
-          )}
-
-          {/* Empty state when no lens selected */}
-          {!lens && (
-            <div className="lens-empty">
-              <p>Select a lens to see what Guapa is tracking.</p>
             </div>
           )}
 
