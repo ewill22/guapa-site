@@ -766,6 +766,9 @@
 
             <!-- Main Content -->
             <div class="music-main">
+                <!-- Broadcast Banner -->
+                <div class="broadcast-banner" id="broadcastBanner" style="display: none;"></div>
+
                 <!-- Music Journey Section -->
                 <section class="journey-section">
                     <nav class="decade-nav">
@@ -896,6 +899,124 @@
     </footer>
 
     <script>
+        // ---------------------------------------------------------------------------
+        // Guapa Music API
+        // ---------------------------------------------------------------------------
+        const MUSIC_API = 'http://localhost:8001';
+        let _staticCatalog = null;
+        let _staticLoaded = false;
+
+        // Load static catalog JSON (works on GitHub Pages without an API)
+        async function loadStaticCatalog() {
+            if (_staticLoaded) return _staticCatalog;
+            try {
+                const r = await fetch('data/music-catalog.json');
+                if (r.ok) _staticCatalog = await r.json();
+            } catch {}
+            _staticLoaded = true;
+            return _staticCatalog;
+        }
+
+        async function apiFetch(path) {
+            try {
+                const r = await fetch(`${MUSIC_API}${path}`);
+                if (!r.ok) return null;
+                return await r.json();
+            } catch { return null; }
+        }
+
+        // Cache API lookups by artist name
+        const _artistCache = {};
+
+        async function fetchArtistByName(name) {
+            if (_artistCache[name]) return _artistCache[name];
+
+            // Try static catalog first (works on GitHub Pages)
+            const catalog = await loadStaticCatalog();
+            if (catalog) {
+                const entry = catalog[name.toLowerCase()];
+                if (entry) {
+                    _artistCache[name] = entry;
+                    return entry;
+                }
+            }
+
+            // Fall back to live API (local dev)
+            const data = await apiFetch(`/artists?search=${encodeURIComponent(name)}&limit=5`);
+            if (data && data.artists) {
+                const exact = data.artists.find(a => a.name.toLowerCase() === name.toLowerCase());
+                if (exact) {
+                    _artistCache[name] = exact;
+                    return exact;
+                }
+            }
+            return null;
+        }
+
+        async function fetchDiscography(artistId) {
+            // If artistId is actually a static catalog entry (has .albums directly), return it
+            if (artistId && typeof artistId === 'object' && artistId.albums) {
+                return artistId;
+            }
+            return apiFetch(`/artists/${artistId}/discography`);
+        }
+
+        // ---------------------------------------------------------------------------
+        // Broadcast — current track from today's schedule
+        // ---------------------------------------------------------------------------
+        let broadcastInterval = null;
+
+        async function initBroadcast() {
+            const banner = document.getElementById('broadcastBanner');
+            if (!banner) return;
+
+            const data = await apiFetch('/broadcast/now');
+            if (!data || !data.artist) {
+                banner.style.display = 'none';
+                return;
+            }
+
+            banner.style.display = 'block';
+
+            if (data.status === 'playing') {
+                const c = data.current;
+                const spotifyLink = c.spotify_url
+                    ? `<a href="${c.spotify_url}" target="_blank" rel="noopener" class="broadcast-spotify-link">Open in Spotify</a>`
+                    : '';
+
+                banner.innerHTML = `
+                    <div class="broadcast-inner">
+                        <div class="broadcast-art" ${c.cover_art_large ? `style="background-image: url(${c.cover_art_large}); background-size: cover; background-position: center;"` : ''}></div>
+                        <div class="broadcast-info">
+                            <div class="broadcast-label">NOW PLAYING</div>
+                            <div class="broadcast-artist">${data.artist.name}</div>
+                            <div class="broadcast-track">${c.track_title}</div>
+                            <div class="broadcast-album">${c.album_title} · ${c.album_year}</div>
+                            ${spotifyLink}
+                        </div>
+                        <div class="broadcast-progress">
+                            <div class="broadcast-progress-bar" style="width: ${(data.progress * 100).toFixed(1)}%"></div>
+                        </div>
+                    </div>
+                `;
+
+                // Auto-advance when track ends
+                if (broadcastInterval) clearInterval(broadcastInterval);
+                broadcastInterval = setInterval(() => initBroadcast(), Math.min(c.remaining_ms + 1000, 30000));
+            } else {
+                // Discography complete
+                banner.innerHTML = `
+                    <div class="broadcast-inner broadcast-inner--complete">
+                        <div class="broadcast-info">
+                            <div class="broadcast-label">TODAY'S ARTIST</div>
+                            <div class="broadcast-artist">${data.artist.name}</div>
+                            <div class="broadcast-album">${data.tracks_count} tracks · Discography complete</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
         const MIN_YEAR = 1960;
         const MAX_YEAR = 2025;
 
@@ -1846,61 +1967,104 @@
         const discoList = document.getElementById('discoList');
         let activeDiscoArtist = null;
 
-        function showDiscography(artist, genreId, subId) {
+        function formatDuration(ms) {
+            if (!ms) return '--:--';
+            const secs = Math.floor(ms / 1000);
+            return `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
+        }
+
+        function renderAlbumCard(album, idx, isLatest, artistWiki) {
+            const art = album.cover_art_large || album.cover_art_small;
+            const artStyle = art ? `background-image: url(${art}); background-size: cover; background-position: center;` : '';
+            const spotifyUrl = album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : '#';
+            const wikiUrl = artistWiki || '#';
+            const tracks = album.tracks || [];
+
+            return `
+                <div class="disco-album ${isLatest ? 'disco-album--latest' : ''}">
+                    <div class="disco-album-header">
+                        <div class="disco-album-art" style="${artStyle}"></div>
+                        <div class="disco-album-info">
+                            <span class="disco-album-year">${isLatest ? 'Latest \u00b7 ' : ''}${album.release_year || '?'}</span>
+                            <h3 class="disco-album-title">${album.title}</h3>
+                            <div class="disco-album-actions">
+                                <a href="${spotifyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--spotify" onclick="event.stopPropagation()">Spotify</a>
+                                <a href="#" class="disco-link disco-link--buy" onclick="event.stopPropagation()">Buy Vinyl</a>
+                                <a href="${wikiUrl}" target="_blank" rel="noopener" class="disco-link disco-link--wiki" onclick="event.stopPropagation()">Wiki</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="disco-tracklist">
+                        <div class="disco-tracklist-header">
+                            <span class="th-num">#</span>
+                            <span class="th-title">Title</span>
+                            <span class="th-duration">Time</span>
+                            <span class="th-data">Data</span>
+                        </div>
+                        ${tracks.map(t => {
+                            const spotifyIcon = t.spotify_id
+                                ? `<a href="https://open.spotify.com/track/${t.spotify_id}" target="_blank" rel="noopener" style="color: #1DB954; text-decoration: none; font-size: 0.65rem;" onclick="event.stopPropagation()" title="Play on Spotify">\u25B6</a>`
+                                : '';
+                            return `
+                                <div class="disco-track">
+                                    <span class="disco-track-num">${t.track_number || ''}</span>
+                                    <span class="disco-track-title">${t.title} ${spotifyIcon}</span>
+                                    <span class="disco-track-duration">${formatDuration(t.duration_ms)}</span>
+                                    <span class="disco-track-data">coming soon</span>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function showDiscography(artist, genreId, subId) {
             activeDiscoArtist = { artist, genreId, subId };
             document.getElementById('discoIcon').textContent = artist.icon;
             document.getElementById('discoArtistName').textContent = artist.name;
             document.getElementById('discoBio').textContent = artist.description;
 
-            // Sort albums newest first
-            const albums = [...artist.albums].sort((a, b) => b.year - a.year);
-            const yearSpan = albums.length > 1 ? `${albums[albums.length - 1].year} – ${albums[0].year}` : `${albums[0].year}`;
-
-            discoList.innerHTML = `<div class="discography-count">${albums.length} album${albums.length !== 1 ? 's' : ''} · ${yearSpan}</div>` + albums.map((album, idx) => {
-                // Generate placeholder tracks (we'll connect real data later)
-                const trackCount = 8 + Math.floor(Math.abs(hashCode(album.title)) % 6);
-                const tracks = Array.from({ length: trackCount }, (_, i) => {
-                    const mins = 2 + Math.floor(Math.abs(hashCode(album.title + i)) % 4);
-                    const secs = Math.floor(Math.abs(hashCode(album.title + i + 's')) % 60);
-                    return { num: i + 1, title: `Track ${i + 1}`, duration: `${mins}:${secs.toString().padStart(2, '0')}` };
-                });
-
-                return `
-                    <div class="disco-album ${idx === 0 ? 'disco-album--latest' : ''}">
-                        <div class="disco-album-header">
-                            <div class="disco-album-art"></div>
-                            <div class="disco-album-info">
-                                <span class="disco-album-year">${idx === 0 ? 'Latest · ' : ''}${album.year}</span>
-                                <h3 class="disco-album-title">${album.title}</h3>
-                                <div class="disco-album-actions">
-                                    <a href="#" class="disco-link disco-link--spotify">Spotify</a>
-                                    <a href="#" class="disco-link disco-link--buy">Buy Vinyl</a>
-                                    <a href="#" class="disco-link disco-link--wiki">Wiki</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="disco-tracklist">
-                            <div class="disco-tracklist-header">
-                                <span class="th-num">#</span>
-                                <span class="th-title">Title</span>
-                                <span class="th-duration">Time</span>
-                                <span class="th-data">Data</span>
-                            </div>
-                            ${tracks.map(t => `
-                                <div class="disco-track">
-                                    <span class="disco-track-num">${t.num}</span>
-                                    <span class="disco-track-title">${t.title}</span>
-                                    <span class="disco-track-duration">${t.duration}</span>
-                                    <span class="disco-track-data">coming soon</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
+            // Show section immediately with loading state
             discoSection.style.display = 'block';
+            discoList.innerHTML = '<div class="discography-count">Loading discography...</div>';
             setTimeout(() => discoSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+
+            // Try to fetch real data (static catalog or live API)
+            const apiArtist = await fetchArtistByName(artist.name);
+            if (apiArtist) {
+                // Static catalog has .albums directly; API needs a separate fetch
+                let albumData = apiArtist.albums;
+                if (!albumData && apiArtist.id) {
+                    const disco = await fetchDiscography(apiArtist.id);
+                    albumData = disco && disco.albums;
+                }
+                if (albumData && albumData.length > 0) {
+                    const albums = [...albumData].sort((a, b) => (b.release_year || 0) - (a.release_year || 0));
+                    const yearSpan = albums.length > 1
+                        ? `${albums[albums.length - 1].release_year || '?'} \u2013 ${albums[0].release_year || '?'}`
+                        : `${albums[0].release_year || '?'}`;
+                    const totalTracks = albums.reduce((sum, a) => sum + (a.tracks ? a.tracks.length : 0), 0);
+
+                    discoList.innerHTML = `<div class="discography-count">${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${totalTracks} tracks \u00b7 ${yearSpan}</div>`
+                        + albums.map((album, idx) => renderAlbumCard(album, idx, idx === 0, apiArtist.url_wikipedia)).join('');
+                    return;
+                }
+            }
+
+            // Fallback: use the editorial data with placeholder tracks
+            const albums = [...artist.albums].sort((a, b) => b.year - a.year);
+            const yearSpan = albums.length > 1 ? `${albums[albums.length - 1].year} \u2013 ${albums[0].year}` : `${albums[0].year}`;
+
+            discoList.innerHTML = `<div class="discography-count">${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${yearSpan}</div>` + albums.map((album, idx) => {
+                const trackCount = 8 + Math.floor(Math.abs(hashCode(album.title)) % 6);
+                const tracks = Array.from({ length: trackCount }, (_, i) => ({
+                    track_number: i + 1,
+                    title: `Track ${i + 1}`,
+                    duration_ms: (120 + Math.floor(Math.abs(hashCode(album.title + i)) % 240)) * 1000,
+                }));
+                return renderAlbumCard({ title: album.title, release_year: album.year, tracks }, idx, idx === 0, null);
+            }).join('');
         }
 
         function hideDiscography() {
@@ -1984,6 +2148,9 @@
 
         // Check for artist deep link
         handleArtistParam();
+
+        // Start broadcast banner
+        initBroadcast();
     </script>
 </body>
 </html>

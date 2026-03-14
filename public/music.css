@@ -462,6 +462,116 @@
     color: var(--gray-600);
 }
 
+/* ========================================
+   BROADCAST BANNER
+======================================== */
+
+.broadcast-banner {
+    margin-bottom: var(--space-md);
+    border: 1px solid rgba(232, 160, 176, 0.15);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--gray-900);
+}
+
+.broadcast-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    position: relative;
+}
+
+.broadcast-inner--complete {
+    justify-content: center;
+    padding: var(--space-md);
+}
+
+.broadcast-art {
+    width: 64px;
+    height: 64px;
+    background: var(--gray-800);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.broadcast-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.broadcast-label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--pink);
+    margin-bottom: 2px;
+}
+
+.broadcast-artist {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 2px;
+}
+
+.broadcast-track {
+    font-size: 0.85rem;
+    color: var(--gray-300);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.broadcast-album {
+    font-size: 0.7rem;
+    color: var(--gray-500);
+    margin-top: 2px;
+}
+
+.broadcast-spotify-link {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #1DB954;
+    text-decoration: none;
+    padding: 2px 8px;
+    border: 1px solid rgba(29, 185, 84, 0.2);
+    border-radius: 3px;
+    transition: all 0.2s;
+}
+
+.broadcast-spotify-link:hover {
+    background: rgba(29, 185, 84, 0.1);
+    border-color: rgba(29, 185, 84, 0.4);
+}
+
+.broadcast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(232, 160, 176, 0.1);
+}
+
+.broadcast-progress-bar {
+    height: 100%;
+    background: var(--pink);
+    transition: width 1s linear;
+}
+
+@media (max-width: 768px) {
+    .broadcast-art {
+        width: 48px;
+        height: 48px;
+    }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .music-header {
