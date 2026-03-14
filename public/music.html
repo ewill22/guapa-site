@@ -1664,7 +1664,7 @@
             if (selectedGenre && selectedSubgenre) {
                 const subgenre = musicData[selectedGenre]?.subgenres[selectedSubgenre];
                 if (subgenre && subgenre.status[currentYear] !== 'hidden') { showArtistsPanel(selectedGenre, selectedSubgenre); }
-                else { selectedGenre = null; selectedSubgenre = null; artistPanel.classList.remove('visible'); renderGenreGroups(); }
+                else { selectedGenre = null; selectedSubgenre = null; closeArtistPanel(); hideDiscography(); renderGenreGroups(); }
             } else if (selectedGenre && !selectedSubgenre) { showGenrePanel(selectedGenre); }
             // Update rankings year filter
             rankingsYearFilter = currentYear;
