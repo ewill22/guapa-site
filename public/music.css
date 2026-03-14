@@ -590,34 +590,23 @@
         gap: var(--space-xs);
     }
     
-    .music-layout {
+    .genre-tabs {
+        gap: 4px;
+    }
+
+    .genre-tab {
+        padding: 5px 10px;
+        font-size: 0.65rem;
+    }
+
+    .genre-tab .tab-count {
+        display: none;
+    }
+
+    .subgenres-grid {
         grid-template-columns: 1fr;
     }
-    
-    .music-sidebar {
-        position: static;
-        display: flex;
-        gap: var(--space-lg);
-        overflow-x: auto;
-        padding-bottom: var(--space-sm);
-        border-bottom: 1px solid var(--gray-800);
-        margin-bottom: var(--space-md);
-    }
-    
-    .sidebar-section {
-        margin-bottom: 0;
-        flex-shrink: 0;
-    }
-    
-    .genre-list {
-        display: flex;
-        gap: var(--space-xs);
-    }
-    
-    .genre-link {
-        white-space: nowrap;
-    }
-    
+
     .disco-album-header {
         flex-direction: column;
         gap: var(--space-sm);

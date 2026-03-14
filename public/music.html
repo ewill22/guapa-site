@@ -114,61 +114,96 @@
             color: var(--gray-600);
         }
 
+        /* Genre Tabs — horizontal across the top */
+        .genre-tabs {
+            display: flex;
+            gap: 3px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .genre-tab {
+            background: transparent;
+            border: 1px solid var(--gray-800);
+            border-radius: 4px;
+            padding: 7px 14px;
+            font-family: var(--font-main);
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .genre-tab:hover {
+            color: var(--white);
+            border-color: var(--gray-600);
+        }
+
+        .genre-tab.active {
+            color: var(--yellow);
+            border-color: var(--yellow);
+            background: rgba(240, 192, 20, 0.06);
+        }
+
+        .genre-tab .tab-icon {
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+
+        .genre-tab .tab-count {
+            font-size: 0.6rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .genre-tab.active .tab-count {
+            color: rgba(240, 192, 20, 0.5);
+        }
+
+        /* Genre Columns — subgenres flow downward */
         .genre-groups {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 28px;
         }
 
         .genre-group {
             display: flex;
-            align-items: stretch;
-            gap: 10px;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .genre-group.hidden {
             display: none;
         }
 
-        .genre-bracket {
-            width: 28px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .bracket-line {
-            width: 2px;
-            flex: 1;
-            background: var(--gray-800);
-            border-radius: 1px;
-        }
-
-        .bracket-icon {
-            font-size: 1.1rem;
-            padding: 6px 0;
-        }
-
-        .genre-label {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: rotate(180deg);
-            font-size: 0.6rem;
-            font-weight: 600;
-            letter-spacing: 0.1em;
+        .genre-group-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             color: var(--gray-600);
-            padding: 6px 0;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .genre-group-label .group-icon {
+            font-size: 0.9rem;
         }
 
         .subgenres-grid {
-            flex: 1;
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             gap: 8px;
-            align-content: flex-start;
         }
 
         .subgenre-item {
@@ -387,22 +422,7 @@
             cursor: not-allowed;
         }
 
-        /* Active genre highlight in sidebar */
-        .genre-link.filter-active {
-            color: var(--yellow) !important;
-            background: rgba(240, 192, 20, 0.1);
-        }
-
-        .genre-link.filter-active::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 4px;
-            background: var(--yellow);
-            border-radius: 50%;
-            margin-right: var(--space-xs);
-            vertical-align: middle;
-        }
+        /* (sidebar filter styles removed — replaced by genre tabs) */
 
         /* Search */
         .search-container {
@@ -744,25 +764,7 @@
         </header>
 
         <!-- Main Layout -->
-        <div class="music-layout">
-            <!-- Sidebar -->
-            <aside class="music-sidebar">
-                <div class="sidebar-section">
-                    <h3>Genres</h3>
-                    <ul class="genre-list">
-                        <li><a href="#" class="genre-link filter-active" data-filter="all">All</a></li>
-                        <li><a href="#" class="genre-link" data-filter="pop">Pop</a></li>
-                        <li><a href="#" class="genre-link" data-filter="rock">Rock</a></li>
-                        <li><a href="#" class="genre-link" data-filter="soul">Soul / R&B</a></li>
-                        <li><a href="#" class="genre-link" data-filter="hiphop">Hip Hop</a></li>
-                        <li><a href="#" class="genre-link" data-filter="electronic">Electronic</a></li>
-                        <li><a href="#" class="genre-link" data-filter="country">Country</a></li>
-                        <li><a href="#" class="genre-link" data-filter="folk">Folk</a></li>
-                        <li><a href="#" class="genre-link" data-filter="jazz">Jazz</a></li>
-                        <li><a href="#" class="genre-link" data-filter="blues">Blues</a></li>
-                    </ul>
-                </div>
-            </aside>
+        <div class="music-layout" style="grid-template-columns: 1fr; max-width: 1100px;">
 
             <!-- Main Content -->
             <div class="music-main">
@@ -801,6 +803,7 @@
                         </div>
                     </div>
 
+                    <div class="genre-tabs" id="genreTabs"></div>
                     <div class="genre-groups" id="genreGroups"></div>
 
                     <div class="artist-panel" id="artistPanel">
@@ -1567,19 +1570,38 @@
         const clearYearLabel = document.getElementById('clearYearLabel');
         const artistPopupOverlay = document.getElementById('artistPopupOverlay');
 
-        // Sidebar filter clicks
-        document.querySelectorAll('.genre-link[data-filter]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                document.querySelectorAll('.genre-link[data-filter]').forEach(l => l.classList.remove('filter-active'));
-                link.classList.add('filter-active');
-                activeFilter = link.dataset.filter;
-                if (activeFilter === 'all') { closeArtistPanel(); }
-                else { selectedGenre = activeFilter; selectedSubgenre = null; showGenrePanel(activeFilter); }
-                renderGenreGroups();
-                renderRankings();
+        // Genre tabs
+        function renderGenreTabs() {
+            const tabsEl = document.getElementById('genreTabs');
+            tabsEl.innerHTML = '';
+
+            // "All" tab
+            const allTab = document.createElement('button');
+            allTab.className = `genre-tab${activeFilter === 'all' ? ' active' : ''}`;
+            allTab.innerHTML = 'All';
+            allTab.onclick = () => { activeFilter = 'all'; closeArtistPanel(); renderGenreTabs(); renderGenreGroups(); renderRankings(); };
+            tabsEl.appendChild(allTab);
+
+            // One tab per genre
+            Object.entries(musicData).forEach(([genreId, genre]) => {
+                const visibleCount = Object.values(genre.subgenres).filter(s => s.status[currentYear] !== 'hidden').length;
+                const tab = document.createElement('button');
+                tab.className = `genre-tab${activeFilter === genreId ? ' active' : ''}`;
+                tab.innerHTML = `<span class="tab-icon">${genre.icon}</span>${genre.name}<span class="tab-count">${visibleCount}</span>`;
+                if (visibleCount === 0) tab.style.opacity = '0.3';
+                tab.onclick = () => {
+                    activeFilter = genreId;
+                    selectedGenre = genreId;
+                    selectedSubgenre = null;
+                    showGenrePanel(genreId);
+                    renderGenreTabs();
+                    renderGenreGroups();
+                    renderRankings();
+                };
+                tabsEl.appendChild(tab);
             });
-        });
+        }
+        renderGenreTabs();
 
         // Decade button clicks
         document.querySelectorAll('.decade-btn').forEach(btn => {
@@ -1635,6 +1657,7 @@
             currentYearDisplay.textContent = currentYear;
             updateDecadeButtons();
             renderAlbumBars();
+            renderGenreTabs();
             renderGenreGroups();
             if (selectedGenre && selectedSubgenre) {
                 const subgenre = musicData[selectedGenre]?.subgenres[selectedSubgenre];
@@ -1654,9 +1677,15 @@
                 if (visibleSubgenres.length === 0) return;
                 const group = document.createElement('div');
                 group.className = 'genre-group';
-                const bracket = document.createElement('div');
-                bracket.className = 'genre-bracket';
-                bracket.innerHTML = `<div class="bracket-line"></div><span class="bracket-icon">${genre.icon}</span><span class="genre-label">${genre.name}</span><div class="bracket-line"></div>`;
+
+                // Genre label header (only shown in "All" view)
+                if (activeFilter === 'all') {
+                    const label = document.createElement('div');
+                    label.className = 'genre-group-label';
+                    label.innerHTML = `<span class="group-icon">${genre.icon}</span>${genre.name}`;
+                    group.appendChild(label);
+                }
+
                 const subgenresGrid = document.createElement('div');
                 subgenresGrid.className = 'subgenres-grid';
                 visibleSubgenres.forEach(([subId, subgenre]) => {
@@ -1669,7 +1698,6 @@
                     item.innerHTML = `<div class="subgenre-header"><span class="icon">${subgenre.icon}</span><span class="name">${subgenre.name}</span></div><div class="artist-list">${artistNames.map(name => `<span>${name}</span>`).join('')}</div>`;
                     subgenresGrid.appendChild(item);
                 });
-                group.appendChild(bracket);
                 group.appendChild(subgenresGrid);
                 genreGroups.appendChild(group);
             });
@@ -2143,6 +2171,7 @@
         // Initial render
         updateDecadeButtons();
         renderAlbumBars();
+        renderGenreTabs();
         renderGenreGroups();
         renderRankings();
 
