@@ -1579,7 +1579,7 @@
             const allTab = document.createElement('button');
             allTab.className = `genre-tab${activeFilter === 'all' ? ' active' : ''}`;
             allTab.innerHTML = 'All';
-            allTab.onclick = () => { activeFilter = 'all'; closeArtistPanel(); renderGenreTabs(); renderGenreGroups(); renderRankings(); };
+            allTab.onclick = () => { activeFilter = 'all'; closeArtistPanel(); hideDiscography(); renderGenreTabs(); renderGenreGroups(); renderRankings(); };
             tabsEl.appendChild(allTab);
 
             // One tab per genre
@@ -1593,7 +1593,9 @@
                     activeFilter = genreId;
                     selectedGenre = genreId;
                     selectedSubgenre = null;
-                    showGenrePanel(genreId);
+                    closeArtistPanel();
+                    hideDiscography();
+                    if (visibleCount > 0) showGenrePanel(genreId);
                     renderGenreTabs();
                     renderGenreGroups();
                     renderRankings();
@@ -1704,6 +1706,7 @@
         }
 
         function selectSubgenre(genreId, subgenreId) {
+            hideDiscography();
             if (selectedGenre === genreId && selectedSubgenre === subgenreId) { selectedGenre = null; selectedSubgenre = null; closeArtistPanel(); }
             else { selectedGenre = genreId; selectedSubgenre = subgenreId; showArtistsPanel(genreId, subgenreId); }
             renderGenreGroups();
