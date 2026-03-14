@@ -688,11 +688,13 @@
             aspect-ratio: 1;
             background: var(--gray-800);
             border-radius: var(--radius-sm);
+            border: 1px solid var(--gray-800);
             margin-bottom: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.8rem;
+            transition: border-color 0.2s;
         }
 
         .popup-album-title {
@@ -705,6 +707,37 @@
         .popup-album-year {
             font-size: 0.6rem;
             color: var(--gray-600);
+        }
+
+        .popup-album-buy {
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--pink);
+            margin-top: 3px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .popup-album:hover .popup-album-buy {
+            opacity: 1;
+        }
+
+        .popup-album:hover .popup-album-art {
+            border-color: var(--pink);
+        }
+
+        a.popup-album {
+            display: block;
+            text-align: center;
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            transition: background 0.2s;
+        }
+
+        a.popup-album:hover {
+            background: rgba(232, 160, 176, 0.05);
         }
 
         .no-rankings {
@@ -1952,22 +1985,43 @@
             });
         }
 
-        function openArtistPopup(artist, rank) {
+        async function openArtistPopup(artist, rank) {
             document.getElementById('popupArtistName').textContent = artist.name;
             const genreLabel = artist.genres[0].charAt(0).toUpperCase() + artist.genres[0].slice(1);
             document.getElementById('popupArtistRank').textContent = `#${rank} in ${genreLabel}`;
             document.getElementById('popupArtistScore').textContent = `Score: ${artist.score}`;
             document.getElementById('popupArtistYears').textContent = `${artist.active[0]}–${artist.active[1]}`;
-            
+
+            // Look up real album data from the static catalog
+            const catalogArtist = await fetchArtistByName(artist.name);
+            const catalogAlbums = catalogArtist && catalogArtist.albums ? catalogArtist.albums : [];
+
             const albumGrid = document.getElementById('popupAlbumGrid');
-            albumGrid.innerHTML = artist.albums.map(album => `
-                <div class="popup-album">
-                    <div class="popup-album-art">💿</div>
-                    <div class="popup-album-title">${album.title}</div>
-                    <div class="popup-album-year">${album.year}</div>
-                </div>
-            `).join('');
-            
+            albumGrid.innerHTML = artist.albums.map(album => {
+                // Match to catalog album for cover art
+                const match = catalogAlbums.find(ca =>
+                    ca.title.toLowerCase() === album.title.toLowerCase() ||
+                    ca.release_year === album.year
+                );
+                const art = match ? (match.cover_art_small || match.cover_art_large) : null;
+                const artHtml = art
+                    ? `<div class="popup-album-art" style="background-image: url(${art}); background-size: cover; background-position: center;"></div>`
+                    : `<div class="popup-album-art">💿</div>`;
+
+                // Affiliate link — Amazon search for "artist album vinyl"
+                const amazonQuery = encodeURIComponent(`${artist.name} ${album.title} vinyl`);
+                const buyUrl = `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
+
+                return `
+                    <a href="${buyUrl}" target="_blank" rel="noopener" class="popup-album" style="text-decoration: none; color: inherit;">
+                        ${artHtml}
+                        <div class="popup-album-title">${album.title}</div>
+                        <div class="popup-album-year">${album.year}</div>
+                        <div class="popup-album-buy">Buy</div>
+                    </a>
+                `;
+            }).join('');
+
             artistPopupOverlay.classList.add('open');
         }
 
@@ -2004,12 +2058,14 @@
             return `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
         }
 
-        function renderAlbumCard(album, idx, isLatest, artistWiki) {
+        function renderAlbumCard(album, idx, isLatest, artistWiki, artistName) {
             const art = album.cover_art_large || album.cover_art_small;
             const artStyle = art ? `background-image: url(${art}); background-size: cover; background-position: center;` : '';
             const spotifyUrl = album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : '#';
             const wikiUrl = artistWiki || '#';
             const tracks = album.tracks || [];
+            const amazonQuery = encodeURIComponent(`${artistName || ''} ${album.title} vinyl`);
+            const buyUrl = `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
 
             return `
                 <div class="disco-album ${isLatest ? 'disco-album--latest' : ''}">
@@ -2020,7 +2076,7 @@
                             <h3 class="disco-album-title">${album.title}</h3>
                             <div class="disco-album-actions">
                                 <a href="${spotifyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--spotify" onclick="event.stopPropagation()">Spotify</a>
-                                <a href="#" class="disco-link disco-link--buy" onclick="event.stopPropagation()">Buy Vinyl</a>
+                                <a href="${buyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--buy" onclick="event.stopPropagation()">Buy Vinyl</a>
                                 <a href="${wikiUrl}" target="_blank" rel="noopener" class="disco-link disco-link--wiki" onclick="event.stopPropagation()">Wiki</a>
                             </div>
                         </div>
@@ -2078,7 +2134,7 @@
                     const totalTracks = albums.reduce((sum, a) => sum + (a.tracks ? a.tracks.length : 0), 0);
 
                     discoList.innerHTML = `<div class="discography-count">${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${totalTracks} tracks \u00b7 ${yearSpan}</div>`
-                        + albums.map((album, idx) => renderAlbumCard(album, idx, idx === 0, apiArtist.url_wikipedia)).join('');
+                        + albums.map((album, idx) => renderAlbumCard(album, idx, idx === 0, apiArtist.url_wikipedia, apiArtist.name)).join('');
                     return;
                 }
             }
@@ -2094,7 +2150,7 @@
                     title: `Track ${i + 1}`,
                     duration_ms: (120 + Math.floor(Math.abs(hashCode(album.title + i)) % 240)) * 1000,
                 }));
-                return renderAlbumCard({ title: album.title, release_year: album.year, tracks }, idx, idx === 0, null);
+                return renderAlbumCard({ title: album.title, release_year: album.year, tracks }, idx, idx === 0, null, artist.name);
             }).join('');
         }
 
