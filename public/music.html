@@ -1528,53 +1528,38 @@
         // Rankings state
         let rankingsYearFilter = null;
 
-        // Mock rankings data
-        const mockRankings = [
-            // Rock
-            { id: 'beatles', name: 'The Beatles', genres: ['rock', 'pop'], subgenres: ['british-invasion', 'psychedelic'], score: 98, active: [1960, 1970], albums: [{title: 'Abbey Road', year: 1969}, {title: 'Sgt. Pepper', year: 1967}] },
-            { id: 'led-zeppelin', name: 'Led Zeppelin', genres: ['rock'], subgenres: ['hard-rock', 'blues-rock'], score: 96, active: [1968, 1980], albums: [{title: 'IV', year: 1971}, {title: 'Physical Graffiti', year: 1975}] },
-            { id: 'pink-floyd', name: 'Pink Floyd', genres: ['rock'], subgenres: ['psychedelic', 'prog'], score: 95, active: [1967, 1995], albums: [{title: 'Dark Side of the Moon', year: 1973}, {title: 'The Wall', year: 1979}] },
-            { id: 'nirvana', name: 'Nirvana', genres: ['rock'], subgenres: ['grunge', 'alternative'], score: 94, active: [1987, 1994], albums: [{title: 'Nevermind', year: 1991}, {title: 'In Utero', year: 1993}] },
-            { id: 'radiohead', name: 'Radiohead', genres: ['rock'], subgenres: ['alternative', 'art-rock'], score: 93, active: [1992, 2025], albums: [{title: 'OK Computer', year: 1997}, {title: 'Kid A', year: 2000}] },
-            { id: 'queen', name: 'Queen', genres: ['rock'], subgenres: ['glam', 'arena-rock'], score: 92, active: [1970, 1995], albums: [{title: 'A Night at the Opera', year: 1975}, {title: 'News of the World', year: 1977}] },
-            { id: 'rolling-stones', name: 'The Rolling Stones', genres: ['rock'], subgenres: ['british-invasion', 'blues-rock'], score: 91, active: [1962, 2025], albums: [{title: 'Exile on Main St.', year: 1972}, {title: 'Let It Bleed', year: 1969}] },
-            { id: 'the-who', name: 'The Who', genres: ['rock'], subgenres: ['british-invasion', 'hard-rock'], score: 89, active: [1964, 1983], albums: [{title: 'Who\'s Next', year: 1971}, {title: 'Tommy', year: 1969}] },
-            { id: 'pearl-jam', name: 'Pearl Jam', genres: ['rock'], subgenres: ['grunge', 'alternative'], score: 85, active: [1990, 2025], albums: [{title: 'Ten', year: 1991}, {title: 'Vs.', year: 1993}] },
-            { id: 'soundgarden', name: 'Soundgarden', genres: ['rock'], subgenres: ['grunge', 'metal'], score: 82, active: [1984, 2017], albums: [{title: 'Superunknown', year: 1994}, {title: 'Badmotorfinger', year: 1991}] },
-            { id: 'arcade-fire', name: 'Arcade Fire', genres: ['rock'], subgenres: ['indie-rock', 'art-rock'], score: 78, active: [2001, 2025], albums: [{title: 'Funeral', year: 2004}, {title: 'The Suburbs', year: 2010}] },
-            { id: 'the-strokes', name: 'The Strokes', genres: ['rock'], subgenres: ['indie-rock', 'garage'], score: 76, active: [1998, 2025], albums: [{title: 'Is This It', year: 2001}, {title: 'Room on Fire', year: 2003}] },
-            { id: 'tame-impala', name: 'Tame Impala', genres: ['rock'], subgenres: ['psychedelic', 'indie-rock'], score: 74, active: [2007, 2025], albums: [{title: 'Currents', year: 2015}, {title: 'Lonerism', year: 2012}] },
-            { id: 'flip-turn', name: 'Flip Turn', genres: ['rock'], subgenres: ['indie-rock'], score: 42, active: [2015, 2025], albums: [{title: 'Shadowglow', year: 2023}] },
-            // Hip Hop
-            { id: 'kendrick', name: 'Kendrick Lamar', genres: ['hiphop'], subgenres: ['conscious', 'west-coast'], score: 97, active: [2004, 2025], albums: [{title: 'To Pimp a Butterfly', year: 2015}, {title: 'good kid, m.A.A.d city', year: 2012}] },
-            { id: 'kanye', name: 'Kanye West', genres: ['hiphop'], subgenres: ['conscious', 'art-rap'], score: 95, active: [1996, 2025], albums: [{title: 'My Beautiful Dark Twisted Fantasy', year: 2010}, {title: 'The College Dropout', year: 2004}] },
-            { id: 'nas', name: 'Nas', genres: ['hiphop'], subgenres: ['east-coast', 'conscious'], score: 94, active: [1991, 2025], albums: [{title: 'Illmatic', year: 1994}] },
-            { id: 'jay-z', name: 'Jay-Z', genres: ['hiphop'], subgenres: ['east-coast'], score: 93, active: [1995, 2025], albums: [{title: 'The Blueprint', year: 2001}, {title: 'Reasonable Doubt', year: 1996}] },
-            { id: 'outkast', name: 'OutKast', genres: ['hiphop'], subgenres: ['southern', 'experimental'], score: 92, active: [1992, 2006], albums: [{title: 'Stankonia', year: 2000}, {title: 'Aquemini', year: 1998}] },
-            { id: 'wu-tang', name: 'Wu-Tang Clan', genres: ['hiphop'], subgenres: ['east-coast', 'hardcore'], score: 90, active: [1992, 2025], albums: [{title: 'Enter the Wu-Tang', year: 1993}] },
-            { id: 'tyler', name: 'Tyler, the Creator', genres: ['hiphop'], subgenres: ['alternative', 'experimental'], score: 85, active: [2007, 2025], albums: [{title: 'IGOR', year: 2019}, {title: 'Flower Boy', year: 2017}] },
-            // Pop
-            { id: 'mj', name: 'Michael Jackson', genres: ['pop', 'soul'], subgenres: ['dance-pop', 'funk'], score: 99, active: [1964, 2009], albums: [{title: 'Thriller', year: 1982}, {title: 'Bad', year: 1987}] },
-            { id: 'prince', name: 'Prince', genres: ['pop', 'rock', 'soul'], subgenres: ['funk', 'synth-pop'], score: 96, active: [1976, 2016], albums: [{title: 'Purple Rain', year: 1984}, {title: 'Sign o\' the Times', year: 1987}] },
-            { id: 'madonna', name: 'Madonna', genres: ['pop'], subgenres: ['dance-pop', 'synth-pop'], score: 94, active: [1982, 2025], albums: [{title: 'Like a Prayer', year: 1989}, {title: 'Ray of Light', year: 1998}] },
-            { id: 'bowie', name: 'David Bowie', genres: ['rock', 'pop'], subgenres: ['glam', 'art-rock'], score: 88, active: [1969, 2016], albums: [{title: 'Ziggy Stardust', year: 1972}, {title: 'Low', year: 1977}] },
-            { id: 'taylor', name: 'Taylor Swift', genres: ['pop', 'country'], subgenres: ['synth-pop', 'folk-pop'], score: 88, active: [2004, 2025], albums: [{title: 'Folklore', year: 2020}, {title: '1989', year: 2014}] },
-            { id: 'billie', name: 'Billie Eilish', genres: ['pop'], subgenres: ['electropop', 'alt-pop'], score: 82, active: [2015, 2025], albums: [{title: 'When We All Fall Asleep', year: 2019}] },
-            // Soul/R&B
-            { id: 'stevie', name: 'Stevie Wonder', genres: ['soul'], subgenres: ['motown', 'funk'], score: 97, active: [1961, 2025], albums: [{title: 'Songs in the Key of Life', year: 1976}, {title: 'Innervisions', year: 1973}] },
-            { id: 'marvin', name: 'Marvin Gaye', genres: ['soul'], subgenres: ['motown', 'quiet-storm'], score: 95, active: [1961, 1984], albums: [{title: 'What\'s Going On', year: 1971}] },
-            { id: 'aretha', name: 'Aretha Franklin', genres: ['soul'], subgenres: ['southern-soul', 'gospel'], score: 94, active: [1956, 2017], albums: [{title: 'I Never Loved a Man', year: 1967}] },
-            { id: 'dangelo', name: 'D\'Angelo', genres: ['soul'], subgenres: ['neo-soul'], score: 89, active: [1994, 2025], albums: [{title: 'Voodoo', year: 2000}, {title: 'Black Messiah', year: 2014}] },
-            { id: 'frank-ocean', name: 'Frank Ocean', genres: ['soul', 'hiphop'], subgenres: ['neo-soul', 'alt-rnb'], score: 88, active: [2010, 2025], albums: [{title: 'Blonde', year: 2016}, {title: 'Channel Orange', year: 2012}] },
-            // Jazz
-            { id: 'miles', name: 'Miles Davis', genres: ['jazz'], subgenres: ['bebop', 'fusion', 'cool'], score: 98, active: [1944, 1991], albums: [{title: 'Kind of Blue', year: 1959}, {title: 'Bitches Brew', year: 1970}] },
-            { id: 'coltrane', name: 'John Coltrane', genres: ['jazz'], subgenres: ['bebop', 'free-jazz'], score: 96, active: [1955, 1967], albums: [{title: 'A Love Supreme', year: 1965}] },
-            { id: 'herbie', name: 'Herbie Hancock', genres: ['jazz'], subgenres: ['fusion', 'funk'], score: 90, active: [1962, 2025], albums: [{title: 'Head Hunters', year: 1973}] },
-            // Electronic
-            { id: 'daftpunk', name: 'Daft Punk', genres: ['electronic'], subgenres: ['house', 'french-touch'], score: 94, active: [1993, 2021], albums: [{title: 'Discovery', year: 2001}, {title: 'Random Access Memories', year: 2013}] },
-            { id: 'aphex', name: 'Aphex Twin', genres: ['electronic'], subgenres: ['idm', 'ambient'], score: 91, active: [1985, 2025], albums: [{title: 'Selected Ambient Works', year: 1992}] },
-            { id: 'kraftwerk', name: 'Kraftwerk', genres: ['electronic'], subgenres: ['synth', 'electro'], score: 93, active: [1970, 2025], albums: [{title: 'Trans-Europe Express', year: 1977}] },
-        ];
+        // Build rankings dynamically from musicData
+        // Each artist's "active years" = years they released albums
+        // Score placeholder = total album count (will be replaced by Guapa Score algorithm)
+        function buildRankings() {
+            const artists = {};
+            for (const [genreId, genre] of Object.entries(musicData)) {
+                for (const [subId, sub] of Object.entries(genre.subgenres)) {
+                    for (const [key, artist] of Object.entries(sub.artists)) {
+                        if (!artists[artist.name]) {
+                            const albumYears = artist.albums.map(a => a.year).filter(Boolean).sort((a, b) => a - b);
+                            artists[artist.name] = {
+                                id: key,
+                                name: artist.name,
+                                genres: [genreId],
+                                subgenres: [subId],
+                                albumYears,
+                                active: albumYears.length ? [albumYears[0], albumYears[albumYears.length - 1]] : [1960, 2025],
+                                albums: artist.albums,
+                                score: Math.min(99, 50 + artist.albums.length * 8),
+                            };
+                        } else {
+                            // Same artist in multiple genres/subgenres
+                            const a = artists[artist.name];
+                            if (!a.genres.includes(genreId)) a.genres.push(genreId);
+                            if (!a.subgenres.includes(subId)) a.subgenres.push(subId);
+                        }
+                    }
+                }
+            }
+            return Object.values(artists);
+        }
+        const allRankings = buildRankings();
 
         // Genre origin stories for contextual messaging
         const genreOrigins = {
@@ -1918,21 +1903,20 @@
 
         // Rankings functions
         function getFilteredRankings() {
-            let filtered = [...mockRankings];
-            
-            // Filter by genre (activeFilter from sidebar)
+            let filtered = [...allRankings];
+
+            // Filter by genre
             if (activeFilter !== 'all') {
                 filtered = filtered.filter(a => a.genres.includes(activeFilter));
             }
-            
-            // Filter by year
+
+            // Filter by year — artist must have released an album within 2 years
             if (rankingsYearFilter) {
-                filtered = filtered.filter(a => 
-                    a.active[0] <= rankingsYearFilter && a.active[1] >= rankingsYearFilter
+                filtered = filtered.filter(a =>
+                    a.albumYears.some(y => Math.abs(y - rankingsYearFilter) <= 2)
                 );
             }
-            
-            // Sort by score
+
             filtered.sort((a, b) => b.score - a.score);
             return filtered;
         }
@@ -1978,7 +1962,7 @@
             rankingsList.querySelectorAll('.ranking-row').forEach(row => {
                 row.addEventListener('click', () => {
                     const artistId = row.dataset.artistId;
-                    const artist = mockRankings.find(a => a.id === artistId);
+                    const artist = allRankings.find(a => a.id === artistId);
                     const rank = getFilteredRankings().findIndex(a => a.id === artistId) + 1;
                     if (artist) openArtistPopup(artist, rank);
                 });
