@@ -276,6 +276,72 @@
             content: "• ";
         }
 
+        /* Welcome Container — shown when no genre selected */
+        .welcome-container {
+            border: 1px solid var(--gray-800);
+            border-radius: 8px;
+            padding: 32px 28px;
+            background: var(--gray-900);
+        }
+
+        .welcome-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0 0 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .welcome-subtitle {
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            line-height: 1.6;
+            margin: 0;
+            max-width: 560px;
+        }
+
+        .welcome-stats {
+            display: flex;
+            gap: 28px;
+            margin: 24px 0;
+            padding: 16px 0;
+            border-top: 1px solid var(--gray-800);
+            border-bottom: 1px solid var(--gray-800);
+        }
+
+        .welcome-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .welcome-stat-num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--yellow);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .welcome-stat-label {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray-500);
+        }
+
+        .welcome-hint {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            font-style: italic;
+            font-family: var(--font-serif);
+        }
+
+        @media (max-width: 768px) {
+            .welcome-container { padding: 20px 16px; }
+            .welcome-stats { gap: 16px; }
+        }
+
         /* Artist Panel */
         .artist-panel {
             display: none;
@@ -1532,7 +1598,7 @@
         let currentYear = 1960;
         let selectedSubgenre = null;
         let selectedGenre = null;
-        let activeFilter = 'all';
+        let activeFilter = null;  // null = welcome view, no genre selected
 
         // Rankings state
         let rankingsYearFilter = null;
@@ -1602,14 +1668,7 @@
             const tabsEl = document.getElementById('genreTabs');
             tabsEl.innerHTML = '';
 
-            // "All" tab
-            const allTab = document.createElement('button');
-            allTab.className = `genre-tab${activeFilter === 'all' ? ' active' : ''}`;
-            allTab.innerHTML = 'All';
-            allTab.onclick = () => { activeFilter = 'all'; closeArtistPanel(); hideDiscography(); renderGenreTabs(); renderGenreGroups(); renderRankings(); };
-            tabsEl.appendChild(allTab);
-
-            // One tab per genre
+            // One tab per genre (no "All" tab — default is welcome view)
             Object.entries(musicData).forEach(([genreId, genre]) => {
                 const visibleCount = Object.values(genre.subgenres).filter(s => s.status[currentYear] !== 'hidden').length;
                 const tab = document.createElement('button');
@@ -1617,12 +1676,21 @@
                 tab.innerHTML = `<span class="tab-icon">${genre.icon}</span>${genre.name}<span class="tab-count">${visibleCount}</span>`;
                 if (visibleCount === 0) tab.style.opacity = '0.3';
                 tab.onclick = () => {
-                    activeFilter = genreId;
-                    selectedGenre = genreId;
-                    selectedSubgenre = null;
-                    closeArtistPanel();
-                    hideDiscography();
-                    if (visibleCount > 0) showGenrePanel(genreId);
+                    if (activeFilter === genreId) {
+                        // Clicking active genre deselects it — back to welcome view
+                        activeFilter = null;
+                        selectedGenre = null;
+                        selectedSubgenre = null;
+                        closeArtistPanel();
+                        hideDiscography();
+                    } else {
+                        activeFilter = genreId;
+                        selectedGenre = genreId;
+                        selectedSubgenre = null;
+                        closeArtistPanel();
+                        hideDiscography();
+                        if (visibleCount > 0) showGenrePanel(genreId);
+                    }
                     renderGenreTabs();
                     renderGenreGroups();
                     renderRankings();
@@ -1654,7 +1722,7 @@
             const counts = {};
             for (let y = MIN_YEAR; y <= MAX_YEAR; y++) counts[y] = 0;
             Object.entries(musicData).forEach(([genreId, genre]) => {
-                if (activeFilter !== 'all' && genreId !== activeFilter) return;
+                if (activeFilter && genreId !== activeFilter) return;
                 Object.values(genre.subgenres).forEach(subgenre => {
                     Object.values(subgenre.artists).forEach(artist => {
                         artist.albums.forEach(album => {
@@ -1700,20 +1768,41 @@
 
         function renderGenreGroups() {
             genreGroups.innerHTML = '';
+
+            // Welcome view when no genre selected
+            if (!activeFilter) {
+                genreGroups.innerHTML = `
+                    <div class="welcome-container">
+                        <div class="welcome-text">
+                            <h2 class="welcome-title">The Record Store</h2>
+                            <p class="welcome-subtitle">Browse ${Object.keys(musicData).length} genres spanning ${MAX_YEAR - MIN_YEAR + 1} years of music history. Pick a genre above to explore its subgenres, artists, and full discographies.</p>
+                        </div>
+                        <div class="welcome-stats">
+                            <div class="welcome-stat">
+                                <span class="welcome-stat-num">${Object.values(musicData).reduce((sum, g) => sum + Object.keys(g.subgenres).length, 0)}</span>
+                                <span class="welcome-stat-label">Subgenres</span>
+                            </div>
+                            <div class="welcome-stat">
+                                <span class="welcome-stat-num">${allRankings.length}</span>
+                                <span class="welcome-stat-label">Artists</span>
+                            </div>
+                            <div class="welcome-stat">
+                                <span class="welcome-stat-num">${allRankings.reduce((sum, a) => sum + a.albums.length, 0)}</span>
+                                <span class="welcome-stat-label">Albums</span>
+                            </div>
+                        </div>
+                        <div class="welcome-hint">Use the timeline to travel through the decades. Click any genre tab to dive in.</div>
+                    </div>
+                `;
+                return;
+            }
+
             Object.entries(musicData).forEach(([genreId, genre]) => {
-                if (activeFilter !== 'all' && genreId !== activeFilter) return;
+                if (genreId !== activeFilter) return;
                 const visibleSubgenres = Object.entries(genre.subgenres).filter(([id, sub]) => sub.status[currentYear] !== 'hidden');
                 if (visibleSubgenres.length === 0) return;
                 const group = document.createElement('div');
                 group.className = 'genre-group';
-
-                // Genre label header (only shown in "All" view)
-                if (activeFilter === 'all') {
-                    const label = document.createElement('div');
-                    label.className = 'genre-group-label';
-                    label.innerHTML = `<span class="group-icon">${genre.icon}</span>${genre.name}`;
-                    group.appendChild(label);
-                }
 
                 const subgenresGrid = document.createElement('div');
                 subgenresGrid.className = 'subgenres-grid';
@@ -1813,7 +1902,6 @@
 
         function closeArtistPanel() {
             artistPanel.classList.remove('visible');
-            selectedGenre = null;
             selectedSubgenre = null;
             renderGenreGroups();
             document.getElementById('rankingsSection').style.display = 'block';
@@ -1889,9 +1977,11 @@
                         updateYear(targetYear);
                     }
 
+                    activeFilter = match.genreId;
                     selectedGenre = match.genreId;
                     selectedSubgenre = match.subId;
                     showArtistsPanel(match.genreId, match.subId);
+                    renderGenreTabs();
                     renderGenreGroups();
                     searchInput.value = '';
                     searchResults.classList.remove('open');
@@ -1914,8 +2004,8 @@
         function getFilteredRankings() {
             let filtered = [...allRankings];
 
-            // Filter by genre
-            if (activeFilter !== 'all') {
+            // Filter by genre (null = show all)
+            if (activeFilter) {
                 filtered = filtered.filter(a => a.genres.includes(activeFilter));
             }
 
@@ -1934,7 +2024,7 @@
             const filtered = getFilteredRankings();
             
             // Update header
-            let genreLabel = activeFilter === 'all' ? 'ALL GENRES' : activeFilter.toUpperCase();
+            let genreLabel = !activeFilter ? 'ALL GENRES' : activeFilter.toUpperCase();
             rankingsGenreEl.textContent = genreLabel;
             
             // Update year tag
@@ -2201,9 +2291,11 @@
             }
 
             // Open the subgenre panel
+            activeFilter = match.genreId;
             selectedGenre = match.genreId;
             selectedSubgenre = match.subId;
             showArtistsPanel(match.genreId, match.subId);
+            renderGenreTabs();
             renderGenreGroups();
 
             // Also open the discography for this specific artist
