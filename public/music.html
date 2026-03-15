@@ -2209,7 +2209,7 @@
             const artStyle = art ? `background-image: url(${art}); background-size: cover; background-position: center;` : '';
             const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (artistSpotifyUrl || '#'));
             const wikiAlbumTitle = (album.title || '').replace(/ /g, '_');
-            const wikiUrl = `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiAlbumTitle)}`;
+            const wikiUrl = album.url_wikipedia || `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiAlbumTitle)}`;
             const tracks = album.tracks || [];
             const amazonQuery = encodeURIComponent(`${artistName || ''} ${album.title} vinyl`);
             const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
