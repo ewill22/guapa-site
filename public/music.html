@@ -1928,32 +1928,76 @@
             Object.entries(musicData).forEach(([genreId, genre]) => {
                 Object.entries(genre.subgenres).forEach(([subId, subgenre]) => {
                     Object.entries(subgenre.artists).forEach(([artistId, artist]) => {
-                        // Find the best year to jump to (first album year, or earliest active year)
                         const bestYear = artist.albums.length > 0 ? artist.albums[0].year : null;
+                        // Index the artist
                         index.push({
+                            type: 'artist',
                             name: artist.name,
                             icon: artist.icon,
                             meta: `${subgenre.name} · ${genre.name}`,
                             genreId, subId,
-                            year: bestYear
+                            year: bestYear,
+                            artistName: artist.name,
                         });
+                        // Index each song from the static catalog
                     });
                 });
             });
             return index;
         }
 
+        // Song index built async from static catalog
+        let songIndex = [];
+        async function buildSongIndex() {
+            const catalog = await loadStaticCatalog();
+            if (!catalog) return;
+            // Map editorial artist names to their genre/sub location
+            const artistLocations = {};
+            Object.entries(musicData).forEach(([genreId, genre]) => {
+                Object.entries(genre.subgenres).forEach(([subId, subgenre]) => {
+                    Object.values(subgenre.artists).forEach(artist => {
+                        artistLocations[artist.name.toLowerCase()] = { genreId, subId, icon: artist.icon, editorialName: artist.name };
+                    });
+                });
+            });
+
+            for (const [key, artist] of Object.entries(catalog)) {
+                const loc = artistLocations[key] || artistLocations[artist.name.toLowerCase()];
+                if (!loc) continue;
+                for (const album of (artist.albums || [])) {
+                    for (const track of (album.tracks || [])) {
+                        songIndex.push({
+                            type: 'song',
+                            name: track.title,
+                            icon: '♪',
+                            meta: `${loc.editorialName} · ${album.title}`,
+                            genreId: loc.genreId,
+                            subId: loc.subId,
+                            year: album.release_year,
+                            artistName: loc.editorialName,
+                            albumTitle: album.title,
+                        });
+                    }
+                }
+            }
+            console.log(`Song index: ${songIndex.length} tracks`);
+        }
+        buildSongIndex();
+
         const searchIndex = buildSearchIndex();
 
         searchInput.addEventListener('input', () => {
             const q = searchInput.value.trim().toLowerCase();
             if (q.length < 2) { searchResults.classList.remove('open'); return; }
-            const matches = searchIndex.filter(item => item.name.toLowerCase().includes(q)).slice(0, 8);
+            // Search artists first, then songs
+            const artistMatches = searchIndex.filter(item => item.name.toLowerCase().includes(q)).slice(0, 5);
+            const songMatches = songIndex.filter(item => item.name.toLowerCase().includes(q)).slice(0, 5);
+            const matches = [...artistMatches, ...songMatches].slice(0, 8);
             if (matches.length === 0) { searchResults.classList.remove('open'); return; }
             searchResults.innerHTML = matches.map((m, i) => `
                 <div class="search-result-item" data-index="${i}">
                     <span class="result-icon">${m.icon}</span>
-                    <span class="result-name">${m.name}</span>
+                    <span class="result-name">${m.name}${m.type === 'song' ? ` <span style="font-size:0.6rem;color:var(--gray-600);text-transform:uppercase;">song</span>` : ''}</span>
                     <span class="result-meta">${m.meta}</span>
                 </div>
             `).join('');
@@ -1961,14 +2005,15 @@
             searchResults.querySelectorAll('.search-result-item').forEach((el, i) => {
                 el.addEventListener('click', () => {
                     const match = matches[i];
-                    // Find the specific artist object
+                    // For songs, look up the artist by artistName; for artists, use match.name
+                    const lookupName = match.type === 'song' ? match.artistName : match.name;
                     const genre = musicData[match.genreId];
                     const subgenre = genre?.subgenres[match.subId];
-                    const artistObj = subgenre ? Object.values(subgenre.artists).find(a => a.name === match.name) : null;
+                    const artistObj = subgenre ? Object.values(subgenre.artists).find(a => a.name === lookupName) : null;
 
-                    // Navigate to their latest album year
+                    // Navigate to the relevant year
                     let targetYear = match.year;
-                    if (artistObj && artistObj.albums.length > 0) {
+                    if (match.type !== 'song' && artistObj && artistObj.albums.length > 0) {
                         const latestAlbum = artistObj.albums.reduce((latest, a) => a.year > latest.year ? a : latest, artistObj.albums[0]);
                         targetYear = latestAlbum.year;
                     }
@@ -1986,9 +2031,26 @@
                     searchInput.value = '';
                     searchResults.classList.remove('open');
 
-                    // Open discography for the specific artist
+                    // Open discography for the artist
                     if (artistObj) {
-                        setTimeout(() => showDiscography(artistObj, match.genreId, match.subId), 100);
+                        setTimeout(() => {
+                            showDiscography(artistObj, match.genreId, match.subId);
+                            // For song results, scroll to the album containing the track
+                            if (match.type === 'song' && match.albumTitle) {
+                                setTimeout(() => {
+                                    const albumCards = document.querySelectorAll('.album-card');
+                                    for (const card of albumCards) {
+                                        const titleEl = card.querySelector('.album-title');
+                                        if (titleEl && titleEl.textContent.trim().toLowerCase() === match.albumTitle.toLowerCase()) {
+                                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            card.style.outline = '1px solid var(--pink)';
+                                            setTimeout(() => card.style.outline = '', 2000);
+                                            break;
+                                        }
+                                    }
+                                }, 200);
+                            }
+                        }, 100);
                     } else {
                         artistPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
