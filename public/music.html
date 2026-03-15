@@ -2051,10 +2051,10 @@
             return `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
         }
 
-        function renderAlbumCard(album, idx, isLatest, artistWiki, artistName) {
+        function renderAlbumCard(album, idx, isLatest, artistWiki, artistName, artistSpotifyUrl) {
             const art = album.cover_art_large || album.cover_art_small;
             const artStyle = art ? `background-image: url(${art}); background-size: cover; background-position: center;` : '';
-            const spotifyUrl = album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : '#';
+            const spotifyUrl = album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (artistSpotifyUrl || '#');
             const wikiUrl = artistWiki || '#';
             const tracks = album.tracks || [];
             const amazonQuery = encodeURIComponent(`${artistName || ''} ${album.title} vinyl`);
@@ -2127,7 +2127,7 @@
                     const totalTracks = albums.reduce((sum, a) => sum + (a.tracks ? a.tracks.length : 0), 0);
 
                     discoList.innerHTML = `<div class="discography-count">${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${totalTracks} tracks \u00b7 ${yearSpan}</div>`
-                        + albums.map((album, idx) => renderAlbumCard(album, idx, idx === 0, apiArtist.url_wikipedia, apiArtist.name)).join('');
+                        + albums.map((album, idx) => renderAlbumCard(album, idx, idx === 0, apiArtist.url_wikipedia, apiArtist.name, apiArtist.url_spotify)).join('');
                     return;
                 }
             }
