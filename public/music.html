@@ -534,7 +534,7 @@
             border-radius: 0 0 var(--radius-sm) var(--radius-sm);
             max-height: 260px;
             overflow-y: auto;
-            z-index: 100;
+            z-index: 200;
         }
 
         .search-results.open { display: block; }
@@ -841,6 +841,11 @@
             <a href="data-solutions.html">Data Solutions</a>
         </div>
 
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search artists or songs..." autocomplete="off">
+            <div class="search-results" id="searchResults"></div>
+        </div>
+
         <div class="nav-actions">
             <a href="https://instagram.com/guapa_skate" target="_blank" rel="noopener" class="nav-social">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -864,10 +869,6 @@
             <div class="music-header-text">
                 <h1>Music</h1>
                 <p>What we're listening to, watching, and vibing with</p>
-            </div>
-            <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" placeholder="Search artists..." autocomplete="off">
-                <div class="search-results" id="searchResults"></div>
             </div>
         </header>
 
