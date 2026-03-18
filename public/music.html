@@ -2319,6 +2319,7 @@
                         <div class="disco-album-art" style="${artStyle}"></div>
                         <div class="disco-album-info">
                             <span class="disco-album-year">${isLatest ? 'Latest \u00b7 ' : ''}${album.release_year || '?'}</span>
+                            <span class="disco-album-artist">${artistName || ''}</span>
                             <h3 class="disco-album-title">${album.title}</h3>
                             <div class="disco-album-actions">
                                 <a href="${spotifyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--spotify" onclick="event.stopPropagation()">Spotify</a>

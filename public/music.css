@@ -337,6 +337,13 @@
     color: var(--yellow);
 }
 
+.disco-album-artist {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--blue);
+    letter-spacing: 0.03em;
+}
+
 .disco-album-title {
     font-size: 1.15rem;
     font-weight: 600;
