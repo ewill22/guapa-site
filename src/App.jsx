@@ -129,7 +129,7 @@ export default function App() {
             {isGuapa ? (
               <>
                 {/* Dev Timeline — daily commit activity */}
-                <h2 className="timeline-section-header" style={{ color: lc }}>Building Guapa</h2>
+                <h2 className="timeline-section-header" style={{ color: lc }}>Guapa</h2>
                 <div className="timeline-header">
                   <div className="timeline-nav-row">
                     <button className="year-arrow" onClick={() => navDev(-1)} aria-label="Previous day">&larr;</button>
