@@ -461,20 +461,24 @@
             position: absolute;
             top: 12px;
             right: 12px;
-            background: transparent;
-            border: 1px solid var(--gray-800);
+            background: var(--gray-800);
+            border: 1px solid var(--gray-700);
             border-radius: 4px;
-            color: var(--gray-600);
-            width: 28px;
-            height: 28px;
-            font-size: 0.9rem;
+            color: var(--white);
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .close-panel:hover {
+            background: var(--pink);
             border-color: var(--pink);
-            color: var(--pink);
+            color: var(--black);
         }
 
         /* Decade nav */
