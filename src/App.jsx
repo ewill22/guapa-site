@@ -181,11 +181,13 @@ export default function App() {
                 {/* Standard Year Timeline */}
                 <h2 className="timeline-section-header" style={{ color: lc }}>{LENS_LABELS[lens]}</h2>
                 <div className="timeline-header">
-                  <button className="year-arrow" onClick={() => navYear(-1)} aria-label="Previous year">&larr;</button>
-                  <div className="year-display">
-                    <h2 style={{ color: lc }}>{year}</h2>
+                  <div className="timeline-nav-row">
+                    <button className="year-arrow" onClick={() => navYear(-1)} aria-label="Previous year">&larr;</button>
+                    <div className="year-display">
+                      <h2 style={{ color: lc }}>{year}</h2>
+                    </div>
+                    <button className="year-arrow" onClick={() => navYear(1)} aria-label="Next year">&rarr;</button>
                   </div>
-                  <button className="year-arrow" onClick={() => navYear(1)} aria-label="Next year">&rarr;</button>
                   <div className="event-bars">
                     {bars.map(b => (
                       <div key={b.year}
