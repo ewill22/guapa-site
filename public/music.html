@@ -2437,6 +2437,14 @@
             return true;
         }
 
+        // Random year on fresh load (skip if deep-linked via ?artist=)
+        if (!new URLSearchParams(window.location.search).get('artist')) {
+            const randomYear = MIN_YEAR + Math.floor(Math.random() * (MAX_YEAR - MIN_YEAR + 1));
+            yearSlider.value = randomYear;
+            currentYear = randomYear;
+            currentYearDisplay.textContent = currentYear;
+        }
+
         // Initial render
         updateDecadeButtons();
         renderAlbumBars();
