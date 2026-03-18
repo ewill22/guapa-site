@@ -247,6 +247,7 @@
 @media (max-width: 600px) {
   .timeline-header { flex-direction: column; align-items: flex-start; gap: var(--space-sm); }
   .year-display h2 { font-size: 2.5rem; }
+  .event-bars { width: 100%; }
   .live-badge { margin-left: 0; }
   .newsletter-form { flex-direction: column; }
   .blurb-metric { flex-wrap: wrap; }
