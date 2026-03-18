@@ -2373,15 +2373,23 @@
             setupDiscoNav();
         }
 
+        function scrollToAlbum(el) {
+            const navHeight = document.querySelector('.nav').offsetHeight;
+            const headerHeight = document.querySelector('.music-header').offsetHeight;
+            const offset = navHeight + headerHeight + 16;
+            const top = el.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+        }
+
         function setupDiscoNav() {
             const albumCards = discoList.querySelectorAll('.disco-album');
             if (albumCards.length === 0) return;
-            document.getElementById('discoLatest').onclick = () => {
-                albumCards[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-            };
-            document.getElementById('discoFirst').onclick = () => {
-                albumCards[albumCards.length - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
-            };
+            // Set nav rail sticky top to clear both sticky headers
+            const navHeight = document.querySelector('.nav').offsetHeight;
+            const headerHeight = document.querySelector('.music-header').offsetHeight;
+            document.getElementById('discoNavRail').style.top = (navHeight + headerHeight + 16) + 'px';
+            document.getElementById('discoLatest').onclick = () => scrollToAlbum(albumCards[0]);
+            document.getElementById('discoFirst').onclick = () => scrollToAlbum(albumCards[albumCards.length - 1]);
         }
 
         function hideDiscography() {
