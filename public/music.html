@@ -2376,7 +2376,7 @@
                     albumData = disco && disco.albums;
                 }
                 if (albumData && albumData.length > 0) {
-                    const albums = [...albumData].map((a, i) => ({...a, _idx: i})).sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || a._idx - b._idx);
+                    const albums = [...albumData].map((a, i) => ({...a, _idx: i})).sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || b._idx - a._idx);
                     const yearSpan = albums.length > 1
                         ? `${albums[albums.length - 1].release_year || '?'} \u2013 ${albums[0].release_year || '?'}`
                         : `${albums[0].release_year || '?'}`;
@@ -2390,7 +2390,7 @@
             }
 
             // Fallback: use the editorial data with placeholder tracks
-            const albums = [...artist.albums].map((a, i) => ({...a, _idx: i})).sort((a, b) => (b.year - a.year) || a._idx - b._idx);
+            const albums = [...artist.albums].map((a, i) => ({...a, _idx: i})).sort((a, b) => (b.year - a.year) || b._idx - a._idx);
             const yearSpan = albums.length > 1 ? `${albums[albums.length - 1].year} \u2013 ${albums[0].year}` : `${albums[0].year}`;
 
             discoStats.textContent = `${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${yearSpan}`;
