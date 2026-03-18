@@ -7,34 +7,25 @@
     padding-bottom: var(--space-xl);
 }
 
-/* Header */
+/* Header — sticky below nav */
 .music-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-lg);
-    padding: var(--space-lg) var(--space-md);
-    border-bottom: 1px solid var(--gray-800);
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.music-header-text {
-    display: flex;
-    align-items: baseline;
     gap: var(--space-md);
-    flex-shrink: 0;
+    padding: var(--space-xs) var(--space-md);
+    border-bottom: 1px solid var(--gray-800);
+    position: sticky;
+    top: 50px;
+    z-index: 50;
+    background: var(--bg);
 }
 
-.music-header-text h1 {
-    font-size: clamp(2.5rem, 6vw, 4rem);
+.music-header h1 {
+    font-size: 1.8rem;
     font-weight: 700;
     color: var(--pink);
-}
-
-.music-header-text p {
-    color: var(--gray-400);
-    font-size: 1rem;
+    flex-shrink: 0;
 }
 
 /* Embeds Grid */
@@ -178,7 +169,7 @@
     border-top: 1px solid var(--gray-800);
     padding-top: var(--space-lg);
     margin-top: var(--space-lg);
-    scroll-margin-top: 60px;
+    scroll-margin-top: 110px;
 }
 
 .discography-header {
