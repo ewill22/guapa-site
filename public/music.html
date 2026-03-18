@@ -972,11 +972,17 @@
                             <div>
                                 <h2 id="discoArtistName">Artist Name</h2>
                                 <p class="discography-bio" id="discoBio"></p>
+                                <p class="discography-stats" id="discoStats"></p>
                             </div>
                         </div>
-                        <button class="discography-close" id="discoClose">Back to browse</button>
                     </div>
-                    <div class="discography-list" id="discoList"></div>
+                    <div class="disco-body">
+                        <div class="discography-list" id="discoList"></div>
+                        <div class="disco-nav-rail" id="discoNavRail">
+                            <button class="disco-nav-btn" id="discoLatest">Latest Album</button>
+                            <button class="disco-nav-btn" id="discoFirst">First Album</button>
+                        </div>
+                    </div>
                 </section>
             </div>
         </div>
@@ -2320,6 +2326,9 @@
             document.getElementById('discoArtistName').textContent = artist.name;
             document.getElementById('discoBio').textContent = artist.description;
 
+            const discoStats = document.getElementById('discoStats');
+            discoStats.textContent = '';
+
             // Show section immediately with loading state
             discoSection.style.display = 'block';
             discoList.innerHTML = '<div class="discography-count">Loading discography...</div>';
@@ -2328,7 +2337,6 @@
             // Try to fetch real data (static catalog or live API)
             const apiArtist = await fetchArtistByName(artist.name);
             if (apiArtist) {
-                // Static catalog has .albums directly; API needs a separate fetch
                 let albumData = apiArtist.albums;
                 if (!albumData && apiArtist.id) {
                     const disco = await fetchDiscography(apiArtist.id);
@@ -2341,8 +2349,9 @@
                         : `${albums[0].release_year || '?'}`;
                     const totalTracks = albums.reduce((sum, a) => sum + (a.tracks ? a.tracks.length : 0), 0);
 
-                    discoList.innerHTML = `<div class="discography-count">${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${totalTracks} tracks \u00b7 ${yearSpan}</div>`
-                        + albums.map((album, idx) => renderAlbumCard(album, idx, idx === 0, apiArtist.url_wikipedia, apiArtist.name, apiArtist.url_spotify)).join('');
+                    discoStats.textContent = `${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${totalTracks} tracks \u00b7 ${yearSpan}`;
+                    discoList.innerHTML = albums.map((album, idx) => renderAlbumCard(album, idx, idx === 0, apiArtist.url_wikipedia, apiArtist.name, apiArtist.url_spotify)).join('');
+                    setupDiscoNav();
                     return;
                 }
             }
@@ -2351,7 +2360,8 @@
             const albums = [...artist.albums].sort((a, b) => b.year - a.year);
             const yearSpan = albums.length > 1 ? `${albums[albums.length - 1].year} \u2013 ${albums[0].year}` : `${albums[0].year}`;
 
-            discoList.innerHTML = `<div class="discography-count">${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${yearSpan}</div>` + albums.map((album, idx) => {
+            discoStats.textContent = `${albums.length} album${albums.length !== 1 ? 's' : ''} \u00b7 ${yearSpan}`;
+            discoList.innerHTML = albums.map((album, idx) => {
                 const trackCount = 8 + Math.floor(Math.abs(hashCode(album.title)) % 6);
                 const tracks = Array.from({ length: trackCount }, (_, i) => ({
                     track_number: i + 1,
@@ -2360,14 +2370,24 @@
                 }));
                 return renderAlbumCard({ title: album.title, release_year: album.year, tracks }, idx, idx === 0, null, artist.name);
             }).join('');
+            setupDiscoNav();
+        }
+
+        function setupDiscoNav() {
+            const albumCards = discoList.querySelectorAll('.disco-album');
+            if (albumCards.length === 0) return;
+            document.getElementById('discoLatest').onclick = () => {
+                albumCards[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
+            document.getElementById('discoFirst').onclick = () => {
+                albumCards[albumCards.length - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            };
         }
 
         function hideDiscography() {
             discoSection.style.display = 'none';
             activeDiscoArtist = null;
         }
-
-        document.getElementById('discoClose').addEventListener('click', hideDiscography);
 
         // Simple hash for generating consistent placeholder data
         function hashCode(str) {
