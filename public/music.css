@@ -18,7 +18,7 @@
     position: sticky;
     top: 50px;
     z-index: 50;
-    background: var(--bg);
+    background: var(--black);
 }
 
 .music-header h1 {
@@ -566,21 +566,12 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .music-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
     .music-embeds-grid {
         max-width: 100%;
     }
 }
 
 @media (max-width: 768px) {
-    .music-header-text {
-        flex-direction: column;
-        gap: var(--space-xs);
-    }
     
     .genre-tabs {
         gap: 4px;
