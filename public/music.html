@@ -1933,8 +1933,8 @@
         function closeArtistPanel() {
             artistPanel.classList.remove('visible');
             selectedSubgenre = null;
+            hideDiscography();
             renderGenreGroups();
-            document.getElementById('rankingsSection').style.display = 'block';
         }
 
         yearSlider.addEventListener('input', (e) => updateYear(e.target.value));
@@ -2250,6 +2250,8 @@
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') { closeArtistPopup(); closeArtistPanel(); }
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            // Disable arrow keys when viewing a subgenre/artist or discography
+            if (selectedSubgenre || discoSection.style.display === 'block') return;
             if (e.key === 'ArrowLeft' && currentYear > MIN_YEAR) { yearSlider.value = currentYear - 1; updateYear(currentYear - 1); }
             if (e.key === 'ArrowRight' && currentYear < MAX_YEAR) { yearSlider.value = currentYear + 1; updateYear(currentYear + 1); }
         });
