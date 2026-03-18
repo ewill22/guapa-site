@@ -129,7 +129,7 @@ export default function App() {
             {isGuapa ? (
               <>
                 {/* Dev Timeline — daily commit activity */}
-                <div className="timeline-section-header">Building Guapa — Commit Activity</div>
+                <h2 className="timeline-section-header" style={{ color: lc }}>Building Guapa</h2>
                 <div className="timeline-header">
                   <div className="timeline-nav-row">
                     <button className="year-arrow" onClick={() => navDev(-1)} aria-label="Previous day">&larr;</button>
@@ -179,6 +179,7 @@ export default function App() {
             ) : (
               <>
                 {/* Standard Year Timeline */}
+                <h2 className="timeline-section-header" style={{ color: lc }}>{LENS_LABELS[lens]}</h2>
                 <div className="timeline-header">
                   <button className="year-arrow" onClick={() => navYear(-1)} aria-label="Previous year">&larr;</button>
                   <div className="year-display">
@@ -238,9 +239,6 @@ export default function App() {
             devBlurbData ? (
               <div className="blurbs-section">
                 <div className="blurbs-header">
-                  <span className="blurbs-lens-tag" style={{ color: GUAPA_COLOR, borderColor: `${GUAPA_COLOR}40`, background: `${GUAPA_COLOR}10` }}>
-                    Dev Log
-                  </span>
                   <span className="blurbs-nearest">{DEV_DAYS[devDay]?.date} — {DEV_DAYS[devDay]?.commits} commits</span>
                 </div>
                 <div className="blurbs-list">
@@ -265,9 +263,6 @@ export default function App() {
             ) : (
               <div className="blurbs-section">
                 <div className="blurbs-header">
-                  <span className="blurbs-lens-tag" style={{ color: GUAPA_COLOR, borderColor: `${GUAPA_COLOR}40`, background: `${GUAPA_COLOR}10` }}>
-                    Dev Log
-                  </span>
                 </div>
                 <div className="blurbs-list">
                   <div className="blurb-card blurb-card--update">
@@ -282,9 +277,6 @@ export default function App() {
           ) : blurbData ? (
             <div className="blurbs-section">
               <div className="blurbs-header">
-                <span className="blurbs-lens-tag" style={{ color: lc, borderColor: `${lc}40`, background: `${lc}10` }}>
-                  {LENS_ICONS[lens]} {LENS_LABELS[lens]}
-                </span>
                 {blurbData.year !== year && (
                   <span className="blurbs-nearest">Showing {blurbData.year} — nearest data to {year}</span>
                 )}
