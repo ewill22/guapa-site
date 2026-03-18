@@ -330,11 +330,15 @@
             color: var(--gray-500);
         }
 
-        .welcome-hint {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-            font-style: italic;
-            font-family: var(--font-serif);
+        .welcome-rankings {
+            margin-top: 16px;
+        }
+
+        .welcome-rankings .rankings-list {
+            border: none;
+            background: transparent;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         @media (max-width: 768px) {
@@ -1774,7 +1778,7 @@
         function renderGenreGroups() {
             genreGroups.innerHTML = '';
 
-            // Welcome view when no genre selected
+            // Welcome view when no genre selected — stats + rankings merged
             if (!activeFilter) {
                 genreGroups.innerHTML = `
                     <div class="welcome-container">
@@ -1796,9 +1800,11 @@
                                 <span class="welcome-stat-label">Albums</span>
                             </div>
                         </div>
-                        <div class="welcome-hint">Use the timeline to travel through the decades. Click any genre tab to dive in.</div>
+                        <div class="welcome-rankings" id="welcomeRankings"></div>
                     </div>
                 `;
+                // Render rankings inline inside the welcome container
+                renderWelcomeRankings();
                 return;
             }
 
@@ -2087,11 +2093,48 @@
             return filtered;
         }
 
-        function renderRankings() {
+        function renderWelcomeRankings() {
+            const container = document.getElementById('welcomeRankings');
+            if (!container) return;
             const filtered = getFilteredRankings();
-            
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="no-rankings">No artists found</div>';
+                return;
+            }
+            container.innerHTML = `
+                <div class="rankings-list">${filtered.map((artist, idx) => `
+                    <div class="ranking-row" data-artist-id="${artist.id}">
+                        <span class="ranking-rank ${idx < 3 ? 'top-3' : ''}">#${idx + 1}</span>
+                        <span class="ranking-name">${artist.name}</span>
+                        <div class="ranking-bar-container">
+                            <div class="ranking-bar" style="width: ${artist.score}%"></div>
+                        </div>
+                        <span class="ranking-score">${artist.score}</span>
+                    </div>
+                `).join('')}</div>
+            `;
+            container.querySelectorAll('.ranking-row').forEach(row => {
+                row.addEventListener('click', () => {
+                    const artist = allRankings.find(a => a.id === row.dataset.artistId);
+                    const rank = filtered.findIndex(a => a.id === row.dataset.artistId) + 1;
+                    if (artist) openArtistPopup(artist, rank);
+                });
+            });
+        }
+
+        function renderRankings() {
+            // In welcome view, rankings are rendered inline — hide standalone section
+            if (!activeFilter) {
+                document.getElementById('rankingsSection').style.display = 'none';
+                renderWelcomeRankings();
+                return;
+            }
+            document.getElementById('rankingsSection').style.display = 'block';
+
+            const filtered = getFilteredRankings();
+
             // Update header
-            let genreLabel = !activeFilter ? 'ALL GENRES' : activeFilter.toUpperCase();
+            let genreLabel = activeFilter.toUpperCase();
             rankingsGenreEl.textContent = genreLabel;
             
             // Update year tag
