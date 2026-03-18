@@ -17,7 +17,7 @@ export const DEV_COMMITS = {
   '2026-03-14': 8,
   '2026-03-15': 17,
   '2026-03-16': 4,
-  '2026-03-17': 28,
+  '2026-03-17': 31,
 };
 
 // Daily summaries — what got done each active day
@@ -66,9 +66,9 @@ export const DEV_BLURBS = {
     { type: 'metric', label: 'Spotify Links', value: '367', change: 'albums enriched' },
   ],
   '2026-03-17': [
-    { type: 'news', text: '28 commits. Biggest day yet. Spotify enrichment completed (955 albums). Mobile UI overhaul: sticky search bar, decade nav, zoom fixes.' },
+    { type: 'news', text: '31 commits. Biggest day yet. Spotify enrichment completed (955 albums). Mobile UI overhaul: sticky search bar, decade nav, zoom fixes.' },
     { type: 'update', text: 'Rankings merged into Record Store welcome view. Artist discography gets sticky nav rail with Latest/First Album buttons. Arrow key behavior refined.' },
-    { type: 'update', text: 'Data Solutions header matched to Merch page. Random year on music page load. Subgenre close button made more visible.' },
+    { type: 'update', text: 'Data Solutions header matched to Merch page. Random year on music page load. Subgenre close button made more visible. Merch added to mobile hamburger menu across all pages.' },
     { type: 'metric', label: 'Spotify Links', value: '955', change: 'albums — enrichment complete' },
   ],
 };
