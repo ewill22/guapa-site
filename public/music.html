@@ -2133,9 +2133,23 @@
             `;
             container.querySelectorAll('.ranking-row').forEach(row => {
                 row.addEventListener('click', () => {
-                    const artist = allRankings.find(a => a.id === row.dataset.artistId);
-                    const rank = filtered.findIndex(a => a.id === row.dataset.artistId) + 1;
-                    if (artist) openArtistPopup(artist, rank);
+                    const rankArtist = allRankings.find(a => a.id === row.dataset.artistId);
+                    if (!rankArtist) return;
+                    const genreId = rankArtist.genres[0];
+                    const subId = rankArtist.subgenres[0];
+                    const genre = musicData[genreId];
+                    if (!genre) return;
+                    const sub = genre.subgenres[subId];
+                    if (!sub) return;
+                    const artistObj = Object.values(sub.artists).find(a => a.name === rankArtist.name);
+                    if (artistObj) {
+                        activeFilter = genreId;
+                        selectedGenre = genreId;
+                        selectedSubgenre = subId;
+                        renderGenreTabs();
+                        renderGenreGroups();
+                        showDiscography(artistObj, genreId, subId);
+                    }
                 });
             });
         }
@@ -2189,10 +2203,23 @@
             // Add click handlers
             rankingsList.querySelectorAll('.ranking-row').forEach(row => {
                 row.addEventListener('click', () => {
-                    const artistId = row.dataset.artistId;
-                    const artist = allRankings.find(a => a.id === artistId);
-                    const rank = getFilteredRankings().findIndex(a => a.id === artistId) + 1;
-                    if (artist) openArtistPopup(artist, rank);
+                    const rankArtist = allRankings.find(a => a.id === row.dataset.artistId);
+                    if (!rankArtist) return;
+                    const genreId = rankArtist.genres[0];
+                    const subId = rankArtist.subgenres[0];
+                    const genre = musicData[genreId];
+                    if (!genre) return;
+                    const sub = genre.subgenres[subId];
+                    if (!sub) return;
+                    const artistObj = Object.values(sub.artists).find(a => a.name === rankArtist.name);
+                    if (artistObj) {
+                        activeFilter = genreId;
+                        selectedGenre = genreId;
+                        selectedSubgenre = subId;
+                        renderGenreTabs();
+                        renderGenreGroups();
+                        showDiscography(artistObj, genreId, subId);
+                    }
                 });
             });
         }
