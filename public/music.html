@@ -330,6 +330,17 @@
             color: var(--gray-500);
         }
 
+        .welcome-year {
+            position: absolute;
+            top: 28px;
+            right: 28px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--yellow);
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
         .welcome-rankings {
             margin-top: 16px;
         }
@@ -344,6 +355,7 @@
         @media (max-width: 768px) {
             .welcome-container { padding: 20px 16px; }
             .welcome-stats { gap: 16px; }
+            .welcome-year { top: 18px; right: 16px; font-size: 2rem; }
         }
 
         /* Artist Panel */
@@ -1781,7 +1793,8 @@
             // Welcome view when no genre selected — stats + rankings merged
             if (!activeFilter) {
                 genreGroups.innerHTML = `
-                    <div class="welcome-container">
+                    <div class="welcome-container" style="position: relative;">
+                        <span class="welcome-year">${currentYear}</span>
                         <div class="welcome-text">
                             <h2 class="welcome-title">The Record Store</h2>
                             <p class="welcome-subtitle">Browse ${Object.keys(musicData).length} genres spanning ${MAX_YEAR - MIN_YEAR + 1} years of music history. Pick a genre above to explore its subgenres, artists, and full discographies.</p>
@@ -2123,13 +2136,14 @@
         }
 
         function renderRankings() {
-            // In welcome view, rankings are rendered inline — hide standalone section
+            // Rankings only show in welcome view (inline) — hide standalone section always
             if (!activeFilter) {
                 document.getElementById('rankingsSection').style.display = 'none';
                 renderWelcomeRankings();
                 return;
             }
-            document.getElementById('rankingsSection').style.display = 'block';
+            // Genre selected — hide rankings entirely
+            document.getElementById('rankingsSection').style.display = 'none';
 
             const filtered = getFilteredRankings();
 
