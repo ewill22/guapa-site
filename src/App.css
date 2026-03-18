@@ -24,6 +24,12 @@
   letter-spacing: -0.02em; line-height: 1; margin: 0;
   min-width: 120px; transition: color 0.3s; text-align: center;
 }
+.dev-date {
+  display: block; text-align: center;
+  font-size: 0.65rem; font-weight: 600;
+  color: var(--gray-500); letter-spacing: 0.05em;
+  margin-top: 4px;
+}
 
 /* Year Arrows */
 .year-arrow {

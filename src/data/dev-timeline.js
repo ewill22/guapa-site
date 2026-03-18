@@ -1,0 +1,74 @@
+// Dev Timeline — commit activity and daily summaries across all Guapa repos
+// First commit: 2026-02-19 (guapa-data), first site commit: 2026-02-28
+// Update this file as development continues
+
+export const DEV_FIRST_DATE = '2026-02-19';
+
+// Combined commit counts per day (guapa-site + guapa-data)
+export const DEV_COMMITS = {
+  '2026-02-19': 1,
+  '2026-02-21': 3,
+  '2026-02-22': 8,
+  '2026-02-28': 6,
+  '2026-03-01': 19,
+  '2026-03-10': 4,
+  '2026-03-11': 10,
+  '2026-03-12': 1,
+  '2026-03-14': 8,
+  '2026-03-15': 17,
+  '2026-03-16': 4,
+  '2026-03-17': 28,
+};
+
+// Daily summaries — what got done each active day
+export const DEV_BLURBS = {
+  '2026-02-19': [
+    { type: 'update', text: 'Day 0. Initial repo setup for guapa-data. The backend begins.' },
+  ],
+  '2026-02-21': [
+    { type: 'update', text: 'Built the Atlantic County GDB ingestion pipeline. FastAPI parcel map API and Leaflet frontend stood up.' },
+  ],
+  '2026-02-22': [
+    { type: 'update', text: 'Big data day. SR1A sales records pipeline built. Address search with FULLTEXT index, address/lot view toggle, abbreviation expansion. 8 commits.' },
+    { type: 'metric', label: 'Parcels Loaded', value: '173K+', change: 'Atlantic County polygons' },
+  ],
+  '2026-02-28': [
+    { type: 'news', text: 'Guapa site goes live. Vite + React migration, GitHub Pages deployment, coffeeshop page. The front door opens.' },
+    { type: 'metric', label: 'Commits', value: '6', change: 'First day of the site' },
+  ],
+  '2026-03-01': [
+    { type: 'update', text: '19 commits. Added Data Solutions page, Formspree lead form, newspaper-style front page. Stripped the ticker bar. Unified branding across all pages.' },
+    { type: 'news', text: 'Merch page launched. Footer logo standardized. Nav consistency achieved across all pages.' },
+  ],
+  '2026-03-10': [
+    { type: 'update', text: 'Shared design tokens published as guapa-base.css. Data Solutions card polish. Guapa RE link added.' },
+    { type: 'update', text: 'Real estate: added 5-mile comp radius with map circle visualization.' },
+  ],
+  '2026-03-11': [
+    { type: 'news', text: 'The Music page gets its soul. Timeline simplified to lens selector + blurbs. Artist discography section replaces blog posts. Deep linking from main page wired up.' },
+    { type: 'metric', label: 'Commits', value: '10', change: 'Biggest music page day yet' },
+  ],
+  '2026-03-12': [
+    { type: 'update', text: 'CLAUDE.md updated to reflect the full project state. Documentation day.' },
+  ],
+  '2026-03-14': [
+    { type: 'update', text: 'Music API integration with static catalog fallback for GitHub Pages. Real album art in rankings popup. Amazon affiliate links wired up.' },
+    { type: 'news', text: 'Genre layout pivoted from sidebar to horizontal tabs with subgenres flowing downward. Dynamic rankings built from musicData.' },
+    { type: 'metric', label: 'Catalog', value: '66', change: 'artists with real discography data' },
+  ],
+  '2026-03-15': [
+    { type: 'news', text: 'The catalog explodes. Song search added. MusicBrainz Wikipedia URLs and Spotify links enriched at build time. Welcome view added as default landing.' },
+    { type: 'metric', label: 'Artists', value: '144', change: 'Complete editorial catalog' },
+    { type: 'metric', label: 'Wiki URLs', value: '297', change: 'albums with verified Wikipedia links' },
+  ],
+  '2026-03-16': [
+    { type: 'update', text: 'Spotify enrichment scaled up with batch processing and rate limit detection. 367 album Spotify URLs added via build-time enrichment.' },
+    { type: 'metric', label: 'Spotify Links', value: '367', change: 'albums enriched' },
+  ],
+  '2026-03-17': [
+    { type: 'news', text: '28 commits. Biggest day yet. Spotify enrichment completed (955 albums). Mobile UI overhaul: sticky search bar, decade nav, zoom fixes.' },
+    { type: 'update', text: 'Rankings merged into Record Store welcome view. Artist discography gets sticky nav rail with Latest/First Album buttons. Arrow key behavior refined.' },
+    { type: 'update', text: 'Data Solutions header matched to Merch page. Random year on music page load. Subgenre close button made more visible.' },
+    { type: 'metric', label: 'Spotify Links', value: '955', change: 'albums — enrichment complete' },
+  ],
+};
