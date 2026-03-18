@@ -2248,7 +2248,7 @@
             if (e.target === artistPopupOverlay) closeArtistPopup();
         });
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') { closeArtistPopup(); closeArtistPanel(); }
+            if (e.key === 'Escape') { closeArtistPopup(); closeArtistPanel(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
             // Disable arrow keys when viewing a subgenre/artist or discography
             if (selectedSubgenre || discoSection.style.display === 'block') return;
