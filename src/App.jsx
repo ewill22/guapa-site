@@ -129,13 +129,16 @@ export default function App() {
             {isGuapa ? (
               <>
                 {/* Dev Timeline — daily commit activity */}
+                <div className="timeline-section-header">Building Guapa — Commit Activity</div>
                 <div className="timeline-header">
-                  <button className="year-arrow" onClick={() => navDev(-1)} aria-label="Previous day">&larr;</button>
-                  <div className="year-display">
-                    <h2 style={{ color: lc }}>Day {devDay + 1}</h2>
-                    <span className="dev-date">{DEV_DAYS[devDay]?.date}</span>
+                  <div className="timeline-nav-row">
+                    <button className="year-arrow" onClick={() => navDev(-1)} aria-label="Previous day">&larr;</button>
+                    <div className="year-display">
+                      <h2 style={{ color: lc }}>Day {devDay + 1}</h2>
+                      <span className="dev-date">{DEV_DAYS[devDay]?.date}</span>
+                    </div>
+                    <button className="year-arrow" onClick={() => navDev(1)} aria-label="Next day">&rarr;</button>
                   </div>
-                  <button className="year-arrow" onClick={() => navDev(1)} aria-label="Next day">&rarr;</button>
                   <div className="event-bars">
                     {devBars.map(b => (
                       <div key={b.index}
