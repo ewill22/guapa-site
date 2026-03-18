@@ -1799,8 +1799,7 @@
             // Welcome view when no genre selected — stats + rankings merged
             if (!activeFilter) {
                 genreGroups.innerHTML = `
-                    <div class="welcome-container" style="position: relative;">
-                        <span class="welcome-year">${currentYear}</span>
+                    <div class="welcome-container">
                         <div class="welcome-text">
                             <h2 class="welcome-title">The Record Store</h2>
                             <p class="welcome-subtitle">Browse ${Object.keys(musicData).length} genres spanning ${MAX_YEAR - MIN_YEAR + 1} years of music history. Pick a genre above to explore its subgenres, artists, and full discographies.</p>
@@ -2473,6 +2472,7 @@
             yearSlider.value = randomYear;
             currentYear = randomYear;
             currentYearDisplay.textContent = currentYear;
+            rankingsYearFilter = currentYear;
         }
 
         // Initial render
