@@ -16,7 +16,7 @@
     padding: var(--space-xs) var(--space-md);
     border-bottom: 1px solid var(--gray-800);
     position: sticky;
-    top: 50px;
+    top: 69px;
     z-index: 50;
     background: var(--black);
 }
