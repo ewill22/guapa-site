@@ -230,7 +230,7 @@
 
 .disco-nav-rail {
     position: sticky;
-    top: 120px;
+    top: 130px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -283,7 +283,7 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     transition: border-color 0.2s;
-    scroll-margin-top: 160px;
+    scroll-margin-top: 130px;
 }
 
 .disco-album:hover {
