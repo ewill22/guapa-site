@@ -2449,12 +2449,12 @@
                 // Try partial match
                 const partial = searchIndex.find(item => item.name.toLowerCase().includes(q));
                 if (!partial) return false;
-                return activateArtist(partial);
+                return activateArtist(partial, params);
             }
-            return activateArtist(match);
+            return activateArtist(match, params);
         }
 
-        function activateArtist(match) {
+        function activateArtist(match, params = null) {
             // Find the specific artist object and their latest album year
             let targetYear = match.year;
             let artistObj = null;
@@ -2485,7 +2485,7 @@
             renderGenreGroups();
 
             // Also open the discography for this specific artist
-            const albumQuery = params.get('album');
+            const albumQuery = params ? params.get('album') : null;
             if (artistObj) {
                 setTimeout(async () => {
                     await showDiscography(artistObj, match.genreId, match.subId);
