@@ -336,58 +336,36 @@ export default function App() {
             {/* Top row: KPI tiles (left) + Timeline (right) */}
             <div className="counter-top">
 
-              {/* KPI Tiles — stacked vertically */}
+              {/* KPI Tiles — stacked vertically: Artist, Album, Song */}
               <div className="counter-tiles">
                 <a href={dailyArtist ? `${base}${dailyArtist.artistUrl}` : '#'} className="kpi-tile kpi-tile--artist">
                   <span className="kpi-label">Artist of the Day{dailyArtist?.isThrowback ? ' — Throwback' : ''}</span>
                   <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
                   {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
                 </a>
-                {nowPlaying && !nowPlaying.auxCord ? (
-                  <>
-                    <a href={`${base}${nowPlaying.albumUrl}`} className="kpi-tile kpi-tile--album">
-                      <span className="kpi-label">Now Playing — {nowPlaying.album}</span>
-                      <span className="kpi-value">{nowPlaying.song}</span>
-                      <span className="kpi-sub">Track {nowPlaying.trackNum} — {nowPlaying.year}</span>
-                      <div className="kpi-progress">
-                        <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
-                      </div>
-                    </a>
-                    <div className="kpi-tile kpi-tile--song">
-                      <span className="kpi-label">Up Next</span>
-                      <span className="kpi-value">{
-                        (() => {
-                          const idx = dailyArtist.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
-                          const next = dailyArtist.schedule[idx + 1];
-                          return next ? next.song : 'Aux Cord';
-                        })()
-                      }</span>
-                    </div>
-                  </>
-                ) : nowPlaying?.auxCord ? (
-                  <>
-                    <div className="kpi-tile kpi-tile--aux">
-                      <span className="kpi-label">Discography Complete</span>
-                      <span className="kpi-value kpi-value--aux">Aux Cord is Open</span>
-                      <span className="kpi-sub">Pick an album to play</span>
-                    </div>
-                    <div className="kpi-tile kpi-tile--song">
-                      <span className="kpi-label">Finished at</span>
-                      <span className="kpi-value">{Math.floor(nowPlaying.finishedAtMs / 3600000)}h {Math.floor((nowPlaying.finishedAtMs % 3600000) / 60000)}m</span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="kpi-tile kpi-tile--album">
-                      <span className="kpi-label">Album of the Day</span>
-                      <span className="kpi-value">...</span>
-                    </div>
-                    <div className="kpi-tile kpi-tile--song">
+                <a href={nowPlaying && !nowPlaying.auxCord ? `${base}${nowPlaying.albumUrl}` : '#'} className="kpi-tile kpi-tile--album">
+                  <span className="kpi-label">{nowPlaying && !nowPlaying.auxCord ? nowPlaying.album : 'Album'}</span>
+                  <span className="kpi-value">{nowPlaying && !nowPlaying.auxCord ? `Track ${nowPlaying.trackNum}` : '...'}</span>
+                  {nowPlaying && !nowPlaying.auxCord && <span className="kpi-sub">{nowPlaying.year}</span>}
+                </a>
+                <div className="kpi-tile kpi-tile--song">
+                  {nowPlaying?.auxCord ? (
+                    <>
+                      <span className="kpi-label">Aux Cord</span>
+                      <span className="kpi-value kpi-value--aux">Open</span>
+                    </>
+                  ) : (
+                    <>
                       <span className="kpi-label">Now Playing</span>
-                      <span className="kpi-value">...</span>
-                    </div>
-                  </>
-                )}
+                      <span className="kpi-value">{nowPlaying?.song || '...'}</span>
+                      {nowPlaying && (
+                        <div className="kpi-progress">
+                          <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
 
               {/* Timeline — shifted right */}
@@ -499,6 +477,16 @@ export default function App() {
                     ))}
                   </div>
                 </div>
+                {/* Up Next — tucked under the timeline */}
+                {nowPlaying && !nowPlaying.auxCord && dailyArtist && (
+                  <div className="up-next">
+                    up next: {(() => {
+                      const idx = dailyArtist.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
+                      const next = dailyArtist.schedule[idx + 1];
+                      return next ? `${next.song} — ${next.album}` : 'Aux Cord';
+                    })()}
+                  </div>
+                )}
               </div>
 
             </div>
