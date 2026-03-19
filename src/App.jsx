@@ -350,9 +350,8 @@ export default function App() {
                       <span className="kpi-label">Discography wrapped</span>
                       <span className="kpi-value kpi-value--aux">Aux Cord is Open</span>
                     </div>
-                    <div className="kpi-tile kpi-tile--song">
-                      <span className="kpi-label">Pick an album</span>
-                      <span className="kpi-value" style={{ color: 'var(--gray-600)' }}>Waiting for someone...</span>
+                    <div className="kpi-tile kpi-tile--song kpi-tile--aux-logo">
+                      <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="kpi-aux-logo" />
                     </div>
                   </>
                 ) : nowPlaying?.waiting ? (

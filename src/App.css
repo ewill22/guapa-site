@@ -126,6 +126,16 @@
   font-style: italic;
 }
 
+/* Aux cord logo */
+.kpi-tile--aux-logo {
+  align-items: center;
+  justify-content: center;
+}
+.kpi-aux-logo {
+  height: 24px;
+  opacity: 0.3;
+}
+
 /* Track progress bar */
 .kpi-progress {
   width: 100%;
