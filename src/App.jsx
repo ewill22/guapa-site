@@ -159,9 +159,9 @@ export default function App() {
     const startStr = weekStart.toISOString().slice(0, 10);
     const endStr = weekEnd.toISOString().slice(0, 10);
 
-    // Gather all days in this week that have blurbs
+    // Gather all days in this week that have blurbs (newest first)
     const entries = [];
-    Object.keys(DEV_BLURBS).sort().forEach(date => {
+    Object.keys(DEV_BLURBS).sort().reverse().forEach(date => {
       if (date >= startStr && date <= endStr) {
         entries.push({ date, blurbs: DEV_BLURBS[date] });
       }
