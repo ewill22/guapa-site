@@ -2314,7 +2314,7 @@
             const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
 
             return `
-                <div class="disco-album ${isLatest ? 'disco-album--latest' : ''}">
+                <div class="disco-album ${isLatest ? 'disco-album--latest' : ''}" data-album-title="${(album.title || '').toLowerCase()}">
                     <div class="disco-album-header">
                         <div class="disco-album-art" style="${artStyle}"></div>
                         <div class="disco-album-info">
@@ -2485,9 +2485,22 @@
             renderGenreGroups();
 
             // Also open the discography for this specific artist
+            const albumQuery = params.get('album');
             if (artistObj) {
-                setTimeout(() => {
-                    showDiscography(artistObj, match.genreId, match.subId);
+                setTimeout(async () => {
+                    await showDiscography(artistObj, match.genreId, match.subId);
+                    // If album param provided, scroll to that specific album
+                    if (albumQuery) {
+                        const q = albumQuery.toLowerCase();
+                        setTimeout(() => {
+                            const albumCard = discoList.querySelector(`[data-album-title="${CSS.escape(q)}"]`);
+                            if (albumCard) {
+                                scrollToAlbum(albumCard);
+                                albumCard.style.outline = '1px solid var(--yellow)';
+                                setTimeout(() => { albumCard.style.outline = ''; }, 3000);
+                            }
+                        }, 300);
+                    }
                 }, 150);
             } else {
                 setTimeout(() => {

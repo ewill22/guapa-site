@@ -74,6 +74,7 @@ function getDailyPick(catalog) {
     cover: album.cover_art_small,
     year: album.release_year,
     artistUrl: `music.html?artist=${encodeURIComponent(artist.name)}`,
+    albumUrl: `music.html?artist=${encodeURIComponent(artist.name)}&album=${encodeURIComponent(album.title)}`,
   };
 }
 
@@ -186,7 +187,7 @@ export default function App() {
                   <span className="kpi-label">Artist of the Day</span>
                   <span className="kpi-value">{dailyPick?.artist || '...'}</span>
                 </a>
-                <a href={dailyPick ? `${base}${dailyPick.artistUrl}` : '#'} className="kpi-tile kpi-tile--album">
+                <a href={dailyPick ? `${base}${dailyPick.albumUrl}` : '#'} className="kpi-tile kpi-tile--album">
                   <span className="kpi-label">Album of the Day</span>
                   <span className="kpi-value">{dailyPick?.album || '...'}</span>
                   {dailyPick?.year && <span className="kpi-sub">{dailyPick.year}</span>}
