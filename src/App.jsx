@@ -119,7 +119,7 @@ function getAlbumsForYear(catalog, year) {
 const GUAPA_COLOR = '#f0c014';
 
 export default function App() {
-  const [lens, setLens] = useState('guapa');
+  const [lens, setLens] = useState('music');
   const [year, setYear] = useState(2026);
   const [devDay, setDevDay] = useState(DEV_DAYS.length - 1);
   const [catalog, setCatalog] = useState(null);
