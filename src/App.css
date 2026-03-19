@@ -315,8 +315,8 @@
 }
 .album-tiles-grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: var(--space-sm);
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px;
 }
 .album-tile {
   display: flex;
@@ -344,21 +344,21 @@
   border-color: var(--pink);
 }
 .album-tile-no-art {
-  font-size: 1.4rem;
+  font-size: 0.9rem;
   font-weight: 700;
   color: var(--gray-600);
 }
 .album-tile-title {
-  font-size: 0.72rem;
+  font-size: 0.6rem;
   font-weight: 600;
   color: var(--white);
-  line-height: 1.3;
+  line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .album-tile-artist {
-  font-size: 0.65rem;
+  font-size: 0.55rem;
   color: var(--gray-500);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -521,7 +521,7 @@
     border-bottom: 1px solid var(--gray-800);
   }
   .album-tiles-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(8, 1fr);
   }
 }
 
@@ -534,7 +534,7 @@
     flex-direction: column;
   }
   .album-tiles-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(6, 1fr);
   }
   .timeline-header { flex-wrap: wrap; gap: var(--space-sm); }
   .timeline-nav-row { gap: 10px; }
