@@ -69,33 +69,7 @@ function getDailyArtist(catalog) {
 
   // Alternate days: even seed = throwback, odd = modern
   const pool = (seed % 2 === 0 && throwback.length) ? throwback : (modern.length ? modern : artists);
-
-  // Pick an artist whose discography fills at least 20 hours
-  // Try preferred pool first, then fall back to all artists
-  const MIN_RUNTIME_MS = 20 * 3600 * 1000; // 20 hours
-  let artist = null;
-  const pools = [pool, artists]; // try preferred pool, then everyone
-  for (const p of pools) {
-    if (artist) break;
-    for (let attempt = 0; attempt < p.length; attempt++) {
-      const candidate = p[(seed + attempt) % p.length];
-      const totalMs = (candidate.albums || []).reduce((sum, alb) =>
-        sum + (alb.tracks || []).reduce((s, t) => s + (t.duration_ms || 210000), 0), 0);
-      if (totalMs >= MIN_RUNTIME_MS) {
-        artist = candidate;
-        break;
-      }
-    }
-  }
-  // Last resort: longest catalog overall
-  if (!artist) {
-    let bestMs = 0;
-    for (const a of artists) {
-      const ms = (a.albums || []).reduce((sum, alb) =>
-        sum + (alb.tracks || []).reduce((s, t) => s + (t.duration_ms || 210000), 0), 0);
-      if (ms > bestMs) { bestMs = ms; artist = a; }
-    }
-  }
+  const artist = pool[seed % pool.length];
 
   // Build chronological playback schedule from full discography
   const albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
@@ -132,12 +106,18 @@ function getDailyArtist(catalog) {
   };
 }
 
-// Find what's currently playing based on time of day
+// Find what's currently playing based on time of day (starts 8am EST)
+const PLAYBACK_START_UTC_HOUR = 13; // 8am EST = 13:00 UTC
+
 function getNowPlaying(dailyArtist) {
   if (!dailyArtist || !dailyArtist.schedule.length) return null;
   const now = new Date();
-  const midnightMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  const elapsedMs = now.getTime() - midnightMs;
+  const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), PLAYBACK_START_UTC_HOUR));
+  // If it's before 8am EST today, nothing playing yet
+  if (now.getTime() < todayStart.getTime()) {
+    return { waiting: true, artist: dailyArtist.artist, artistUrl: dailyArtist.artistUrl };
+  }
+  const elapsedMs = now.getTime() - todayStart.getTime();
 
   if (elapsedMs >= dailyArtist.totalMs) {
     // Discography finished — Aux Cord is open
@@ -343,15 +323,15 @@ export default function App() {
                   <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
                   {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
                 </a>
-                <a href={nowPlaying && !nowPlaying.auxCord ? `${base}${nowPlaying.albumUrl}` : '#'} className="kpi-tile kpi-tile--album kpi-tile--album-art">
-                  {nowPlaying && !nowPlaying.auxCord && nowPlaying.cover ? (
+                <a href={nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? `${base}${nowPlaying.albumUrl}` : '#'} className="kpi-tile kpi-tile--album kpi-tile--album-art">
+                  {nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting && nowPlaying.cover ? (
                     <div className="kpi-album-art" style={{ backgroundImage: `url(${nowPlaying.cover})` }} />
                   ) : (
                     <div className="kpi-album-art kpi-album-art--empty" />
                   )}
                   <div className="kpi-album-info">
-                    <span className="kpi-label">{nowPlaying && !nowPlaying.auxCord ? nowPlaying.album : 'Album'}</span>
-                    <span className="kpi-sub">{nowPlaying && !nowPlaying.auxCord ? nowPlaying.year : ''}</span>
+                    <span className="kpi-label">{nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? nowPlaying.album : 'Album'}</span>
+                    <span className="kpi-sub">{nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? nowPlaying.year : ''}</span>
                   </div>
                 </a>
                 <div className="kpi-tile kpi-tile--song">
@@ -359,6 +339,11 @@ export default function App() {
                     <>
                       <span className="kpi-label">Aux Cord</span>
                       <span className="kpi-value kpi-value--aux">Open</span>
+                    </>
+                  ) : nowPlaying?.waiting ? (
+                    <>
+                      <span className="kpi-label">Starts at 8am</span>
+                      <span className="kpi-value">...</span>
                     </>
                   ) : (
                     <>
