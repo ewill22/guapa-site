@@ -130,11 +130,13 @@
 .kpi-tile--aux-logo {
   align-items: center;
   justify-content: center;
+  background: transparent;
 }
 .kpi-aux-logo {
   height: 100%;
   max-height: 60px;
   opacity: 0.6;
+  mix-blend-mode: screen;
 }
 
 /* Track progress bar */
