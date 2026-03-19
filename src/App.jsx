@@ -343,10 +343,16 @@ export default function App() {
                   <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
                   {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
                 </a>
-                <a href={nowPlaying && !nowPlaying.auxCord ? `${base}${nowPlaying.albumUrl}` : '#'} className="kpi-tile kpi-tile--album">
-                  <span className="kpi-label">{nowPlaying && !nowPlaying.auxCord ? nowPlaying.album : 'Album'}</span>
-                  <span className="kpi-value">{nowPlaying && !nowPlaying.auxCord ? `Track ${nowPlaying.trackNum}` : '...'}</span>
-                  {nowPlaying && !nowPlaying.auxCord && <span className="kpi-sub">{nowPlaying.year}</span>}
+                <a href={nowPlaying && !nowPlaying.auxCord ? `${base}${nowPlaying.albumUrl}` : '#'} className="kpi-tile kpi-tile--album kpi-tile--album-art">
+                  {nowPlaying && !nowPlaying.auxCord && nowPlaying.cover ? (
+                    <div className="kpi-album-art" style={{ backgroundImage: `url(${nowPlaying.cover})` }} />
+                  ) : (
+                    <div className="kpi-album-art kpi-album-art--empty" />
+                  )}
+                  <div className="kpi-album-info">
+                    <span className="kpi-label">{nowPlaying && !nowPlaying.auxCord ? nowPlaying.album : 'Album'}</span>
+                    <span className="kpi-sub">{nowPlaying && !nowPlaying.auxCord ? nowPlaying.year : ''}</span>
+                  </div>
                 </a>
                 <div className="kpi-tile kpi-tile--song">
                   {nowPlaying?.auxCord ? (

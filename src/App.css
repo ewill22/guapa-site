@@ -83,6 +83,35 @@
 .kpi-tile--song {
   border-left: 2px solid var(--blue);
 }
+/* Album tile with artwork */
+.kpi-tile--album-art {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.kpi-album-art {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: var(--gray-800);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.kpi-album-art--empty {
+  background: var(--gray-800);
+}
+.kpi-album-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.kpi-album-info .kpi-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .kpi-tile--song .kpi-value {
   font-style: italic;
   color: var(--gray-400);
