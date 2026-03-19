@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import Nav from './components/Nav';
 import Banner from './components/Banner';
 import Footer from './components/Footer';
+import GenreExplorer from './components/GenreExplorer';
 import {
   TIMELINE, LENS_COLORS, LENS_ICONS, LENS_LABELS,
   hashStr,
@@ -594,8 +595,13 @@ export default function App() {
                 </div>
               )}
 
-              {/* Text blurbs */}
-              {blurbData ? (
+              {/* Genre Explorer for music lens */}
+              {lens === 'music' && (
+                <GenreExplorer year={year} catalog={catalog} />
+              )}
+
+              {/* Text blurbs for non-music lenses */}
+              {lens !== 'music' && blurbData ? (
                 <>
                   <div className="blurbs-header">
                     {blurbData.year !== year && (
@@ -621,7 +627,7 @@ export default function App() {
                     ))}
                   </div>
                 </>
-              ) : !yearAlbums.length && (
+              ) : lens !== 'music' && !yearAlbums.length && (
                 <div className="blurbs-placeholder">
                   <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="blurbs-placeholder-logo" style={{ filter: `hue-rotate(${hashStr(year + lens) % 360}deg)` }} />
                 </div>

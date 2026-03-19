@@ -1,0 +1,572 @@
+/* ========================================
+   GENRE EXPLORER — React component styles
+   Ported from public/music.html + music.css
+======================================== */
+
+/* Genre Tabs */
+.ge-tabs {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.ge-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.ge-tab {
+  background: transparent;
+  border: 1px solid var(--gray-800);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-family: var(--font-main);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ge-tab:hover {
+  color: var(--white);
+  border-color: var(--gray-600);
+}
+
+.ge-tab.active {
+  color: var(--yellow);
+  border-color: var(--yellow);
+  background: rgba(240, 192, 20, 0.06);
+}
+
+.ge-tab-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.ge-tab-count {
+  font-size: 0.6rem;
+  color: var(--gray-600);
+  font-weight: 500;
+}
+
+.ge-tab.active .ge-tab-count {
+  color: rgba(240, 192, 20, 0.5);
+}
+
+/* Subgenre Grid */
+.ge-subgenres {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.ge-sub {
+  background: transparent;
+  border: 2px solid var(--gray-800);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 10px 12px;
+}
+
+.ge-sub:hover {
+  border-color: var(--pink);
+  background: rgba(232, 160, 176, 0.05);
+}
+
+.ge-sub.active {
+  border-color: var(--pink);
+  background: rgba(232, 160, 176, 0.1);
+}
+
+.ge-sub.rising { border-color: var(--blue, #88a8d4); }
+.ge-sub.peak { border-color: var(--pink); }
+.ge-sub.fading { border-color: var(--gray-800); opacity: 0.5; }
+.ge-sub.emerging { border-color: var(--yellow); border-style: dashed; }
+
+.ge-sub-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ge-sub-icon {
+  font-size: 1rem;
+}
+
+.ge-sub-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-400);
+}
+
+.ge-sub.rising .ge-sub-name { color: var(--blue, #88a8d4); }
+.ge-sub.peak .ge-sub-name { color: var(--pink); }
+.ge-sub.emerging .ge-sub-name { color: var(--yellow); }
+
+.ge-sub-artists {
+  font-size: 0.65rem;
+  color: var(--gray-600);
+  padding-left: 2px;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.ge-sub-artists span::before {
+  content: "\2022  ";
+}
+
+/* Origin Story */
+.ge-origin {
+  border: 1px solid var(--gray-800);
+  border-radius: 8px;
+  padding: 24px;
+  background: var(--gray-900);
+  margin-bottom: 20px;
+}
+
+.ge-origin-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  margin: 0 0 8px;
+}
+
+.ge-origin p {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  line-height: 1.6;
+  margin: 0 0 8px;
+}
+
+.ge-origin-hint {
+  color: var(--yellow);
+  font-size: 0.8rem;
+}
+
+/* Artist Panel */
+.ge-artists {
+  background: var(--gray-900);
+  border: 2px solid var(--pink);
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.ge-artists-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray-800);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--yellow);
+}
+
+.ge-artists-meta {
+  font-size: 0.75rem;
+  color: var(--blue, #88a8d4);
+  margin-left: auto;
+}
+
+.ge-artists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.ge-artist-card {
+  background: transparent;
+  border: 1px solid var(--gray-800);
+  border-radius: 6px;
+  padding: 16px;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.ge-artist-card:hover {
+  border-color: var(--pink);
+}
+
+.ge-artist-card.active {
+  border-color: var(--pink);
+  background: rgba(232, 160, 176, 0.08);
+}
+
+.ge-artist-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ge-artist-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--white);
+  margin: 0 0 4px;
+}
+
+.ge-artist-desc {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin: 0 0 6px;
+  line-height: 1.4;
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.ge-artist-count {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-600);
+}
+
+/* Discography */
+.ge-disco {
+  margin-top: 20px;
+  border-top: 1px solid var(--gray-800);
+  padding-top: 20px;
+}
+
+.ge-disco-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--gray-800);
+}
+
+.ge-disco-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ge-disco-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--yellow);
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+}
+
+.ge-disco-bio {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  line-height: 1.5;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+}
+
+.ge-disco-close {
+  margin-left: auto;
+  background: var(--gray-800);
+  border: 1px solid var(--gray-700);
+  border-radius: 4px;
+  color: var(--white);
+  padding: 6px 14px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.ge-disco-close:hover {
+  background: var(--pink);
+  border-color: var(--pink);
+  color: var(--black);
+}
+
+.ge-disco-loading {
+  color: var(--gray-500);
+  font-size: 0.85rem;
+  padding: 20px 0;
+}
+
+.ge-disco-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Album Card */
+.ge-album {
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.ge-album:hover {
+  border-color: var(--gray-600);
+}
+
+.ge-album--latest {
+  border-color: rgba(240, 192, 20, 0.2);
+}
+
+.ge-album--latest:hover {
+  border-color: rgba(240, 192, 20, 0.4);
+}
+
+.ge-album-header {
+  display: flex;
+  gap: 16px;
+  padding: 16px 16px 12px;
+}
+
+.ge-album-art {
+  width: 90px;
+  height: 90px;
+  background: var(--gray-800);
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid var(--gray-800);
+  background-size: cover;
+  background-position: center;
+}
+
+.ge-album--latest .ge-album-art {
+  border-color: rgba(240, 192, 20, 0.15);
+}
+
+.ge-album-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.ge-album-year {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gray-500);
+}
+
+.ge-album--latest .ge-album-year {
+  color: var(--yellow);
+}
+
+.ge-album-artist {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #88a8d4;
+  letter-spacing: 0.03em;
+}
+
+.ge-album-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--white);
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.ge-album-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+/* Action Links */
+.ge-link {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.ge-link--spotify {
+  color: #1DB954;
+  background: rgba(29, 185, 84, 0.08);
+  border-color: rgba(29, 185, 84, 0.15);
+}
+
+.ge-link--spotify:hover {
+  background: rgba(29, 185, 84, 0.18);
+  border-color: rgba(29, 185, 84, 0.3);
+}
+
+.ge-link--buy {
+  color: var(--pink);
+  background: rgba(232, 160, 176, 0.08);
+  border-color: rgba(232, 160, 176, 0.15);
+}
+
+.ge-link--buy:hover {
+  background: rgba(232, 160, 176, 0.18);
+  border-color: rgba(232, 160, 176, 0.3);
+}
+
+.ge-link--wiki {
+  color: var(--gray-400);
+  background: rgba(156, 163, 175, 0.06);
+  border-color: rgba(156, 163, 175, 0.12);
+}
+
+.ge-link--wiki:hover {
+  background: rgba(156, 163, 175, 0.14);
+  border-color: rgba(156, 163, 175, 0.25);
+}
+
+/* Tracklist */
+.ge-tracklist {
+  padding: 0;
+}
+
+.ge-tracklist-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  margin-bottom: 2px;
+}
+
+.ge-tracklist-header span {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-600);
+}
+
+.ge-th-num { width: 28px; text-align: right; }
+.ge-th-title { flex: 1; }
+.ge-th-dur { width: 44px; text-align: right; }
+
+.ge-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 16px;
+  transition: background 0.15s;
+}
+
+.ge-track:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ge-track:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.ge-track-num {
+  font-size: 0.72rem;
+  color: var(--gray-600);
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.ge-track-title {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ge-track:hover .ge-track-title {
+  color: var(--white);
+}
+
+.ge-track-play {
+  color: #1DB954;
+  text-decoration: none;
+  margin-left: 6px;
+  font-size: 0.7rem;
+}
+
+.ge-track-dur {
+  font-size: 0.72rem;
+  color: var(--gray-600);
+  width: 44px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ge-tabs {
+    gap: 4px;
+  }
+
+  .ge-tab {
+    padding: 5px 10px;
+    font-size: 0.65rem;
+  }
+
+  .ge-tab-count {
+    display: none;
+  }
+
+  .ge-subgenres {
+    grid-template-columns: 1fr;
+  }
+
+  .ge-album-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ge-album-art {
+    width: 60px;
+    height: 60px;
+  }
+
+  .ge-artists-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ge-artists-meta {
+    margin-left: 0;
+  }
+
+  .ge-disco-header {
+    flex-direction: column;
+  }
+}
