@@ -69,7 +69,28 @@ function getDailyArtist(catalog) {
 
   // Alternate days: even seed = throwback, odd = modern
   const pool = (seed % 2 === 0 && throwback.length) ? throwback : (modern.length ? modern : artists);
-  const artist = pool[seed % pool.length];
+
+  // Pick an artist whose discography fills at least 20 hours
+  // Try multiple seeds, fall back to longest catalog if none qualifies
+  const MIN_RUNTIME_MS = 20 * 3600 * 1000; // 20 hours
+  let artist = null;
+  for (let attempt = 0; attempt < pool.length; attempt++) {
+    const candidate = pool[(seed + attempt) % pool.length];
+    const totalMs = (candidate.albums || []).reduce((sum, alb) =>
+      sum + (alb.tracks || []).reduce((s, t) => s + (t.duration_ms || 210000), 0), 0);
+    if (totalMs >= MIN_RUNTIME_MS) {
+      artist = candidate;
+      break;
+    }
+  }
+  // Fallback: pick the artist with the longest catalog from the pool
+  if (!artist) {
+    artist = pool.reduce((best, a) => {
+      const ms = (a.albums || []).reduce((sum, alb) =>
+        sum + (alb.tracks || []).reduce((s, t) => s + (t.duration_ms || 210000), 0), 0);
+      return ms > best.ms ? { ...a, ms } : best;
+    }, { ms: 0, ...pool[0] });
+  }
 
   // Build chronological playback schedule from full discography
   const albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
