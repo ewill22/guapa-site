@@ -55,27 +55,89 @@ function getBlurbs(lens, year) {
   return null;
 }
 
-// Pick a random artist/album/song from the music catalog (seeded by date so it changes daily)
-function getDailyPick(catalog) {
-  const artists = Object.values(catalog);
+// Pick the daily artist and build a full playback schedule
+// Alternates between modern (2000+) and throwback (<2000) artists by day
+function getDailyArtist(catalog) {
+  const artists = Object.values(catalog).filter(a => a.albums && a.albums.length > 0);
   if (!artists.length) return null;
   const today = new Date().toISOString().slice(0, 10);
   const seed = hashStr(today);
-  const artist = artists[seed % artists.length];
-  const albums = artist.albums || [];
-  if (!albums.length) return { artist: artist.name, album: null, song: null, cover: null };
-  const album = albums[hashStr(today + 'album') % albums.length];
-  const tracks = album.tracks || [];
-  const song = tracks.length ? tracks[hashStr(today + 'song') % tracks.length] : null;
+
+  // Split into modern vs throwback based on begin_year
+  const modern = artists.filter(a => (a.begin_year || 2000) >= 2000);
+  const throwback = artists.filter(a => (a.begin_year || 2000) < 2000);
+
+  // Alternate days: even seed = throwback, odd = modern
+  const pool = (seed % 2 === 0 && throwback.length) ? throwback : (modern.length ? modern : artists);
+  const artist = pool[seed % pool.length];
+
+  // Build chronological playback schedule from full discography
+  const albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
+  const schedule = [];
+  let elapsed = 0;
+  for (const album of albums) {
+    const tracks = album.tracks || [];
+    for (const track of tracks) {
+      const dur = track.duration_ms || 210000; // default ~3.5min
+      schedule.push({
+        artist: artist.name,
+        album: album.title,
+        song: track.title,
+        trackNum: track.track_number,
+        cover: album.cover_art_small || album.cover_art_large,
+        year: album.release_year,
+        durationMs: dur,
+        startMs: elapsed,
+        artistUrl: `music.html?artist=${encodeURIComponent(artist.name)}`,
+        albumUrl: `music.html?artist=${encodeURIComponent(artist.name)}&album=${encodeURIComponent(album.title)}`,
+      });
+      elapsed += dur;
+    }
+  }
+
   return {
     artist: artist.name,
-    album: album.title,
-    song: song ? song.title : null,
-    cover: album.cover_art_small,
-    year: album.release_year,
     artistUrl: `music.html?artist=${encodeURIComponent(artist.name)}`,
-    albumUrl: `music.html?artist=${encodeURIComponent(artist.name)}&album=${encodeURIComponent(album.title)}`,
+    totalMs: elapsed,
+    totalTracks: schedule.length,
+    albumCount: albums.length,
+    schedule,
+    isThrowback: pool === throwback,
   };
+}
+
+// Find what's currently playing based on time of day
+function getNowPlaying(dailyArtist) {
+  if (!dailyArtist || !dailyArtist.schedule.length) return null;
+  const now = new Date();
+  const midnightMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const elapsedMs = now.getTime() - midnightMs;
+
+  if (elapsedMs >= dailyArtist.totalMs) {
+    // Discography finished — Aux Cord is open
+    return {
+      auxCord: true,
+      artist: dailyArtist.artist,
+      artistUrl: dailyArtist.artistUrl,
+      finishedAtMs: dailyArtist.totalMs,
+    };
+  }
+
+  // Find current track
+  for (let i = dailyArtist.schedule.length - 1; i >= 0; i--) {
+    if (elapsedMs >= dailyArtist.schedule[i].startMs) {
+      const track = dailyArtist.schedule[i];
+      const trackElapsed = elapsedMs - track.startMs;
+      const progress = Math.min(trackElapsed / track.durationMs, 1);
+      return {
+        auxCord: false,
+        ...track,
+        progress,
+        trackElapsedMs: trackElapsed,
+      };
+    }
+  }
+  return { auxCord: false, ...dailyArtist.schedule[0], progress: 0, trackElapsedMs: 0 };
 }
 
 // Coffee beans of the moment — rotates daily
@@ -136,9 +198,20 @@ export default function App() {
       .catch(() => {});
   }, [base]);
 
-  const dailyPick = useMemo(() => catalog ? getDailyPick(catalog) : null, [catalog]);
+  const dailyArtist = useMemo(() => catalog ? getDailyArtist(catalog) : null, [catalog]);
+  const [nowPlaying, setNowPlaying] = useState(null);
   const dailyBean = useMemo(() => getDailyBean(), []);
   const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year), [catalog, year]);
+
+  // Tick now playing every 5 seconds
+  useEffect(() => {
+    if (!dailyArtist) return;
+    setNowPlaying(getNowPlaying(dailyArtist));
+    const interval = setInterval(() => {
+      setNowPlaying(getNowPlaying(dailyArtist));
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [dailyArtist]);
 
   // Dev timeline bars — commit counts per day
   const devBars = useMemo(() => {
@@ -239,19 +312,56 @@ export default function App() {
 
               {/* KPI Tiles — stacked vertically */}
               <div className="counter-tiles">
-                <a href={dailyPick ? `${base}${dailyPick.artistUrl}` : '#'} className="kpi-tile kpi-tile--artist">
-                  <span className="kpi-label">Artist of the Day</span>
-                  <span className="kpi-value">{dailyPick?.artist || '...'}</span>
+                <a href={dailyArtist ? `${base}${dailyArtist.artistUrl}` : '#'} className="kpi-tile kpi-tile--artist">
+                  <span className="kpi-label">Artist of the Day{dailyArtist?.isThrowback ? ' — Throwback' : ''}</span>
+                  <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
+                  {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
                 </a>
-                <a href={dailyPick ? `${base}${dailyPick.albumUrl}` : '#'} className="kpi-tile kpi-tile--album">
-                  <span className="kpi-label">Album of the Day</span>
-                  <span className="kpi-value">{dailyPick?.album || '...'}</span>
-                  {dailyPick?.year && <span className="kpi-sub">{dailyPick.year}</span>}
-                </a>
-                <div className="kpi-tile kpi-tile--song">
-                  <span className="kpi-label">Now Playing</span>
-                  <span className="kpi-value">{dailyPick?.song || '...'}</span>
-                </div>
+                {nowPlaying && !nowPlaying.auxCord ? (
+                  <>
+                    <a href={`${base}${nowPlaying.albumUrl}`} className="kpi-tile kpi-tile--album">
+                      <span className="kpi-label">Now Playing — {nowPlaying.album}</span>
+                      <span className="kpi-value">{nowPlaying.song}</span>
+                      <span className="kpi-sub">Track {nowPlaying.trackNum} — {nowPlaying.year}</span>
+                      <div className="kpi-progress">
+                        <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
+                      </div>
+                    </a>
+                    <div className="kpi-tile kpi-tile--song">
+                      <span className="kpi-label">Up Next</span>
+                      <span className="kpi-value">{
+                        (() => {
+                          const idx = dailyArtist.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
+                          const next = dailyArtist.schedule[idx + 1];
+                          return next ? next.song : 'Aux Cord';
+                        })()
+                      }</span>
+                    </div>
+                  </>
+                ) : nowPlaying?.auxCord ? (
+                  <>
+                    <div className="kpi-tile kpi-tile--aux">
+                      <span className="kpi-label">Discography Complete</span>
+                      <span className="kpi-value kpi-value--aux">Aux Cord is Open</span>
+                      <span className="kpi-sub">Pick an album to play</span>
+                    </div>
+                    <div className="kpi-tile kpi-tile--song">
+                      <span className="kpi-label">Finished at</span>
+                      <span className="kpi-value">{Math.floor(nowPlaying.finishedAtMs / 3600000)}h {Math.floor((nowPlaying.finishedAtMs % 3600000) / 60000)}m</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="kpi-tile kpi-tile--album">
+                      <span className="kpi-label">Album of the Day</span>
+                      <span className="kpi-value">...</span>
+                    </div>
+                    <div className="kpi-tile kpi-tile--song">
+                      <span className="kpi-label">Now Playing</span>
+                      <span className="kpi-value">...</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Timeline — shifted right */}
