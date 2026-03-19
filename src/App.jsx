@@ -186,11 +186,11 @@ export default function App() {
                   <span className="kpi-label">Artist of the Day</span>
                   <span className="kpi-value">{dailyPick?.artist || '...'}</span>
                 </a>
-                <div className="kpi-tile kpi-tile--album">
+                <a href={dailyPick ? `${base}${dailyPick.artistUrl}` : '#'} className="kpi-tile kpi-tile--album">
                   <span className="kpi-label">Album of the Day</span>
                   <span className="kpi-value">{dailyPick?.album || '...'}</span>
                   {dailyPick?.year && <span className="kpi-sub">{dailyPick.year}</span>}
-                </div>
+                </a>
                 <div className="kpi-tile kpi-tile--song">
                   <span className="kpi-label">Now Playing</span>
                   <span className="kpi-value">{dailyPick?.song || '...'}</span>
