@@ -314,14 +314,12 @@
   color: var(--gray-600);
 }
 .album-tiles-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 .album-tile {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  width: 72px;
   text-decoration: none;
   transition: transform 0.2s ease;
 }
@@ -330,8 +328,8 @@
   z-index: 2;
 }
 .album-tile-art {
-  width: 100%;
-  aspect-ratio: 1;
+  width: 72px;
+  height: 72px;
   border-radius: var(--radius-sm);
   background: var(--gray-800);
   background-size: cover;
@@ -342,7 +340,6 @@
   border: 1px solid var(--gray-800);
   transition: border-color 0.2s;
   overflow: hidden;
-  flex-shrink: 0;
 }
 .album-tile:hover .album-tile-art {
   border-color: var(--pink);
@@ -353,20 +350,25 @@
   color: var(--gray-600);
 }
 .album-tile-title {
-  font-size: 0.6rem;
+  display: block;
+  margin-top: 3px;
+  font-size: 0.55rem;
   font-weight: 600;
   color: var(--white);
   line-height: 1.2;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 72px;
 }
 .album-tile-artist {
-  font-size: 0.55rem;
+  display: block;
+  font-size: 0.5rem;
   color: var(--gray-500);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 72px;
 }
 
 /* Blurbs Placeholder */
@@ -524,9 +526,6 @@
     border-right: none;
     border-bottom: 1px solid var(--gray-800);
   }
-  .album-tiles-grid {
-    grid-template-columns: repeat(8, 1fr);
-  }
 }
 
 @media (max-width: 768px) {
@@ -536,9 +535,6 @@
 @media (max-width: 600px) {
   .counter-tiles {
     flex-direction: column;
-  }
-  .album-tiles-grid {
-    grid-template-columns: repeat(6, 1fr);
   }
   .timeline-header { flex-wrap: wrap; gap: var(--space-sm); }
   .timeline-nav-row { gap: 10px; }
