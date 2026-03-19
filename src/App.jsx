@@ -323,40 +323,61 @@ export default function App() {
                   <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
                   {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
                 </a>
-                <a href={nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? `${base}${nowPlaying.albumUrl}` : '#'} className="kpi-tile kpi-tile--album kpi-tile--album-art">
-                  {nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting && nowPlaying.cover ? (
-                    <div className="kpi-album-art" style={{ backgroundImage: `url(${nowPlaying.cover})` }} />
-                  ) : (
-                    <div className="kpi-album-art kpi-album-art--empty" />
-                  )}
-                  <div className="kpi-album-info">
-                    <span className="kpi-label">{nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? nowPlaying.album : 'Album'}</span>
-                    <span className="kpi-sub">{nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? nowPlaying.year : ''}</span>
-                  </div>
-                </a>
-                <div className="kpi-tile kpi-tile--song">
-                  {nowPlaying?.auxCord ? (
-                    <>
-                      <span className="kpi-label">Aux Cord</span>
-                      <span className="kpi-value kpi-value--aux">Open</span>
-                    </>
-                  ) : nowPlaying?.waiting ? (
-                    <>
-                      <span className="kpi-label">Starts at 8am</span>
-                      <span className="kpi-value">...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="kpi-label">Now Playing</span>
-                      <span className="kpi-value">{nowPlaying?.song || '...'}</span>
-                      {nowPlaying && (
-                        <div className="kpi-progress">
-                          <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
-                        </div>
+                {nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? (
+                  <>
+                    <a href={`${base}${nowPlaying.albumUrl}`} className="kpi-tile kpi-tile--album kpi-tile--album-art">
+                      {nowPlaying.cover ? (
+                        <div className="kpi-album-art" style={{ backgroundImage: `url(${nowPlaying.cover})` }} />
+                      ) : (
+                        <div className="kpi-album-art kpi-album-art--empty" />
                       )}
-                    </>
-                  )}
-                </div>
+                      <div className="kpi-album-info">
+                        <span className="kpi-label">{nowPlaying.album}</span>
+                        <span className="kpi-sub">{nowPlaying.year}</span>
+                      </div>
+                    </a>
+                    <div className="kpi-tile kpi-tile--song">
+                      <span className="kpi-label">Now Playing</span>
+                      <span className="kpi-value">{nowPlaying.song}</span>
+                      <div className="kpi-progress">
+                        <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
+                      </div>
+                    </div>
+                  </>
+                ) : nowPlaying?.auxCord ? (
+                  <>
+                    <div className="kpi-tile kpi-tile--aux">
+                      <span className="kpi-label">Discography wrapped</span>
+                      <span className="kpi-value kpi-value--aux">Aux Cord is Open</span>
+                    </div>
+                    <div className="kpi-tile kpi-tile--song">
+                      <span className="kpi-label">Pick an album</span>
+                      <span className="kpi-value" style={{ color: 'var(--gray-600)' }}>Waiting for someone...</span>
+                    </div>
+                  </>
+                ) : nowPlaying?.waiting ? (
+                  <>
+                    <div className="kpi-tile kpi-tile--album">
+                      <span className="kpi-label">Opening at 8am EST</span>
+                      <span className="kpi-value" style={{ color: 'var(--gray-600)' }}>Coffee's brewing</span>
+                    </div>
+                    <div className="kpi-tile kpi-tile--song">
+                      <span className="kpi-label">Now Playing</span>
+                      <span className="kpi-value" style={{ color: 'var(--gray-600)' }}>...</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="kpi-tile kpi-tile--album">
+                      <span className="kpi-label">Album</span>
+                      <span className="kpi-value">...</span>
+                    </div>
+                    <div className="kpi-tile kpi-tile--song">
+                      <span className="kpi-label">Now Playing</span>
+                      <span className="kpi-value">...</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Timeline — shifted right */}
