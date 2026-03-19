@@ -95,6 +95,27 @@ function getDailyBean() {
   return COFFEE_BEANS[seed % COFFEE_BEANS.length];
 }
 
+// Pull albums from catalog for a given year, shuffled by date seed
+function getAlbumsForYear(catalog, year) {
+  if (!catalog) return [];
+  const albums = [];
+  Object.values(catalog).forEach(artist => {
+    (artist.albums || []).forEach(album => {
+      if (album.release_year === year) {
+        albums.push({
+          artist: artist.name,
+          title: album.title,
+          cover: album.cover_art_small || album.cover_art_large,
+          artistUrl: `music.html?artist=${encodeURIComponent(artist.name)}&album=${encodeURIComponent(album.title)}`,
+        });
+      }
+    });
+  });
+  // Shuffle deterministically by year so it's consistent but not alphabetical
+  albums.sort((a, b) => hashStr(a.title + year) - hashStr(b.title + year));
+  return albums;
+}
+
 const GUAPA_COLOR = '#f0c014';
 
 export default function App() {
@@ -117,6 +138,7 @@ export default function App() {
 
   const dailyPick = useMemo(() => catalog ? getDailyPick(catalog) : null, [catalog]);
   const dailyBean = useMemo(() => getDailyBean(), []);
+  const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year), [catalog, year]);
 
   // Dev timeline bars — commit counts per day
   const devBars = useMemo(() => {
@@ -148,11 +170,11 @@ export default function App() {
     const selectedDate = DEV_DAYS[devDay]?.date;
     if (!selectedDate) return null;
     const d = new Date(selectedDate + 'T00:00:00');
-    // Find the Saturday that starts this week (Saturday = 6)
-    const dayOfWeek = d.getDay(); // 0=Sun, 6=Sat
-    const satOffset = dayOfWeek === 6 ? 0 : -(dayOfWeek + 1);
+    // Find the Friday that starts this week (Friday = 5, new music release day)
+    const dayOfWeek = d.getDay(); // 0=Sun, 5=Fri
+    const friOffset = dayOfWeek === 5 ? 0 : -(((dayOfWeek - 5) + 7) % 7);
     const weekStart = new Date(d);
-    weekStart.setDate(weekStart.getDate() + satOffset);
+    weekStart.setDate(weekStart.getDate() + friOffset);
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekEnd.getDate() + 6);
 
@@ -414,35 +436,61 @@ export default function App() {
                 </div>
               </div>
             )
-          ) : blurbData ? (
+          ) : (
             <div className="blurbs-section">
-              <div className="blurbs-header">
-                {blurbData.year !== year && (
-                  <span className="blurbs-nearest">Showing {blurbData.year} — nearest data to {year}</span>
-                )}
-              </div>
-              <div className="blurbs-list">
-                {blurbData.items.map((blurb, i) => (
-                  <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
-                    {blurb.type === 'metric' ? (
-                      <div className="blurb-metric">
-                        <span className="blurb-metric-label">{blurb.label}</span>
-                        <span className="blurb-metric-value" style={{ color: lc }}>{blurb.value}</span>
-                        <span className="blurb-metric-change">{blurb.change}</span>
-                      </div>
-                    ) : (
-                      <div className="blurb-content">
-                        <span className={`blurb-type blurb-type--${blurb.type}`}>{blurb.type}</span>
-                        <p>{renderBlurbText(blurb.text, base)}</p>
-                      </div>
+              {/* Album art tiles for music lens */}
+              {lens === 'music' && yearAlbums.length > 0 && (
+                <div className="album-tiles">
+                  <div className="album-tiles-header">
+                    <span className="kpi-label">Releases from {year}</span>
+                    <span className="album-tiles-count">{yearAlbums.length} albums</span>
+                  </div>
+                  <div className="album-tiles-grid">
+                    {yearAlbums.slice(0, 12).map((a, i) => (
+                      <a key={i} href={`${base}${a.artistUrl}`} className="album-tile">
+                        <div className="album-tile-art" style={a.cover ? { backgroundImage: `url(${a.cover})` } : {}}>
+                          {!a.cover && <span className="album-tile-no-art">{a.title.charAt(0)}</span>}
+                        </div>
+                        <span className="album-tile-title">{a.title}</span>
+                        <span className="album-tile-artist">{a.artist}</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Text blurbs */}
+              {blurbData ? (
+                <>
+                  <div className="blurbs-header">
+                    {blurbData.year !== year && (
+                      <span className="blurbs-nearest">Showing {blurbData.year} — nearest data to {year}</span>
                     )}
                   </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="blurbs-placeholder">
-              <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="blurbs-placeholder-logo" style={{ filter: `hue-rotate(${hashStr(year + lens) % 360}deg)` }} />
+                  <div className="blurbs-list">
+                    {blurbData.items.map((blurb, i) => (
+                      <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
+                        {blurb.type === 'metric' ? (
+                          <div className="blurb-metric">
+                            <span className="blurb-metric-label">{blurb.label}</span>
+                            <span className="blurb-metric-value" style={{ color: lc }}>{blurb.value}</span>
+                            <span className="blurb-metric-change">{blurb.change}</span>
+                          </div>
+                        ) : (
+                          <div className="blurb-content">
+                            <span className={`blurb-type blurb-type--${blurb.type}`}>{blurb.type}</span>
+                            <p>{renderBlurbText(blurb.text, base)}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : !yearAlbums.length && (
+                <div className="blurbs-placeholder">
+                  <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="blurbs-placeholder-logo" style={{ filter: `hue-rotate(${hashStr(year + lens) % 360}deg)` }} />
+                </div>
+              )}
             </div>
           )}
 

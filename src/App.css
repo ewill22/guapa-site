@@ -297,6 +297,74 @@
    BLURBS SECTION
 ======================================== */
 
+/* ========================================
+   ALBUM TILES (Music lens)
+======================================== */
+.album-tiles {
+  margin-bottom: var(--space-lg);
+}
+.album-tiles-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+.album-tiles-count {
+  font-size: 0.65rem;
+  color: var(--gray-600);
+}
+.album-tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-sm);
+}
+.album-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  transition: transform 0.15s ease;
+}
+.album-tile:hover {
+  transform: translateY(-2px);
+}
+.album-tile-art {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  background: var(--gray-800);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-800);
+  transition: border-color 0.2s;
+}
+.album-tile:hover .album-tile-art {
+  border-color: var(--pink);
+}
+.album-tile-no-art {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gray-600);
+}
+.album-tile-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.album-tile-artist {
+  font-size: 0.65rem;
+  color: var(--gray-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Blurbs Placeholder */
 .blurbs-placeholder {
   margin-top: var(--space-lg);
@@ -452,6 +520,9 @@
     border-right: none;
     border-bottom: 1px solid var(--gray-800);
   }
+  .album-tiles-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
@@ -461,6 +532,9 @@
 @media (max-width: 600px) {
   .counter-tiles {
     flex-direction: column;
+  }
+  .album-tiles-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
   .timeline-header { flex-wrap: wrap; gap: var(--space-sm); }
   .timeline-nav-row { gap: 10px; }
