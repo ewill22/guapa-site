@@ -132,8 +132,9 @@
   justify-content: center;
 }
 .kpi-aux-logo {
-  height: 24px;
-  opacity: 0.3;
+  height: 100%;
+  max-height: 60px;
+  opacity: 0.6;
 }
 
 /* Track progress bar */

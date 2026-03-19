@@ -351,7 +351,7 @@ export default function App() {
                       <span className="kpi-value kpi-value--aux">Aux Cord is Open</span>
                     </div>
                     <div className="kpi-tile kpi-tile--song kpi-tile--aux-logo">
-                      <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="kpi-aux-logo" />
+                      <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="kpi-aux-logo" style={{ filter: `hue-rotate(${hashStr(new Date().toISOString().slice(0, 10) + 'aux') % 360}deg)` }} />
                     </div>
                   </>
                 ) : nowPlaying?.waiting ? (
