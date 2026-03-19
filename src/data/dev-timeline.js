@@ -18,6 +18,7 @@ export const DEV_COMMITS = {
   '2026-03-15': 17,
   '2026-03-16': 4,
   '2026-03-17': 31,
+  '2026-03-18': 21,
 };
 
 // Daily summaries — what got done each active day
@@ -70,5 +71,11 @@ export const DEV_BLURBS = {
     { type: 'update', text: 'Rankings merged into Record Store welcome view. Artist discography gets sticky nav rail with Latest/First Album buttons. Arrow key behavior refined.' },
     { type: 'update', text: 'Data Solutions header matched to Merch page. Random year on music page load. Subgenre close button made more visible. Merch added to mobile hamburger menu across all pages.' },
     { type: 'metric', label: 'Spotify Links', value: '955', change: 'albums — enrichment complete' },
+  ],
+  '2026-03-18': [
+    { type: 'news', text: 'Front page redesigned as a coffee shop counter. L-shaped layout with daily KPI tiles (Artist/Album/Song of the Day), welcome greeting, and Bean of the Moment rotating daily.' },
+    { type: 'update', text: 'Album deep-linking wired up — clicking Album of the Day on the front page opens the music page, loads the discography, and scrolls to that specific album with a highlight.' },
+    { type: 'update', text: 'Music page cleanup: 30 bootlegs/promos removed from catalog, Prince catalog fixed, Unicode normalization, mobile layout fixes, album sort order corrected.' },
+    { type: 'metric', label: 'Commits', value: '21', change: 'coffee shop counter launch day' },
   ],
 };
