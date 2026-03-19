@@ -78,4 +78,10 @@ export const DEV_BLURBS = {
     { type: 'update', text: 'Music page cleanup: 30 bootlegs/promos removed from catalog, Prince catalog fixed, Unicode normalization, mobile layout fixes, album sort order corrected.' },
     { type: 'metric', label: 'Commits', value: '21', change: 'coffee shop counter launch day' },
   ],
+  '2026-03-19': [
+    { type: 'news', text: 'Live Now Playing system launched. Daily artist discography plays from 8am EST, timed by real track durations. Progress bar ticks every 5 seconds. Aux Cord opens when the catalog finishes.' },
+    { type: 'update', text: 'Modern/throwback artist rotation. Album art in KPI tile. Up Next tucked under timeline. Colored guapa logo for Aux Cord idle state.' },
+    { type: 'update', text: 'Music lens now shows album art tile grid for each year. Weekly dev blurbs grouped Friday–Thursday with newest first. Default lens switched to Music.' },
+    { type: 'metric', label: 'Commits', value: '12', change: 'Now Playing + Aux Cord day' },
+  ],
 };
