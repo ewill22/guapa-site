@@ -141,7 +141,41 @@ export default function App() {
   }, [lens]);
 
   const blurbData = getBlurbs(lens, year);
-  const devBlurbData = isGuapa ? (DEV_BLURBS[DEV_DAYS[devDay]?.date] || null) : null;
+
+  // Collect all dev blurbs for the week containing the selected day (weeks start Saturday)
+  const weekBlurbs = useMemo(() => {
+    if (!isGuapa) return null;
+    const selectedDate = DEV_DAYS[devDay]?.date;
+    if (!selectedDate) return null;
+    const d = new Date(selectedDate + 'T00:00:00');
+    // Find the Saturday that starts this week (Saturday = 6)
+    const dayOfWeek = d.getDay(); // 0=Sun, 6=Sat
+    const satOffset = dayOfWeek === 6 ? 0 : -(dayOfWeek + 1);
+    const weekStart = new Date(d);
+    weekStart.setDate(weekStart.getDate() + satOffset);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
+    const startStr = weekStart.toISOString().slice(0, 10);
+    const endStr = weekEnd.toISOString().slice(0, 10);
+
+    // Gather all days in this week that have blurbs
+    const entries = [];
+    Object.keys(DEV_BLURBS).sort().forEach(date => {
+      if (date >= startStr && date <= endStr) {
+        entries.push({ date, blurbs: DEV_BLURBS[date] });
+      }
+    });
+    if (entries.length === 0) return null;
+
+    // Sum commits for the week
+    const weekCommits = entries.reduce((sum, e) => {
+      const day = DEV_DAYS.find(dd => dd.date === e.date);
+      return sum + (day ? day.commits : 0);
+    }, 0);
+
+    return { startStr, endStr, entries, weekCommits };
+  }, [isGuapa, devDay]);
 
   // Navigation for dev timeline
   const navDev = useCallback((dir) => {
@@ -336,39 +370,45 @@ export default function App() {
 
           {/* Blurbs — below the counter */}
           {isGuapa ? (
-            devBlurbData ? (
+            weekBlurbs ? (
               <div className="blurbs-section">
                 <div className="blurbs-header">
-                  <span className="blurbs-nearest">{DEV_DAYS[devDay]?.date} — {DEV_DAYS[devDay]?.commits} commits</span>
+                  <span className="blurbs-nearest">Week of {weekBlurbs.startStr.slice(5)} — {weekBlurbs.weekCommits} commits</span>
                 </div>
-                <div className="blurbs-list">
-                  {devBlurbData.map((blurb, i) => (
-                    <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
-                      {blurb.type === 'metric' ? (
-                        <div className="blurb-metric">
-                          <span className="blurb-metric-label">{blurb.label}</span>
-                          <span className="blurb-metric-value" style={{ color: lc }}>{blurb.value}</span>
-                          <span className="blurb-metric-change">{blurb.change}</span>
+                {weekBlurbs.entries.map(entry => (
+                  <div key={entry.date} className="blurbs-day-group">
+                    <div className="blurbs-day-label">{entry.date}</div>
+                    <div className="blurbs-list">
+                      {entry.blurbs.map((blurb, i) => (
+                        <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
+                          {blurb.type === 'metric' ? (
+                            <div className="blurb-metric">
+                              <span className="blurb-metric-label">{blurb.label}</span>
+                              <span className="blurb-metric-value" style={{ color: lc }}>{blurb.value}</span>
+                              <span className="blurb-metric-change">{blurb.change}</span>
+                            </div>
+                          ) : (
+                            <div className="blurb-content">
+                              <span className={`blurb-type blurb-type--${blurb.type}`}>{blurb.type}</span>
+                              <p>{blurb.text}</p>
+                            </div>
+                          )}
                         </div>
-                      ) : (
-                        <div className="blurb-content">
-                          <span className={`blurb-type blurb-type--${blurb.type}`}>{blurb.type}</span>
-                          <p>{blurb.text}</p>
-                        </div>
-                      )}
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="blurbs-section">
                 <div className="blurbs-header">
+                  <span className="blurbs-nearest">Week of {DEV_DAYS[devDay]?.date?.slice(5)}</span>
                 </div>
                 <div className="blurbs-list">
                   <div className="blurb-card blurb-card--update">
                     <div className="blurb-content">
                       <span className="blurb-type blurb-type--update">quiet</span>
-                      <p>No commits on {DEV_DAYS[devDay]?.date}. Rest day.</p>
+                      <p>No activity this week yet.</p>
                     </div>
                   </div>
                 </div>

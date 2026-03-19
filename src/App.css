@@ -331,6 +331,23 @@
   font-size: 0.75rem; color: var(--gray-600); font-style: italic;
 }
 
+.blurbs-day-group {
+  margin-bottom: var(--space-md);
+}
+.blurbs-day-group:last-child {
+  margin-bottom: 0;
+}
+.blurbs-day-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-600);
+  margin-bottom: var(--space-xs);
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--gray-800);
+}
+
 .blurbs-list {
   display: grid; grid-template-columns: 1fr 1fr;
   gap: var(--space-sm);
