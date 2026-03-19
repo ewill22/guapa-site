@@ -71,25 +71,30 @@ function getDailyArtist(catalog) {
   const pool = (seed % 2 === 0 && throwback.length) ? throwback : (modern.length ? modern : artists);
 
   // Pick an artist whose discography fills at least 20 hours
-  // Try multiple seeds, fall back to longest catalog if none qualifies
+  // Try preferred pool first, then fall back to all artists
   const MIN_RUNTIME_MS = 20 * 3600 * 1000; // 20 hours
   let artist = null;
-  for (let attempt = 0; attempt < pool.length; attempt++) {
-    const candidate = pool[(seed + attempt) % pool.length];
-    const totalMs = (candidate.albums || []).reduce((sum, alb) =>
-      sum + (alb.tracks || []).reduce((s, t) => s + (t.duration_ms || 210000), 0), 0);
-    if (totalMs >= MIN_RUNTIME_MS) {
-      artist = candidate;
-      break;
+  const pools = [pool, artists]; // try preferred pool, then everyone
+  for (const p of pools) {
+    if (artist) break;
+    for (let attempt = 0; attempt < p.length; attempt++) {
+      const candidate = p[(seed + attempt) % p.length];
+      const totalMs = (candidate.albums || []).reduce((sum, alb) =>
+        sum + (alb.tracks || []).reduce((s, t) => s + (t.duration_ms || 210000), 0), 0);
+      if (totalMs >= MIN_RUNTIME_MS) {
+        artist = candidate;
+        break;
+      }
     }
   }
-  // Fallback: pick the artist with the longest catalog from the pool
+  // Last resort: longest catalog overall
   if (!artist) {
-    artist = pool.reduce((best, a) => {
+    let bestMs = 0;
+    for (const a of artists) {
       const ms = (a.albums || []).reduce((sum, alb) =>
         sum + (alb.tracks || []).reduce((s, t) => s + (t.duration_ms || 210000), 0), 0);
-      return ms > best.ms ? { ...a, ms } : best;
-    }, { ms: 0, ...pool[0] });
+      if (ms > bestMs) { bestMs = ms; artist = a; }
+    }
   }
 
   // Build chronological playback schedule from full discography
