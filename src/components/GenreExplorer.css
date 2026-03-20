@@ -3,6 +3,12 @@
    Ported from public/music.html + music.css
 ======================================== */
 
+/* Container */
+.ge {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 /* Genre Tabs */
 .ge-tabs {
   display: flex;
@@ -214,6 +220,7 @@
   padding: 24px;
   margin-bottom: 20px;
   position: relative;
+  box-sizing: border-box;
   max-width: 1060px;
   margin-left: auto;
   margin-right: auto;
