@@ -134,6 +134,50 @@
   content: "\2022  ";
 }
 
+/* Subgenre legend */
+.ge-sub-legend {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  padding-top: 6px;
+}
+
+.ge-sub-legend-item {
+  font-size: 0.58rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-600);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ge-sub-legend-item::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 2px;
+}
+
+.ge-sub-legend--emerging::before {
+  border-top: 2px dashed var(--yellow);
+}
+
+.ge-sub-legend--rising::before {
+  background: var(--blue, #88a8d4);
+}
+
+.ge-sub-legend--peak::before {
+  background: var(--pink);
+}
+
+.ge-sub-legend--fading::before {
+  background: var(--gray-800);
+  opacity: 0.5;
+}
+
 /* Origin Story */
 .ge-origin {
   border: 1px solid var(--gray-800);
