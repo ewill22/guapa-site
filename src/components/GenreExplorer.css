@@ -214,6 +214,7 @@
   padding: 24px;
   margin-bottom: 20px;
   position: relative;
+  max-width: 900px;
 }
 
 .ge-artists-header {
@@ -296,6 +297,7 @@
   margin-top: 20px;
   border-top: 1px solid var(--gray-800);
   padding-top: 20px;
+  max-width: 900px;
 }
 
 .ge-disco-header {

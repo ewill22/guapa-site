@@ -146,7 +146,8 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     setSelectedSub(null);
     setDiscoArtist(null);
     setDiscoAlbums(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Use both methods for cross-browser/mobile compatibility
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
   }, []);
 
   // Escape key closes everything
