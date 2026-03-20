@@ -17,6 +17,9 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   const [highlightAlbum, setHighlightAlbum] = useState(null);
   const pendingAlbumRef = useRef(null);
   const discoListRef = useRef(null);
+  const geRef = useRef(null);
+  const artistPanelRef = useRef(null);
+  const discoRef = useRef(null);
 
   const base = import.meta.env.BASE_URL;
 
@@ -138,6 +141,27 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     return Object.entries(sub.artists).map(([id, a]) => ({ id, ...a }));
   }, [activeGenre, selectedSub]);
 
+  const closeAll = useCallback(() => {
+    setActiveGenre(null);
+    setSelectedSub(null);
+    setDiscoArtist(null);
+    setDiscoAlbums(null);
+    setTimeout(() => {
+      geRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }, []);
+
+  // Escape key closes everything
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === 'Escape' && (activeGenre || selectedSub || discoArtist)) {
+        closeAll();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [activeGenre, selectedSub, discoArtist, closeAll]);
+
   const handleGenreClick = useCallback((genreId) => {
     if (activeGenre === genreId) {
       setActiveGenre(null);
@@ -161,6 +185,9 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       setSelectedSub(subId);
       setDiscoArtist(null);
       setDiscoAlbums(null);
+      setTimeout(() => {
+        artistPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     }
   }, [selectedSub]);
 
@@ -168,6 +195,9 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     setDiscoArtist(artist);
     setDiscoAlbums(null);
     setLoading(true);
+    setTimeout(() => {
+      discoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
 
     // Try to find real data from catalog
     if (catalog) {
@@ -213,7 +243,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   }, [activeGenre, visibleSubgenres, year]);
 
   return (
-    <div className="ge">
+    <div className="ge" ref={geRef}>
       {/* Genre Tabs */}
       <div className="ge-tabs">
         {genreTabs.map(g => (
@@ -270,7 +300,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
 
       {/* Artist Panel */}
       {selectedSub && artists.length > 0 && (
-        <div className="ge-artists">
+        <div className="ge-artists" ref={artistPanelRef}>
           <div className="ge-artists-header">
             <span>{MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.icon}</span>
             <span>{MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.name}</span>
@@ -299,7 +329,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
 
       {/* Discography */}
       {discoArtist && (
-        <div className="ge-disco">
+        <div className="ge-disco" ref={discoRef}>
           <div className="ge-disco-header">
             <span className="ge-disco-icon">{discoArtist.icon}</span>
             <div>
@@ -366,6 +396,21 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
           ) : (
             <div className="ge-disco-loading">No album data available.</div>
           )}
+        </div>
+      )}
+
+      {/* Floating nav rail — Latest / First Album */}
+      {discoArtist && discoAlbums && discoAlbums.length > 1 && (
+        <div className="ge-nav-rail">
+          <button className="ge-nav-btn" onClick={() => {
+            const el = discoListRef.current?.querySelector('.ge-album:first-child');
+            el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}>Latest</button>
+          <button className="ge-nav-btn" onClick={() => {
+            const el = discoListRef.current?.querySelector('.ge-album:last-child');
+            el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}>First</button>
+          <button className="ge-nav-btn ge-nav-btn--close" onClick={closeAll}>&times;</button>
         </div>
       )}
     </div>
