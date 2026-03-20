@@ -538,10 +538,6 @@
   transition: background 0.15s;
 }
 
-.ge-track:hover {
-  background: rgba(255, 255, 255, 0.02);
-}
-
 .ge-track:not(:last-child) {
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -563,10 +559,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.ge-track:hover .ge-track-title {
-  color: var(--white);
 }
 
 .ge-track-play {
@@ -678,21 +670,10 @@
 
   .ge-artists {
     padding: 14px;
-    max-width: 100%;
-    overflow: hidden;
   }
 
   .ge-artists-grid {
     grid-template-columns: 1fr;
-  }
-
-  .ge-disco {
-    max-width: 100%;
-    overflow: hidden;
-  }
-
-  .ge-album {
-    overflow: hidden;
   }
 
   .ge-album-header {
@@ -706,20 +687,12 @@
     height: 60px;
   }
 
-  .ge-album-info {
-    min-width: 0;
-  }
-
   .ge-album-title {
     font-size: 0.95rem;
   }
 
   .ge-album-actions {
     flex-wrap: wrap;
-  }
-
-  .ge-tracklist {
-    overflow: hidden;
   }
 
   .ge-track {
