@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { MUSIC_DATA, GENRE_ORIGINS } from '../data/music-data';
 import './GenreExplorer.css';
 
@@ -14,6 +14,9 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   const [discoArtist, setDiscoArtist] = useState(null);
   const [discoAlbums, setDiscoAlbums] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [highlightAlbum, setHighlightAlbum] = useState(null);
+  const pendingAlbumRef = useRef(null);
+  const discoListRef = useRef(null);
 
   const base = import.meta.env.BASE_URL;
 
@@ -21,6 +24,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   useEffect(() => {
     if (!deepLink?.artist) return;
     const target = deepLink.artist.toLowerCase();
+    pendingAlbumRef.current = deepLink.album || null;
 
     // Find editorial info if available (for icon/description)
     let editorialArtist = null;
@@ -91,6 +95,21 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       }
     }
   }, [year, activeGenre, selectedSub]);
+
+  // Scroll to specific album after discography loads
+  useEffect(() => {
+    if (!discoAlbums || !pendingAlbumRef.current) return;
+    const targetAlbum = pendingAlbumRef.current;
+    pendingAlbumRef.current = null;
+    setTimeout(() => {
+      const el = discoListRef.current?.querySelector(`[data-album-title="${CSS.escape(targetAlbum)}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setHighlightAlbum(targetAlbum);
+        setTimeout(() => setHighlightAlbum(null), 3000);
+      }
+    }, 200);
+  }, [discoAlbums]);
 
   // Genre tabs with visible subgenre counts
   const genreTabs = useMemo(() => {
@@ -292,7 +311,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
           {loading ? (
             <div className="ge-disco-loading">Loading discography...</div>
           ) : discoAlbums && discoAlbums.length > 0 ? (
-            <div className="ge-disco-list">
+            <div className="ge-disco-list" ref={discoListRef}>
               {discoAlbums.map((album, idx) => {
                 const art = album.cover_art_large || album.cover_art_small;
                 const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (album.artistSpotify || '#'));
@@ -304,7 +323,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
                 const isLatest = idx === 0;
 
                 return (
-                  <div key={idx} className={`ge-album ${isLatest ? 'ge-album--latest' : ''}`}>
+                  <div key={idx} className={`ge-album ${isLatest ? 'ge-album--latest' : ''} ${highlightAlbum === album.title ? 'ge-album--highlight' : ''}`} data-album-title={album.title}>
                     <div className="ge-album-header">
                       <div className="ge-album-art" style={art ? { backgroundImage: `url(${art})` } : {}} />
                       <div className="ge-album-info">

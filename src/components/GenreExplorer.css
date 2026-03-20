@@ -340,6 +340,12 @@
   border-color: rgba(240, 192, 20, 0.4);
 }
 
+.ge-album--highlight {
+  border-color: var(--pink);
+  box-shadow: 0 0 20px rgba(232, 160, 176, 0.2);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
 .ge-album-header {
   display: flex;
   gap: 16px;
