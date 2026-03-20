@@ -184,9 +184,6 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       setSelectedSub(subId);
       setDiscoArtist(null);
       setDiscoAlbums(null);
-      setTimeout(() => {
-        artistPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
     }
   }, [selectedSub]);
 
