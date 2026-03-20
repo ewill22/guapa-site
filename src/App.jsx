@@ -217,7 +217,7 @@ export default function App() {
     setDeepLink({ artist: artistName, album: albumTitle || null });
     setTimeout(() => {
       genreExplorerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+    }, 300);
   }, []);
 
   // Tick now playing every 5 seconds

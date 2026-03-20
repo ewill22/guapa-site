@@ -17,23 +17,22 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
 
   const base = import.meta.env.BASE_URL;
 
-  // Deep link — find artist in MUSIC_DATA and open genre/sub/artist
+  // Deep link — find artist in MUSIC_DATA or catalog and open discography
   useEffect(() => {
     if (!deepLink?.artist) return;
     const target = deepLink.artist.toLowerCase();
+
+    // First try to find in editorial MUSIC_DATA (so we can open genre/sub)
     for (const [genreId, genre] of Object.entries(MUSIC_DATA)) {
       for (const [subId, sub] of Object.entries(genre.subgenres)) {
         for (const [artId, artist] of Object.entries(sub.artists)) {
           if (artist.name.toLowerCase() === target) {
             setActiveGenre(genreId);
             setSelectedSub(subId);
-            // Build artist object matching the shape handleArtistClick expects
             const fullArtist = { id: artId, ...artist };
-            // Trigger discography load
             setDiscoArtist(fullArtist);
             setDiscoAlbums(null);
             setLoading(true);
-            // Load from catalog
             if (catalog) {
               const key = Object.keys(catalog).find(k =>
                 catalog[k].name.toLowerCase() === target
@@ -52,7 +51,6 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
                 return;
               }
             }
-            // Fallback
             const albums = [...artist.albums]
               .sort((a, b) => (b.year || 0) - (a.year || 0))
               .map(a => ({ title: a.title, release_year: a.year, tracks: [], artistName: artist.name }));
@@ -64,6 +62,32 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
         }
       }
     }
+
+    // Not in MUSIC_DATA — load directly from catalog (for artists only in catalog)
+    if (catalog) {
+      const key = Object.keys(catalog).find(k =>
+        catalog[k].name.toLowerCase() === target
+      );
+      if (key && catalog[key].albums?.length) {
+        const catArtist = catalog[key];
+        setActiveGenre(null);
+        setSelectedSub(null);
+        setDiscoArtist({ id: key, name: catArtist.name, icon: '', description: '', albums: [] });
+        setLoading(true);
+        const albums = [...catArtist.albums]
+          .sort((a, b) => (b.release_year || 0) - (a.release_year || 0));
+        setDiscoAlbums(albums.map(a => ({
+          ...a,
+          artistName: catArtist.name,
+          artistWiki: catArtist.url_wikipedia,
+          artistSpotify: catArtist.url_spotify,
+        })));
+        setLoading(false);
+        onDeepLinkHandled?.();
+        return;
+      }
+    }
+
     onDeepLinkHandled?.();
   }, [deepLink, catalog, onDeepLinkHandled]);
 
