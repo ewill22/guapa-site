@@ -676,14 +676,55 @@
     grid-template-columns: 1fr;
   }
 
+  .ge-artists {
+    padding: 14px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .ge-artists-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ge-disco {
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .ge-album {
+    overflow: hidden;
+  }
+
   .ge-album-header {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    gap: 10px;
+    padding: 12px;
   }
 
   .ge-album-art {
     width: 60px;
     height: 60px;
+  }
+
+  .ge-album-info {
+    min-width: 0;
+  }
+
+  .ge-album-title {
+    font-size: 0.95rem;
+  }
+
+  .ge-album-actions {
+    flex-wrap: wrap;
+  }
+
+  .ge-tracklist {
+    overflow: hidden;
+  }
+
+  .ge-track {
+    padding: 7px 12px;
+    gap: 8px;
   }
 
   .ge-artists-header {
@@ -697,6 +738,8 @@
 
   .ge-disco-header {
     flex-direction: column;
+    padding: 0;
+    gap: 10px;
   }
 
   .ge-disco-body {
