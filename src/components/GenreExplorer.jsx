@@ -101,6 +101,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     if (!discoAlbums || !pendingAlbumRef.current) return;
     const targetAlbum = pendingAlbumRef.current;
     pendingAlbumRef.current = null;
+    // Wait for DOM to render album cards, then scroll
     setTimeout(() => {
       const el = discoListRef.current?.querySelector(`[data-album-title="${CSS.escape(targetAlbum)}"]`);
       if (el) {
@@ -108,7 +109,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
         setHighlightAlbum(targetAlbum);
         setTimeout(() => setHighlightAlbum(null), 3000);
       }
-    }, 200);
+    }, 500);
   }, [discoAlbums]);
 
   // Genre tabs with visible subgenre counts

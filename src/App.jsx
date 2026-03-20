@@ -215,9 +215,12 @@ export default function App() {
   const scrollToExplorer = useCallback((artistName, albumTitle) => {
     setLens('music');
     setDeepLink({ artist: artistName, album: albumTitle || null });
-    setTimeout(() => {
-      genreExplorerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300);
+    // Only scroll to explorer top if no album target — album scroll is handled by GenreExplorer
+    if (!albumTitle) {
+      setTimeout(() => {
+        genreExplorerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
   }, []);
 
   // Tick now playing every 5 seconds
