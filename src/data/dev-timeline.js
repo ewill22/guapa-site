@@ -19,6 +19,7 @@ export const DEV_COMMITS = {
   '2026-03-16': 4,
   '2026-03-17': 31,
   '2026-03-18': 21,
+  '2026-03-19': 30,
 };
 
 // Daily summaries — what got done each active day
@@ -81,7 +82,9 @@ export const DEV_BLURBS = {
   '2026-03-19': [
     { type: 'news', text: 'Live Now Playing system launched. Daily artist discography plays from 8am EST, timed by real track durations. Progress bar ticks every 5 seconds. Aux Cord opens when the catalog finishes.' },
     { type: 'update', text: 'Modern/throwback artist rotation. Album art in KPI tile. Up Next tucked under timeline. Colored guapa logo for Aux Cord idle state.' },
-    { type: 'update', text: 'Music lens now shows album art tile grid for each year. Weekly dev blurbs grouped Friday–Thursday with newest first. Default lens switched to Music.' },
-    { type: 'metric', label: 'Commits', value: '12', change: 'Now Playing + Aux Cord day' },
+    { type: 'news', text: 'Genre Explorer merged into main page. Full genre/subgenre/artist/discography journey lifted from static music page into React. Album tiles moved to counter as 4x2 grid next to Bean of the Moment.' },
+    { type: 'update', text: 'Deep-linking from KPI tiles and album art to Genre Explorer with auto-scroll to specific albums and pink highlight. Floating Latest/First/Close nav rail alongside discography.' },
+    { type: 'update', text: 'Subgenre status legend (Emerging/Rising/Peak/Fading). Escape closes everything and scrolls to top. Mobile polish: tracklist sizing, zoom support, responsive nav rail.' },
+    { type: 'metric', label: 'Commits', value: '30', change: 'Now Playing + Genre Explorer day' },
   ],
 };
