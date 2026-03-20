@@ -342,75 +342,75 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
           {loading ? (
             <div className="ge-disco-loading">Loading discography...</div>
           ) : discoAlbums && discoAlbums.length > 0 ? (
-            <div className="ge-disco-list" ref={discoListRef}>
-              {discoAlbums.map((album, idx) => {
-                const art = album.cover_art_large || album.cover_art_small;
-                const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (album.artistSpotify || '#'));
-                const wikiTitle = (album.title || '').replace(/ /g, '_');
-                const wikiUrl = album.url_wikipedia || `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiTitle)}`;
-                const amazonQ = encodeURIComponent(`${album.artistName || ''} ${album.title} vinyl`);
-                const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQ}&tag=guapainc-20`;
-                const tracks = album.tracks || [];
-                const isLatest = idx === 0;
+            <div className="ge-disco-body">
+              <div className="ge-disco-list" ref={discoListRef}>
+                {discoAlbums.map((album, idx) => {
+                  const art = album.cover_art_large || album.cover_art_small;
+                  const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (album.artistSpotify || '#'));
+                  const wikiTitle = (album.title || '').replace(/ /g, '_');
+                  const wikiUrl = album.url_wikipedia || `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiTitle)}`;
+                  const amazonQ = encodeURIComponent(`${album.artistName || ''} ${album.title} vinyl`);
+                  const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQ}&tag=guapainc-20`;
+                  const tracks = album.tracks || [];
+                  const isLatest = idx === 0;
 
-                return (
-                  <div key={idx} className={`ge-album ${isLatest ? 'ge-album--latest' : ''} ${highlightAlbum === album.title ? 'ge-album--highlight' : ''}`} data-album-title={album.title}>
-                    <div className="ge-album-header">
-                      <div className="ge-album-art" style={art ? { backgroundImage: `url(${art})` } : {}} />
-                      <div className="ge-album-info">
-                        <span className="ge-album-year">{isLatest ? 'Latest \u00b7 ' : ''}{album.release_year || '?'}</span>
-                        <span className="ge-album-artist">{album.artistName}</span>
-                        <h3 className="ge-album-title">{album.title}</h3>
-                        <div className="ge-album-actions">
-                          <a href={spotifyUrl} target="_blank" rel="noopener" className="ge-link ge-link--spotify" onClick={e => e.stopPropagation()}>Spotify</a>
-                          <a href={buyUrl} target="_blank" rel="noopener" className="ge-link ge-link--buy" onClick={e => e.stopPropagation()}>Buy Vinyl</a>
-                          <a href={wikiUrl} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>
-                        </div>
-                      </div>
-                    </div>
-                    {tracks.length > 0 && (
-                      <div className="ge-tracklist">
-                        <div className="ge-tracklist-header">
-                          <span className="ge-th-num">#</span>
-                          <span className="ge-th-title">Title</span>
-                          <span className="ge-th-dur">Time</span>
-                        </div>
-                        {tracks.map((t, ti) => (
-                          <div key={ti} className="ge-track">
-                            <span className="ge-track-num">{t.track_number || ti + 1}</span>
-                            <span className="ge-track-title">
-                              {t.title}
-                              {t.spotify_id && (
-                                <a href={`https://open.spotify.com/track/${t.spotify_id}`} target="_blank" rel="noopener" className="ge-track-play" onClick={e => e.stopPropagation()}>&#9654;</a>
-                              )}
-                            </span>
-                            <span className="ge-track-dur">{formatDuration(t.duration_ms)}</span>
+                  return (
+                    <div key={idx} className={`ge-album ${isLatest ? 'ge-album--latest' : ''} ${highlightAlbum === album.title ? 'ge-album--highlight' : ''}`} data-album-title={album.title}>
+                      <div className="ge-album-header">
+                        <div className="ge-album-art" style={art ? { backgroundImage: `url(${art})` } : {}} />
+                        <div className="ge-album-info">
+                          <span className="ge-album-year">{isLatest ? 'Latest \u00b7 ' : ''}{album.release_year || '?'}</span>
+                          <span className="ge-album-artist">{album.artistName}</span>
+                          <h3 className="ge-album-title">{album.title}</h3>
+                          <div className="ge-album-actions">
+                            <a href={spotifyUrl} target="_blank" rel="noopener" className="ge-link ge-link--spotify" onClick={e => e.stopPropagation()}>Spotify</a>
+                            <a href={buyUrl} target="_blank" rel="noopener" className="ge-link ge-link--buy" onClick={e => e.stopPropagation()}>Buy Vinyl</a>
+                            <a href={wikiUrl} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>
                           </div>
-                        ))}
+                        </div>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
+                      {tracks.length > 0 && (
+                        <div className="ge-tracklist">
+                          <div className="ge-tracklist-header">
+                            <span className="ge-th-num">#</span>
+                            <span className="ge-th-title">Title</span>
+                            <span className="ge-th-dur">Time</span>
+                          </div>
+                          {tracks.map((t, ti) => (
+                            <div key={ti} className="ge-track">
+                              <span className="ge-track-num">{t.track_number || ti + 1}</span>
+                              <span className="ge-track-title">
+                                {t.title}
+                                {t.spotify_id && (
+                                  <a href={`https://open.spotify.com/track/${t.spotify_id}`} target="_blank" rel="noopener" className="ge-track-play" onClick={e => e.stopPropagation()}>&#9654;</a>
+                                )}
+                              </span>
+                              <span className="ge-track-dur">{formatDuration(t.duration_ms)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              {discoAlbums.length > 1 && (
+                <div className="ge-nav-rail">
+                  <button className="ge-nav-btn" onClick={() => {
+                    const el = discoListRef.current?.querySelector('.ge-album:first-child');
+                    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}>Latest</button>
+                  <button className="ge-nav-btn" onClick={() => {
+                    const el = discoListRef.current?.querySelector('.ge-album:last-child');
+                    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }}>First</button>
+                  <button className="ge-nav-btn ge-nav-btn--close" onClick={closeAll}>&times;</button>
+                </div>
+              )}
             </div>
           ) : (
             <div className="ge-disco-loading">No album data available.</div>
           )}
-        </div>
-      )}
-
-      {/* Floating nav rail — Latest / First Album */}
-      {discoArtist && discoAlbums && discoAlbums.length > 1 && (
-        <div className="ge-nav-rail">
-          <button className="ge-nav-btn" onClick={() => {
-            const el = discoListRef.current?.querySelector('.ge-album:first-child');
-            el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}>Latest</button>
-          <button className="ge-nav-btn" onClick={() => {
-            const el = discoListRef.current?.querySelector('.ge-album:last-child');
-            el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}>First</button>
-          <button className="ge-nav-btn ge-nav-btn--close" onClick={closeAll}>&times;</button>
         </div>
       )}
     </div>
