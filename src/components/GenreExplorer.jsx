@@ -8,7 +8,7 @@ function formatDuration(ms) {
   return `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
 }
 
-export default function GenreExplorer({ year, catalog }) {
+export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandled }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
   const [discoArtist, setDiscoArtist] = useState(null);
@@ -16,6 +16,56 @@ export default function GenreExplorer({ year, catalog }) {
   const [loading, setLoading] = useState(false);
 
   const base = import.meta.env.BASE_URL;
+
+  // Deep link — find artist in MUSIC_DATA and open genre/sub/artist
+  useEffect(() => {
+    if (!deepLink?.artist) return;
+    const target = deepLink.artist.toLowerCase();
+    for (const [genreId, genre] of Object.entries(MUSIC_DATA)) {
+      for (const [subId, sub] of Object.entries(genre.subgenres)) {
+        for (const [artId, artist] of Object.entries(sub.artists)) {
+          if (artist.name.toLowerCase() === target) {
+            setActiveGenre(genreId);
+            setSelectedSub(subId);
+            // Build artist object matching the shape handleArtistClick expects
+            const fullArtist = { id: artId, ...artist };
+            // Trigger discography load
+            setDiscoArtist(fullArtist);
+            setDiscoAlbums(null);
+            setLoading(true);
+            // Load from catalog
+            if (catalog) {
+              const key = Object.keys(catalog).find(k =>
+                catalog[k].name.toLowerCase() === target
+              );
+              if (key && catalog[key].albums?.length) {
+                const albums = [...catalog[key].albums]
+                  .sort((a, b) => (b.release_year || 0) - (a.release_year || 0));
+                setDiscoAlbums(albums.map(a => ({
+                  ...a,
+                  artistName: artist.name,
+                  artistWiki: catalog[key].url_wikipedia,
+                  artistSpotify: catalog[key].url_spotify,
+                })));
+                setLoading(false);
+                onDeepLinkHandled?.();
+                return;
+              }
+            }
+            // Fallback
+            const albums = [...artist.albums]
+              .sort((a, b) => (b.year || 0) - (a.year || 0))
+              .map(a => ({ title: a.title, release_year: a.year, tracks: [], artistName: artist.name }));
+            setDiscoAlbums(albums);
+            setLoading(false);
+            onDeepLinkHandled?.();
+            return;
+          }
+        }
+      }
+    }
+    onDeepLinkHandled?.();
+  }, [deepLink, catalog, onDeepLinkHandled]);
 
   // Reset selections when year changes (keep genre open)
   useEffect(() => {

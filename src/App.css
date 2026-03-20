@@ -267,6 +267,7 @@
 .counter-album-tile {
   text-decoration: none;
   transition: transform 0.2s ease;
+  cursor: pointer;
 }
 .counter-album-tile:hover {
   transform: scale(1.1);

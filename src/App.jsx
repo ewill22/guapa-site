@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Nav from './components/Nav';
 import Banner from './components/Banner';
 import Footer from './components/Footer';
@@ -209,6 +209,16 @@ export default function App() {
   const [nowPlaying, setNowPlaying] = useState(null);
   const dailyBean = useMemo(() => getDailyBean(), []);
   const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year), [catalog, year]);
+  const [deepLink, setDeepLink] = useState(null);
+  const genreExplorerRef = useRef(null);
+
+  const scrollToExplorer = useCallback((artistName, albumTitle) => {
+    setLens('music');
+    setDeepLink({ artist: artistName, album: albumTitle || null });
+    setTimeout(() => {
+      genreExplorerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }, []);
 
   // Tick now playing every 5 seconds
   useEffect(() => {
@@ -319,14 +329,14 @@ export default function App() {
 
               {/* KPI Tiles — stacked vertically: Artist, Album, Song */}
               <div className="counter-tiles">
-                <a href={dailyArtist ? `${base}${dailyArtist.artistUrl}` : '#'} className="kpi-tile kpi-tile--artist">
+                <div className="kpi-tile kpi-tile--artist" style={{ cursor: dailyArtist ? 'pointer' : 'default' }} onClick={() => dailyArtist && scrollToExplorer(dailyArtist.artist)}>
                   <span className="kpi-label">Artist of the Day{dailyArtist?.isThrowback ? ' — Throwback' : ''}</span>
                   <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
                   {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
-                </a>
+                </div>
                 {nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? (
                   <>
-                    <a href={`${base}${nowPlaying.albumUrl}`} className="kpi-tile kpi-tile--album kpi-tile--album-art">
+                    <div className="kpi-tile kpi-tile--album kpi-tile--album-art" style={{ cursor: 'pointer' }} onClick={() => scrollToExplorer(nowPlaying.artist, nowPlaying.album)}>
                       {nowPlaying.cover ? (
                         <div className="kpi-album-art" style={{ backgroundImage: `url(${nowPlaying.cover})` }} />
                       ) : (
@@ -336,7 +346,7 @@ export default function App() {
                         <span className="kpi-label">{nowPlaying.album}</span>
                         <span className="kpi-sub">{nowPlaying.year}</span>
                       </div>
-                    </a>
+                    </div>
                     <div className="kpi-tile kpi-tile--song">
                       <span className="kpi-label">Now Playing</span>
                       <span className="kpi-value">{nowPlaying.song}</span>
@@ -527,11 +537,11 @@ export default function App() {
                   <span className="kpi-label">Releases from {year}</span>
                   <div className="counter-albums-grid">
                     {yearAlbums.slice(0, 8).map((a, i) => (
-                      <a key={i} href={`${base}${a.artistUrl}`} className="counter-album-tile">
+                      <div key={i} className="counter-album-tile" onClick={() => scrollToExplorer(a.artist, a.title)}>
                         <div className="counter-album-art" style={a.cover ? { backgroundImage: `url(${a.cover})` } : {}}>
                           {!a.cover && <span className="counter-album-no-art">{a.title.charAt(0)}</span>}
                         </div>
-                      </a>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -590,7 +600,9 @@ export default function App() {
             <div className="blurbs-section">
               {/* Genre Explorer for music lens */}
               {lens === 'music' && (
-                <GenreExplorer year={year} catalog={catalog} />
+                <div ref={genreExplorerRef}>
+                  <GenreExplorer year={year} catalog={catalog} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} />
+                </div>
               )}
 
               {/* Text blurbs for non-music lenses */}
