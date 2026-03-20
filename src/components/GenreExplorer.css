@@ -33,8 +33,9 @@
   transition: all 0.2s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  flex-shrink: 0;
+  flex: 1;
   white-space: nowrap;
 }
 

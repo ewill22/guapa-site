@@ -177,7 +177,7 @@
 /* Bottom row: greeting + coffee bean, 50/50 */
 .counter-bottom {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   border-top: 1px solid var(--gray-800);
 }
 
@@ -248,6 +248,50 @@
   letter-spacing: 0.08em;
   color: var(--gray-600);
   margin-top: 4px;
+}
+
+/* Counter Album Tiles — 4x2 grid in counter-bottom */
+.counter-albums {
+  padding: var(--space-md) var(--space-lg);
+  border-left: 1px solid var(--gray-800);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+.counter-albums-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+.counter-album-tile {
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+.counter-album-tile:hover {
+  transform: scale(1.1);
+  z-index: 2;
+}
+.counter-album-art {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--gray-800);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-800);
+  transition: border-color 0.2s;
+}
+.counter-album-tile:hover .counter-album-art {
+  border-color: var(--pink);
+}
+.counter-album-no-art {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gray-600);
 }
 
 /* ========================================
@@ -605,6 +649,10 @@
   .counter-greeting {
     border-right: none;
     border-bottom: 1px solid var(--gray-800);
+  }
+  .counter-albums {
+    border-left: none;
+    border-top: 1px solid var(--gray-800);
   }
 }
 

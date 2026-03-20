@@ -503,7 +503,7 @@ export default function App() {
 
             </div>
 
-            {/* Bottom row: Greeting (left) + Coffee Bean (right) */}
+            {/* Bottom row: Greeting + Coffee Bean + Album Tiles */}
             <div className="counter-bottom">
               <div className="counter-greeting">
                 <h2>Welcome to Guapa</h2>
@@ -522,6 +522,20 @@ export default function App() {
                 <span className="bean-notes">{dailyBean.notes}</span>
                 <span className="bean-process">{dailyBean.process} process</span>
               </div>
+              {lens === 'music' && yearAlbums.length > 0 && (
+                <div className="counter-albums">
+                  <span className="kpi-label">Releases from {year}</span>
+                  <div className="counter-albums-grid">
+                    {yearAlbums.slice(0, 8).map((a, i) => (
+                      <a key={i} href={`${base}${a.artistUrl}`} className="counter-album-tile">
+                        <div className="counter-album-art" style={a.cover ? { backgroundImage: `url(${a.cover})` } : {}}>
+                          {!a.cover && <span className="counter-album-no-art">{a.title.charAt(0)}</span>}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
           </div>
@@ -574,27 +588,6 @@ export default function App() {
             )
           ) : (
             <div className="blurbs-section">
-              {/* Album art tiles for music lens */}
-              {lens === 'music' && yearAlbums.length > 0 && (
-                <div className="album-tiles">
-                  <div className="album-tiles-header">
-                    <span className="kpi-label">Releases from {year}</span>
-                    <span className="album-tiles-count">{yearAlbums.length} albums</span>
-                  </div>
-                  <div className="album-tiles-grid">
-                    {yearAlbums.slice(0, 12).map((a, i) => (
-                      <a key={i} href={`${base}${a.artistUrl}`} className="album-tile">
-                        <div className="album-tile-art" style={a.cover ? { backgroundImage: `url(${a.cover})` } : {}}>
-                          {!a.cover && <span className="album-tile-no-art">{a.title.charAt(0)}</span>}
-                        </div>
-                        <span className="album-tile-title">{a.title}</span>
-                        <span className="album-tile-artist">{a.artist}</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Genre Explorer for music lens */}
               {lens === 'music' && (
                 <GenreExplorer year={year} catalog={catalog} />
