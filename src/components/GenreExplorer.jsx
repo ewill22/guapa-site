@@ -142,13 +142,12 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   }, [activeGenre, selectedSub]);
 
   const closeAll = useCallback(() => {
+    const scrollTarget = geRef.current?.getBoundingClientRect().top + window.scrollY - 80;
     setActiveGenre(null);
     setSelectedSub(null);
     setDiscoArtist(null);
     setDiscoAlbums(null);
-    setTimeout(() => {
-      geRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 50);
+    window.scrollTo({ top: Math.max(0, scrollTarget), behavior: 'smooth' });
   }, []);
 
   // Escape key closes everything
