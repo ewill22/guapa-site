@@ -282,10 +282,10 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
         ))}
       </div>
 
-      {/* Subgenre Grid */}
+      {/* Subgenre Grid — hide others when discography is open */}
       {activeGenre && visibleSubgenres.length > 0 && (
         <div className="ge-subgenres">
-          {visibleSubgenres.map(sub => (
+          {(discoArtist ? visibleSubgenres.filter(sub => sub.id === selectedSub) : visibleSubgenres).map(sub => (
             <div
               key={sub.id}
               className={`ge-sub ${sub.status} ${selectedSub === sub.id ? 'active' : ''}`}
@@ -357,8 +357,10 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
           <div className="ge-disco-header">
             <span className="ge-disco-icon">{discoArtist.icon}</span>
             <div>
-              <h2 className="ge-disco-name">{discoArtist.name}</h2>
-              <p className="ge-disco-bio">{discoArtist.description}</p>
+              <h2 className="ge-disco-name">
+                {discoArtist.name}
+                {discoAlbums && <span className="ge-disco-album-count">{discoAlbums.length} album{discoAlbums.length !== 1 ? 's' : ''}</span>}
+              </h2>
             </div>
           </div>
 
