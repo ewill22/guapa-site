@@ -85,8 +85,8 @@ function getDailyArtist(catalog) {
   const dayNum = daysSinceEpoch(today);
 
   // Split into modern vs throwback based on begin_year
-  const modern = artists.filter(a => (a.begin_year || 2000) >= 2000);
-  const throwback = artists.filter(a => (a.begin_year || 2000) < 2000);
+  const modern = artists.filter(a => (a.begin_year || 2000) >= 1991);
+  const throwback = artists.filter(a => (a.begin_year || 2000) < 1991);
 
   // Alternate days: even = throwback, odd = modern
   const isThrowbackDay = dayNum % 2 === 0;
