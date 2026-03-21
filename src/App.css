@@ -600,6 +600,7 @@ html, body {
 
 .blurbs-section {
   margin-top: var(--space-lg);
+  overflow: hidden;
 }
 
 .blurbs-header {

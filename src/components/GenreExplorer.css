@@ -5,9 +5,6 @@
 
 /* Container */
 .ge {
-  max-width: 100%;
-  width: 100%;
-  overflow-x: clip;
   box-sizing: border-box;
 }
 
@@ -224,7 +221,6 @@
   position: relative;
   box-sizing: border-box;
   max-width: 1060px;
-  width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -310,8 +306,6 @@
   border-top: 1px solid var(--gray-800);
   padding-top: 20px;
   max-width: 1060px;
-  width: 100%;
-  box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
 }
@@ -685,33 +679,10 @@
 
   .ge-artists {
     padding: 10px;
-    max-width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    overflow-x: hidden;
-    box-sizing: border-box;
   }
 
   .ge-artists-grid {
     grid-template-columns: 1fr;
-  }
-
-  .ge-disco {
-    max-width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    overflow-x: hidden;
-    box-sizing: border-box;
-  }
-
-  .ge-disco-body {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-
-  .ge-album {
-    max-width: 100%;
-    box-sizing: border-box;
   }
 
   .ge-album-header {
