@@ -370,6 +370,21 @@ export default function App() {
       <Nav />
       <Banner />
 
+      {/* DEBUG: find overflowing elements on mobile */}
+      <div id="overflow-debug" style={{ position: 'fixed', top: 60, left: 0, right: 0, zIndex: 9999, background: 'red', color: 'white', fontSize: '11px', padding: '6px', display: 'none', maxHeight: '120px', overflow: 'auto' }} />
+      {typeof window !== 'undefined' && window.innerWidth < 800 && setTimeout(() => {
+        const vw = document.documentElement.clientWidth;
+        const bad = [];
+        document.querySelectorAll('*').forEach(el => {
+          const r = el.getBoundingClientRect();
+          if (r.right > vw + 2 || r.width > vw + 2) {
+            bad.push(`${el.tagName}.${el.className?.split?.(' ')?.[0] || '?'} w=${Math.round(r.width)} r=${Math.round(r.right)} vw=${vw}`);
+          }
+        });
+        const d = document.getElementById('overflow-debug');
+        if (d && bad.length) { d.style.display = 'block'; d.textContent = bad.join(' | '); }
+      }, 3000) && null}
+
       <main>
         <section className="dashboard-hero">
 
