@@ -263,7 +263,11 @@ export default function App() {
     // Only scroll to explorer top if no album target — album scroll is handled by GenreExplorer
     if (!albumTitle) {
       setTimeout(() => {
-        genreExplorerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const el = genreExplorerRef.current;
+        if (el) {
+          const top = window.scrollY + el.getBoundingClientRect().top - (parseInt(getComputedStyle(el).scrollMarginTop) || 0);
+          window.scrollTo({ top, behavior: 'smooth' });
+        }
       }, 300);
     }
   }, []);

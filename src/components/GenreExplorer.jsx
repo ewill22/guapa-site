@@ -8,6 +8,20 @@ function formatDuration(ms) {
   return `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, '0')}`;
 }
 
+// Use window.scrollTo instead of scrollIntoView — iOS Safari auto-zooms on scrollIntoView
+function safeScrollTo(el, block = 'start') {
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const scrollMargin = parseInt(getComputedStyle(el).scrollMarginTop) || 0;
+  let top;
+  if (block === 'center') {
+    top = window.scrollY + rect.top - window.innerHeight / 2 + rect.height / 2;
+  } else {
+    top = window.scrollY + rect.top - scrollMargin;
+  }
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
 export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandled }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
@@ -108,7 +122,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     setTimeout(() => {
       const el = discoListRef.current?.querySelector(`[data-album-title="${CSS.escape(targetAlbum)}"]`);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        safeScrollTo(el, 'center');
         setHighlightAlbum(targetAlbum);
         setTimeout(() => setHighlightAlbum(null), 3000);
       }
@@ -189,7 +203,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       // Only scroll on mobile
       if (window.innerWidth <= 768) {
         setTimeout(() => {
-          artistPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          safeScrollTo(artistPanelRef.current);
         }, 100);
       }
     }
@@ -200,7 +214,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     setDiscoAlbums(null);
     setLoading(true);
     setTimeout(() => {
-      discoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      safeScrollTo(discoRef.current);
     }, 100);
 
     // Try to find real data from catalog
@@ -402,11 +416,11 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
                 <div className="ge-nav-rail">
                   <button className="ge-nav-btn" onClick={() => {
                     const el = discoListRef.current?.querySelector('.ge-album:first-child');
-                    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    safeScrollTo(el);
                   }}>Latest Album</button>
                   <button className="ge-nav-btn" onClick={() => {
                     const el = discoListRef.current?.querySelector('.ge-album:last-child');
-                    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    safeScrollTo(el);
                   }}>First Album</button>
                   <button className="ge-nav-btn ge-nav-btn--close" onClick={closeAll}>&times;</button>
                 </div>
