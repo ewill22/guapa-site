@@ -590,7 +590,8 @@ export default function App() {
                         <div key={i} className="counter-search-item" onClick={() => {
                           setSearchQuery('');
                           setSearchOpen(false);
-                          scrollToExplorer(r.artist || r.name, r.album || null);
+                          const albumTarget = r.type === 'album' ? r.name : (r.album || null);
+                          scrollToExplorer(r.artist || r.name, albumTarget);
                         }}>
                           <span className="counter-search-icon">{r.type === 'artist' ? '🎤' : r.type === 'album' ? '💿' : '♫'}</span>
                           <span className="counter-search-type">{r.type}</span>
