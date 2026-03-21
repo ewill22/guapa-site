@@ -6,7 +6,9 @@
 /* Container */
 .ge {
   max-width: 100%;
+  width: 100%;
   overflow-x: clip;
+  box-sizing: border-box;
 }
 
 /* Genre Tabs */
@@ -676,11 +678,20 @@
   }
 
   .ge-artists {
-    padding: 14px;
+    padding: 12px;
+    max-width: 100%;
+    width: 100%;
   }
 
   .ge-artists-grid {
     grid-template-columns: 1fr;
+  }
+
+  .ge-disco {
+    max-width: 100%;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .ge-album-header {
@@ -703,8 +714,17 @@
   }
 
   .ge-track {
-    padding: 7px 12px;
-    gap: 8px;
+    padding: 7px 10px;
+    gap: 6px;
+  }
+
+  .ge-track-num { width: 22px; }
+  .ge-track-dur { width: 36px; }
+  .ge-th-num { width: 22px; }
+  .ge-th-dur { width: 36px; }
+
+  .ge-tracklist-header {
+    padding: 0 10px;
   }
 
   .ge-artists-header {
