@@ -92,7 +92,7 @@ html {
 /* Album tile with artwork */
 .kpi-tile--album-art {
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--space-sm);
 }
 .kpi-album-art {
