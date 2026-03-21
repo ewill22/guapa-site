@@ -624,7 +624,14 @@
   text-align: left;
 }
 
-.ge-nav-btn:hover {
+@media (hover: hover) {
+  .ge-nav-btn:hover {
+    border-color: var(--pink);
+    color: var(--pink);
+  }
+}
+
+.ge-nav-btn:active {
   border-color: var(--pink);
   color: var(--pink);
 }
@@ -635,7 +642,15 @@
   padding: 6px 12px;
 }
 
-.ge-nav-btn--close:hover {
+@media (hover: hover) {
+  .ge-nav-btn--close:hover {
+    background: var(--pink);
+    color: var(--black);
+    border-color: var(--pink);
+  }
+}
+
+.ge-nav-btn--close:active {
   background: var(--pink);
   color: var(--black);
   border-color: var(--pink);
