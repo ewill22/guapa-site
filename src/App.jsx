@@ -601,6 +601,12 @@ export default function App() {
                       ))}
                     </div>
                   )}
+                  <div className="ge-sub-legend">
+                    <span className="ge-sub-legend-item ge-sub-legend--emerging">Emerging</span>
+                    <span className="ge-sub-legend-item ge-sub-legend--rising">Rising</span>
+                    <span className="ge-sub-legend-item ge-sub-legend--peak">Peak</span>
+                    <span className="ge-sub-legend-item ge-sub-legend--fading">Fading</span>
+                  </div>
                 </div>
               ) : (
                 <div className="counter-bean">
