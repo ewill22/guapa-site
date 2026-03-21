@@ -370,16 +370,6 @@ export default function App() {
       <Nav />
       <Banner />
 
-      {/* DEBUG: colored borders on key containers */}
-      <style>{`
-        @media (max-width: 800px) {
-          .dashboard-hero { outline: 3px solid red !important; }
-          .blurbs-section { outline: 3px solid lime !important; }
-          .ge { outline: 3px solid cyan !important; }
-          .ge-artists { outline: 3px dashed yellow !important; }
-          .ge-album { outline: 2px solid magenta !important; }
-        }
-      `}</style>
 
       <main>
         <section className="dashboard-hero">

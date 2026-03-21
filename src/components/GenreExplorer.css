@@ -644,7 +644,8 @@
 /* Responsive */
 @media (max-width: 768px) {
   .ge {
-    overflow: hidden;
+    width: 100%;
+    min-width: 0;
   }
 
   .ge-origin {
@@ -653,6 +654,8 @@
 
   .ge-tabs {
     gap: 4px;
+    flex-wrap: wrap;
+    overflow-x: visible;
   }
 
   .ge-tab {
