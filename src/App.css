@@ -2,6 +2,11 @@
    HOME PAGE STYLES
 ======================================== */
 
+/* Prevent iOS double-tap zoom while keeping pinch-to-zoom */
+html {
+  touch-action: manipulation;
+}
+
 /* Dashboard Hero */
 .dashboard-hero {
   padding: var(--space-lg) var(--space-md);
