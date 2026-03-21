@@ -370,35 +370,6 @@ export default function App() {
       <Nav />
       <Banner />
 
-      {/* DEBUG: viewport diagnostics */}
-      <div id="overflow-debug" style={{ position: 'fixed', top: 60, left: 0, right: 0, zIndex: 9999, background: '#222', color: '#0f0', fontSize: '10px', padding: '6px', maxHeight: '150px', overflow: 'auto', fontFamily: 'monospace' }}>loading debug...</div>
-      {typeof window !== 'undefined' && setTimeout(() => {
-        const d = document.getElementById('overflow-debug');
-        if (!d) return;
-        const vw = document.documentElement.clientWidth;
-        const bw = document.body.scrollWidth;
-        const hw = document.documentElement.scrollWidth;
-        const iw = window.innerWidth;
-        const vv = window.visualViewport;
-        const scale = vv ? vv.scale : '?';
-        const vvw = vv ? Math.round(vv.width) : '?';
-        const dpr = window.devicePixelRatio;
-        const lines = [
-          `clientW=${vw} bodyScrollW=${bw} htmlScrollW=${hw} innerW=${iw}`,
-          `visualVP: w=${vvw} scale=${scale} dpr=${dpr}`,
-        ];
-        const bad = [];
-        document.querySelectorAll('*').forEach(el => {
-          const r = el.getBoundingClientRect();
-          if (r.right > vw + 2) {
-            const cls = (el.className && typeof el.className === 'string') ? el.className.split(' ')[0] : el.tagName;
-            bad.push(`${cls} r=${Math.round(r.right)}`);
-          }
-        });
-        lines.push(bad.length ? `OVERFLOW: ${bad.slice(0,10).join(', ')}` : 'No overflow detected');
-        d.textContent = lines.join('\n');
-        d.style.whiteSpace = 'pre-wrap';
-      }, 2000) && null}
 
       <main>
         <section className="dashboard-hero">
