@@ -173,7 +173,7 @@ html {
 
 /* Up Next — grey text, right-aligned under timeline */
 .up-next {
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: var(--gray-600);
   text-align: left;
   margin-top: 6px;
