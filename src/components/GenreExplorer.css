@@ -746,6 +746,7 @@
   .ge-artists-header {
     flex-direction: column;
     gap: 8px;
+    font-size: 0.95rem;
   }
 
   .ge-artists-meta {
@@ -756,6 +757,18 @@
     flex-direction: column;
     padding: 0;
     gap: 10px;
+  }
+
+  .ge-disco-icon {
+    font-size: 1.6rem;
+  }
+
+  .ge-disco-name {
+    font-size: 1.2rem;
+  }
+
+  .ge-disco-bio {
+    font-size: 0.8rem;
   }
 
   .ge-disco-body {
