@@ -354,7 +354,6 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
               <h2 className="ge-disco-name">{discoArtist.name}</h2>
               <p className="ge-disco-bio">{discoArtist.description}</p>
             </div>
-            <button className="ge-disco-close" onClick={() => { setDiscoArtist(null); setDiscoAlbums(null); }}>Close</button>
           </div>
 
           {loading ? (
