@@ -43,13 +43,17 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     const target = deepLink.artist.toLowerCase();
     pendingAlbumRef.current = deepLink.album || null;
 
-    // Find editorial info if available (for icon/description)
+    // Find editorial info if available (for icon/description) + genre/sub
     let editorialArtist = null;
-    for (const genre of Object.values(MUSIC_DATA)) {
-      for (const sub of Object.values(genre.subgenres)) {
+    let foundGenre = null;
+    let foundSub = null;
+    for (const [genreId, genre] of Object.entries(MUSIC_DATA)) {
+      for (const [subId, sub] of Object.entries(genre.subgenres)) {
         for (const [artId, artist] of Object.entries(sub.artists)) {
           if (artist.name.toLowerCase() === target) {
             editorialArtist = { id: artId, ...artist };
+            foundGenre = genreId;
+            foundSub = subId;
             break;
           }
         }
@@ -58,9 +62,9 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       if (editorialArtist) break;
     }
 
-    // Clear genre/sub so we don't hit year-based visibility issues
-    setActiveGenre(null);
-    setSelectedSub(null);
+    // Set genre/sub if found, otherwise clear
+    setActiveGenre(foundGenre);
+    setSelectedSub(foundSub);
 
     // Build artist object
     const artistObj = editorialArtist || { id: target, name: deepLink.artist, icon: '', description: '', albums: [] };
