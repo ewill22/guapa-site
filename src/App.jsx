@@ -283,13 +283,15 @@ export default function App() {
     return () => clearInterval(interval);
   }, [dailyArtist]);
 
-  // Sync timeline year to currently playing album
+  // Sync timeline year + genre explorer to currently playing album
+  const initialDeepLinked = useRef(false);
   useEffect(() => {
     if (!nowPlaying) return;
     if (nowPlaying.auxCord) {
-      // Aux cord open — go to random year (only once on transition)
+      // Aux cord open — random year, clear selection
       if (prevAlbumRef.current !== '__aux__') {
         setYear(Math.floor(Math.random() * (2026 - 1960 + 1)) + 1960);
+        if (initialDeepLinked.current) setDeepLink(null);
         prevAlbumRef.current = '__aux__';
       }
     } else if (nowPlaying.year && !nowPlaying.waiting) {
@@ -297,6 +299,11 @@ export default function App() {
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
         setYear(nowPlaying.year);
+        // Deep link to artist on initial load only
+        if (!initialDeepLinked.current && nowPlaying.artist) {
+          setDeepLink({ artist: nowPlaying.artist, album: null });
+          initialDeepLinked.current = true;
+        }
         prevAlbumRef.current = key;
       }
     }
