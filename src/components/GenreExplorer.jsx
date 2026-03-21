@@ -22,24 +22,6 @@ function safeScrollTo(el, block = 'start') {
   window.scrollTo({ top, behavior: 'smooth' });
 }
 
-// Check if a subgenre has any artist with albums spanning the given year
-function subgenreHasAlbumsInYear(sub, yr, catalog) {
-  for (const artist of Object.values(sub.artists)) {
-    const years = artist.albums.map(a => a.year).filter(Boolean);
-    if (catalog) {
-      const catKey = Object.keys(catalog).find(k =>
-        catalog[k].name.toLowerCase() === artist.name.toLowerCase()
-      );
-      if (catKey) {
-        const catYears = catalog[catKey].albums?.map(a => a.release_year).filter(Boolean) || [];
-        years.push(...catYears);
-      }
-    }
-    if (years.length > 0 && yr >= Math.min(...years) && yr <= Math.max(...years)) return true;
-  }
-  return false;
-}
-
 export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandled }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
@@ -154,29 +136,20 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   // Genre tabs with visible subgenre counts
   const genreTabs = useMemo(() => {
     return Object.entries(MUSIC_DATA).map(([id, genre]) => {
-      const visibleCount = Object.values(genre.subgenres).filter(sub =>
-        sub.status[year] !== 'hidden' || subgenreHasAlbumsInYear(sub, year, catalog)
-      ).length;
+      const visibleCount = Object.values(genre.subgenres).filter(s => s.status[year] !== 'hidden').length;
       return { id, name: genre.name, icon: genre.icon, visibleCount };
     });
-  }, [year, catalog]);
+  }, [year]);
 
   // Visible subgenres for active genre
-  // A subgenre is visible if its editorial status isn't 'hidden' OR if any
-  // artist in it has albums spanning the current year (editorial + catalog).
   const visibleSubgenres = useMemo(() => {
     if (!activeGenre) return [];
     const genre = MUSIC_DATA[activeGenre];
     if (!genre) return [];
     return Object.entries(genre.subgenres)
-      .filter(([, sub]) =>
-        sub.status[year] !== 'hidden' || subgenreHasAlbumsInYear(sub, year, catalog)
-      )
-      .map(([id, sub]) => ({
-        id, ...sub,
-        status: sub.status[year] === 'hidden' ? 'fading' : sub.status[year]
-      }));
-  }, [activeGenre, year, catalog]);
+      .filter(([, sub]) => sub.status[year] !== 'hidden')
+      .map(([id, sub]) => ({ id, ...sub, status: sub.status[year] }));
+  }, [activeGenre, year]);
 
   // Artists for selected subgenre
   const artists = useMemo(() => {
