@@ -14,6 +14,13 @@ import './App.css';
 // Only these three lenses (dev is the default "guapa" view)
 const LENSES = ['music', 'coffee', 'economics'];
 
+// Get today's date in EST (UTC-5) so daily picks change at midnight EST, not UTC
+function getTodayEST() {
+  const now = new Date();
+  const est = new Date(now.getTime() - 5 * 60 * 60 * 1000);
+  return est.toISOString().slice(0, 10);
+}
+
 // Build dev day list — every day from first commit to today
 function buildDevDays() {
   const start = new Date(DEV_FIRST_DATE + 'T00:00:00');
@@ -61,7 +68,7 @@ function getBlurbs(lens, year) {
 function getDailyArtist(catalog) {
   const artists = Object.values(catalog).filter(a => a.albums && a.albums.length > 0);
   if (!artists.length) return null;
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayEST();
   const seed = hashStr(today);
 
   // Split into modern vs throwback based on begin_year
@@ -108,12 +115,12 @@ function getDailyArtist(catalog) {
 }
 
 // Find what's currently playing based on time of day (starts 8am EST)
-const PLAYBACK_START_UTC_HOUR = 13; // 8am EST = 13:00 UTC
-
 function getNowPlaying(dailyArtist) {
   if (!dailyArtist || !dailyArtist.schedule.length) return null;
   const now = new Date();
-  const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), PLAYBACK_START_UTC_HOUR));
+  // Use EST date for todayStart so it aligns with EST-based daily artist
+  const estDateStr = getTodayEST(); // e.g. "2026-03-20"
+  const todayStart = new Date(estDateStr + 'T13:00:00Z'); // 8am EST = 13:00 UTC
   // If it's before 8am EST today, nothing playing yet
   if (now.getTime() < todayStart.getTime()) {
     return { waiting: true, artist: dailyArtist.artist, artistUrl: dailyArtist.artistUrl };
@@ -159,7 +166,7 @@ const COFFEE_BEANS = [
 ];
 
 function getDailyBean() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getTodayEST();
   const seed = hashStr(today + 'bean');
   return COFFEE_BEANS[seed % COFFEE_BEANS.length];
 }
@@ -365,7 +372,7 @@ export default function App() {
                       <span className="kpi-value kpi-value--aux">Aux Cord is Open</span>
                     </div>
                     <div className="kpi-tile kpi-tile--song kpi-tile--aux-logo">
-                      <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="kpi-aux-logo" style={{ filter: `hue-rotate(${hashStr(new Date().toISOString().slice(0, 10) + 'aux') % 360}deg)` }} />
+                      <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="kpi-aux-logo" style={{ filter: `hue-rotate(${hashStr(getTodayEST() + 'aux') % 360}deg)` }} />
                     </div>
                   </>
                 ) : nowPlaying?.waiting ? (
