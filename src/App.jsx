@@ -151,6 +151,9 @@ function getNowPlaying(dailyArtist) {
       const albumEndMs = lastTrack.startMs + lastTrack.durationMs;
       const albumProgress = Math.min((elapsedMs - albumStartMs) / (albumEndMs - albumStartMs), 1);
 
+      // Compute artist-level (full discography) progress
+      const artistProgress = Math.min(elapsedMs / dailyArtist.totalMs, 1);
+
       return {
         auxCord: false,
         ...track,
@@ -159,6 +162,7 @@ function getNowPlaying(dailyArtist) {
         albumProgress,
         albumTrackIndex: albumTracks.findIndex(t => t === track) + 1,
         albumTrackCount: albumTracks.length,
+        artistProgress,
       };
     }
   }
@@ -430,6 +434,11 @@ export default function App() {
                   <span className="kpi-label">Artist of the Day</span>
                   <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
                   {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
+                  {nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting && (
+                    <div className="kpi-artist-progress">
+                      <div className="kpi-artist-progress-bar" style={{ width: `${(nowPlaying.artistProgress * 100).toFixed(1)}%` }} />
+                    </div>
+                  )}
                 </div>
                 {nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting ? (
                   <>
