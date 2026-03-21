@@ -63,27 +63,43 @@ function getBlurbs(lens, year) {
   return null;
 }
 
-// Pick the daily artist and build a full playback schedule
+// Deterministic shuffle: sort artists by hash(cycleId + name)
+function shufflePool(pool, cycleId) {
+  return [...pool].sort((a, b) => hashStr(cycleId + a.name) - hashStr(cycleId + b.name));
+}
+
+// Days since rotation epoch
+const ROTATION_EPOCH = '2026-03-21'; // rotation starts today
+function daysSinceEpoch(dateStr) {
+  const epoch = new Date(ROTATION_EPOCH + 'T00:00:00');
+  const d = new Date(dateStr + 'T00:00:00');
+  return Math.floor((d - epoch) / 86400000);
+}
+
+// Pick the daily artist — rotation-based, no repeats until entire pool is exhausted
 // Alternates between modern (2000+) and throwback (<2000) artists by day
-// Selection is stable: sorted by name, scored by hash — catalog changes don't shift the pick
 function getDailyArtist(catalog) {
   const artists = Object.values(catalog).filter(a => a.albums && a.albums.length > 0);
   if (!artists.length) return null;
   const today = getTodayEST();
-  const seed = hashStr(today);
+  const dayNum = daysSinceEpoch(today);
 
   // Split into modern vs throwback based on begin_year
   const modern = artists.filter(a => (a.begin_year || 2000) >= 2000);
   const throwback = artists.filter(a => (a.begin_year || 2000) < 2000);
 
-  // Alternate days: even seed = throwback, odd = modern
-  const pool = (seed % 2 === 0 && throwback.length) ? throwback : (modern.length ? modern : artists);
+  // Alternate days: even = throwback, odd = modern
+  const isThrowbackDay = dayNum % 2 === 0;
+  const pool = (isThrowbackDay && throwback.length) ? throwback : (modern.length ? modern : artists);
 
-  // Score each artist by hashing their name with today's date — stable across catalog changes
-  const artist = pool.reduce((best, a) => {
-    const score = hashStr(today + a.name);
-    return (!best || score > best.score) ? { ...a, score } : best;
-  }, null);
+  // Position within this pool's rotation (each pool gets picked every other day)
+  const poolDayIndex = Math.floor(dayNum / 2) + (isThrowbackDay ? 0 : 0);
+  const cycleIndex = Math.floor(poolDayIndex / pool.length);
+  const posInCycle = poolDayIndex % pool.length;
+
+  // Shuffle pool deterministically for this cycle, pick by position
+  const shuffled = shufflePool(pool, `cycle${cycleIndex}${isThrowbackDay ? 'T' : 'M'}`);
+  const artist = shuffled[posInCycle];
 
   // Build chronological playback schedule from full discography
   const albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
@@ -116,7 +132,7 @@ function getDailyArtist(catalog) {
     totalTracks: schedule.length,
     albumCount: albums.length,
     schedule,
-    isThrowback: pool === throwback,
+    isThrowback: isThrowbackDay,
   };
 }
 
