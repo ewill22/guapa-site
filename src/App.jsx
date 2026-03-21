@@ -196,7 +196,7 @@ const GUAPA_COLOR = '#f0c014';
 
 export default function App() {
   const [lens, setLens] = useState('music');
-  const [year, setYear] = useState(() => Math.floor(Math.random() * (2026 - 1960 + 1)) + 1960);
+  const [year, setYear] = useState(null);
   const [devDay, setDevDay] = useState(DEV_DAYS.length - 1);
   const [catalog, setCatalog] = useState(null);
 
@@ -285,12 +285,18 @@ export default function App() {
 
   // Sync timeline year + genre explorer to currently playing album
   const initialDeepLinked = useRef(false);
+  const randYear = () => Math.floor(Math.random() * (2026 - 1960 + 1)) + 1960;
   useEffect(() => {
     if (!nowPlaying) return;
+    if (nowPlaying.waiting) {
+      // Before 8am — random year
+      if (year === null) setYear(randYear());
+      return;
+    }
     if (nowPlaying.auxCord) {
       // Aux cord open — random year, clear selection
       if (prevAlbumRef.current !== '__aux__') {
-        setYear(Math.floor(Math.random() * (2026 - 1960 + 1)) + 1960);
+        setYear(randYear());
         if (initialDeepLinked.current) setDeepLink(null);
         prevAlbumRef.current = '__aux__';
       }
@@ -553,9 +559,9 @@ export default function App() {
                       <div className="slider-row">
                         <div className="slider-wrapper">
                           <input type="range" className="year-slider" min="1960" max="2026"
-                            value={year} onChange={e => setYear(+e.target.value)}
+                            value={year || 1960} onChange={e => setYear(+e.target.value)}
                             style={{
-                              background: `linear-gradient(to right, ${lc} 0%, ${lc} ${((year - 1960) / 66) * 100}%, var(--gray-800) ${((year - 1960) / 66) * 100}%, var(--gray-800) 100%)`,
+                              background: `linear-gradient(to right, ${lc} 0%, ${lc} ${(((year || 1960) - 1960) / 66) * 100}%, var(--gray-800) ${(((year || 1960) - 1960) / 66) * 100}%, var(--gray-800) 100%)`,
                               accentColor: lc,
                             }}
                           />
