@@ -283,9 +283,15 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       </div>
 
       {/* Subgenre Grid — hide others when discography is open */}
-      {activeGenre && visibleSubgenres.length > 0 && (
+      {activeGenre && (visibleSubgenres.length > 0 || (discoArtist && selectedSub)) && (
         <div className="ge-subgenres">
-          {(discoArtist ? visibleSubgenres.filter(sub => sub.id === selectedSub) : visibleSubgenres).map(sub => (
+          {(discoArtist && selectedSub
+            ? (() => {
+                const subData = MUSIC_DATA[activeGenre]?.subgenres[selectedSub];
+                return subData ? [{ id: selectedSub, ...subData, status: subData.status[year] || 'peak' }] : [];
+              })()
+            : visibleSubgenres
+          ).map(sub => (
             <div
               key={sub.id}
               className={`ge-sub ${sub.status} ${selectedSub === sub.id ? 'active' : ''}`}
