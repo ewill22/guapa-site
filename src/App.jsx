@@ -370,6 +370,16 @@ export default function App() {
       <Nav />
       <Banner />
 
+      {/* DEBUG: show widths of key elements */}
+      <div id="dbg" style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 9999, background: '#000', color: '#0f0', fontSize: '9px', padding: '4px', fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>...</div>
+      {typeof window !== 'undefined' && setTimeout(() => {
+        const d = document.getElementById('dbg');
+        if (!d) return;
+        const q = s => { const el = document.querySelector(s); return el ? Math.round(el.getBoundingClientRect().width) : '?'; };
+        const r = s => { const el = document.querySelector(s); return el ? Math.round(el.getBoundingClientRect().right) : '?'; };
+        const vw = document.documentElement.clientWidth;
+        d.textContent = `vw=${vw} hero=${q('.dashboard-hero')} blurbs=${q('.blurbs-section')} ge=${q('.ge')} tabs=${q('.ge-tabs')} artists=${q('.ge-artists')} album=${q('.ge-album')}\nhero.r=${r('.dashboard-hero')} blurbs.r=${r('.blurbs-section')} ge.r=${r('.ge')} tabs.r=${r('.ge-tabs')} artists.r=${r('.ge-artists')} album.r=${r('.ge-album')}`;
+      }, 3000) && null}
 
       <main>
         <section className="dashboard-hero">
