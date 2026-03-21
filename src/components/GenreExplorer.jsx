@@ -37,6 +37,33 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
 
   const base = import.meta.env.BASE_URL;
 
+  // Build subgenre year ranges from catalog album-level tags
+  // { "KRAUTROCK / SYNTH": { min: 1970, max: 2003 }, ... }
+  const catalogSubRanges = useMemo(() => {
+    if (!catalog) return {};
+    const ranges = {};
+    for (const artist of Object.values(catalog)) {
+      for (const album of (artist.albums || [])) {
+        const sub = album.subgenre || artist.subgenre;
+        const yr = album.release_year;
+        if (!sub || !yr) continue;
+        if (!ranges[sub]) ranges[sub] = { min: yr, max: yr };
+        else {
+          if (yr < ranges[sub].min) ranges[sub].min = yr;
+          if (yr > ranges[sub].max) ranges[sub].max = yr;
+        }
+      }
+    }
+    return ranges;
+  }, [catalog]);
+
+  // Check if a subgenre is visible: editorial status OR catalog albums span this year
+  const isSubVisible = useCallback((sub, yr) => {
+    if (sub.status[yr] !== 'hidden') return true;
+    const range = catalogSubRanges[sub.name];
+    return range && yr >= range.min && yr <= range.max;
+  }, [catalogSubRanges]);
+
   // Deep link — load artist discography directly (skip genre/sub navigation)
   useEffect(() => {
     if (!deepLink?.artist) return;
@@ -136,10 +163,10 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   // Genre tabs with visible subgenre counts
   const genreTabs = useMemo(() => {
     return Object.entries(MUSIC_DATA).map(([id, genre]) => {
-      const visibleCount = Object.values(genre.subgenres).filter(s => s.status[year] !== 'hidden').length;
+      const visibleCount = Object.values(genre.subgenres).filter(s => isSubVisible(s, year)).length;
       return { id, name: genre.name, icon: genre.icon, visibleCount };
     });
-  }, [year]);
+  }, [year, isSubVisible]);
 
   // Visible subgenres for active genre
   const visibleSubgenres = useMemo(() => {
@@ -147,9 +174,12 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     const genre = MUSIC_DATA[activeGenre];
     if (!genre) return [];
     return Object.entries(genre.subgenres)
-      .filter(([, sub]) => sub.status[year] !== 'hidden')
-      .map(([id, sub]) => ({ id, ...sub, status: sub.status[year] }));
-  }, [activeGenre, year]);
+      .filter(([, sub]) => isSubVisible(sub, year))
+      .map(([id, sub]) => ({
+        id, ...sub,
+        status: sub.status[year] === 'hidden' ? 'fading' : sub.status[year]
+      }));
+  }, [activeGenre, year, isSubVisible]);
 
   // Artists for selected subgenre
   const artists = useMemo(() => {
