@@ -65,6 +65,7 @@ function getBlurbs(lens, year) {
 
 // Pick the daily artist and build a full playback schedule
 // Alternates between modern (2000+) and throwback (<2000) artists by day
+// Selection is stable: sorted by name, scored by hash — catalog changes don't shift the pick
 function getDailyArtist(catalog) {
   const artists = Object.values(catalog).filter(a => a.albums && a.albums.length > 0);
   if (!artists.length) return null;
@@ -77,7 +78,12 @@ function getDailyArtist(catalog) {
 
   // Alternate days: even seed = throwback, odd = modern
   const pool = (seed % 2 === 0 && throwback.length) ? throwback : (modern.length ? modern : artists);
-  const artist = pool[seed % pool.length];
+
+  // Score each artist by hashing their name with today's date — stable across catalog changes
+  const artist = pool.reduce((best, a) => {
+    const score = hashStr(today + a.name);
+    return (!best || score > best.score) ? { ...a, score } : best;
+  }, null);
 
   // Build chronological playback schedule from full discography
   const albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
