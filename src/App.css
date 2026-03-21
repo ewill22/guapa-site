@@ -92,8 +92,9 @@ html {
 /* Album tile with artwork */
 .kpi-tile--album-art {
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-sm);
+  justify-content: flex-start;
 }
 .kpi-album-art {
   width: 48px;
