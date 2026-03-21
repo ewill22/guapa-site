@@ -103,7 +103,7 @@
 
 .ge-sub.rising { border-color: var(--blue, #88a8d4); }
 .ge-sub.peak { border-color: var(--pink); }
-.ge-sub.fading { border-color: #6b3a3a; border-style: dashed; opacity: 0.6; }
+.ge-sub.fading { border-color: #a05050; border-style: dashed; opacity: 0.7; }
 .ge-sub.emerging { border-color: var(--green, #7ec89b); border-style: dashed; }
 
 .ge-sub-header {
@@ -180,8 +180,8 @@
 }
 
 .ge-sub-legend--fading::before {
-  border-top: 2px dashed #6b3a3a;
-  opacity: 0.6;
+  border-top: 2px dashed #a05050;
+  opacity: 0.7;
 }
 
 /* Origin Story */
