@@ -50,8 +50,10 @@ html {
   text-decoration: none;
   transition: background 0.2s;
 }
-.kpi-tile:hover {
-  background: rgba(255, 255, 255, 0.02);
+@media (hover: hover) {
+  .kpi-tile:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
 }
 
 .kpi-label {
