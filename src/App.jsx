@@ -143,15 +143,26 @@ function getNowPlaying(dailyArtist) {
       const track = dailyArtist.schedule[i];
       const trackElapsed = elapsedMs - track.startMs;
       const progress = Math.min(trackElapsed / track.durationMs, 1);
+
+      // Compute album-level progress
+      const albumTracks = dailyArtist.schedule.filter(t => t.album === track.album);
+      const albumStartMs = albumTracks[0].startMs;
+      const lastTrack = albumTracks[albumTracks.length - 1];
+      const albumEndMs = lastTrack.startMs + lastTrack.durationMs;
+      const albumProgress = Math.min((elapsedMs - albumStartMs) / (albumEndMs - albumStartMs), 1);
+
       return {
         auxCord: false,
         ...track,
         progress,
         trackElapsedMs: trackElapsed,
+        albumProgress,
+        albumTrackIndex: albumTracks.findIndex(t => t === track) + 1,
+        albumTrackCount: albumTracks.length,
       };
     }
   }
-  return { auxCord: false, ...dailyArtist.schedule[0], progress: 0, trackElapsedMs: 0 };
+  return { auxCord: false, ...dailyArtist.schedule[0], progress: 0, trackElapsedMs: 0, albumProgress: 0 };
 }
 
 // Coffee beans of the moment — rotates daily
@@ -430,7 +441,10 @@ export default function App() {
                       )}
                       <div className="kpi-album-info">
                         <span className="kpi-label">{nowPlaying.album}</span>
-                        <span className="kpi-sub">{nowPlaying.year}</span>
+                        <span className="kpi-sub">{nowPlaying.year} — track {nowPlaying.albumTrackIndex}/{nowPlaying.albumTrackCount}</span>
+                      </div>
+                      <div className="kpi-album-progress">
+                        <div className="kpi-album-progress-bar" style={{ width: `${(nowPlaying.albumProgress * 100).toFixed(1)}%` }} />
                       </div>
                     </div>
                     <div className="kpi-tile kpi-tile--song">
