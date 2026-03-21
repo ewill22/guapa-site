@@ -15,14 +15,14 @@
   border: 1px solid var(--gray-800);
   border-radius: var(--radius-lg);
   background: var(--gray-900);
-  overflow: hidden;
 }
-
 /* Top row: tiles + timeline side by side */
 .counter-top {
   display: grid;
   grid-template-columns: 200px 1fr;
   min-height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 /* KPI Tiles — left column */
