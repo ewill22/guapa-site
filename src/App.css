@@ -2,7 +2,7 @@
    HOME PAGE STYLES
 ======================================== */
 
-/* Prevent iOS double-tap zoom while keeping pinch-to-zoom */
+/* Prevent iOS double-tap zoom */
 html {
   touch-action: manipulation;
 }
@@ -12,7 +12,6 @@ html {
   padding: var(--space-lg) var(--space-md);
   max-width: 1400px;
   margin: 0 auto;
-  overflow-x: clip;
 }
 
 /* ========================================
@@ -602,7 +601,6 @@ html {
 
 .blurbs-section {
   margin-top: var(--space-lg);
-  overflow: hidden;
 }
 
 .blurbs-header {

@@ -580,21 +580,10 @@
 }
 
 /* Scroll margins — clear the sticky nav (~70px) */
-.ge {
-  scroll-margin-top: 80px;
-}
-
-.ge-artists {
-  scroll-margin-top: 80px;
-}
-
-.ge-disco {
-  scroll-margin-top: 80px;
-}
-
-.ge-album {
-  scroll-margin-top: 80px;
-}
+.ge { scroll-margin-top: 80px; }
+.ge-artists { scroll-margin-top: 80px; }
+.ge-disco { scroll-margin-top: 80px; }
+.ge-album { scroll-margin-top: 80px; }
 
 /* Disco body — list + sticky nav rail side by side */
 .ge-disco-body {
@@ -653,6 +642,10 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .ge {
+    overflow: hidden;
+  }
+
   .ge-tabs {
     gap: 4px;
   }
