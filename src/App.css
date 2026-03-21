@@ -272,10 +272,10 @@ html {
   background: transparent;
   border: 1px solid var(--gray-800);
   border-radius: 4px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   color: var(--white);
   font-family: inherit;
-  font-size: 16px; /* must be >= 16px to prevent iOS auto-zoom */
+  font-size: 0.78rem;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -758,6 +758,9 @@ html {
 }
 
 @media (max-width: 600px) {
+  .counter-search-input {
+    font-size: 16px; /* >= 16px prevents iOS auto-zoom on focus */
+  }
   .counter-tiles {
     flex-direction: column;
   }
