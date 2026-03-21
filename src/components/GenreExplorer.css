@@ -103,8 +103,8 @@
 
 .ge-sub.rising { border-color: var(--blue, #88a8d4); }
 .ge-sub.peak { border-color: var(--pink); }
-.ge-sub.fading { border-color: var(--gray-800); opacity: 0.5; }
-.ge-sub.emerging { border-color: var(--yellow); border-style: dashed; }
+.ge-sub.fading { border-color: #6b3a3a; border-style: dashed; opacity: 0.6; }
+.ge-sub.emerging { border-color: var(--green, #7ec89b); border-style: dashed; }
 
 .ge-sub-header {
   display: flex;
@@ -124,7 +124,7 @@
 
 .ge-sub.rising .ge-sub-name { color: var(--blue, #88a8d4); }
 .ge-sub.peak .ge-sub-name { color: var(--pink); }
-.ge-sub.emerging .ge-sub-name { color: var(--yellow); }
+.ge-sub.emerging .ge-sub-name { color: var(--green, #7ec89b); }
 
 .ge-sub-artists {
   font-size: 0.65rem;
@@ -145,7 +145,7 @@
   grid-column: 1 / -1;
   display: flex;
   gap: 16px;
-  justify-content: flex-end;
+  justify-content: center;
   padding-top: 6px;
 }
 
@@ -168,7 +168,7 @@
 }
 
 .ge-sub-legend--emerging::before {
-  border-top: 2px dashed var(--yellow);
+  border-top: 2px dashed var(--green, #7ec89b);
 }
 
 .ge-sub-legend--rising::before {
@@ -180,8 +180,8 @@
 }
 
 .ge-sub-legend--fading::before {
-  background: var(--gray-800);
-  opacity: 0.5;
+  border-top: 2px dashed #6b3a3a;
+  opacity: 0.6;
 }
 
 /* Origin Story */
