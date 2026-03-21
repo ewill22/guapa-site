@@ -2,15 +2,12 @@
    HOME PAGE STYLES
 ======================================== */
 
-html, body {
-  overflow-x: hidden;
-}
-
 /* Dashboard Hero */
 .dashboard-hero {
   padding: var(--space-lg) var(--space-md);
   max-width: 1400px;
   margin: 0 auto;
+  overflow-x: clip;
 }
 
 /* ========================================
