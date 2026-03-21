@@ -217,7 +217,45 @@ export default function App() {
   const dailyBean = useMemo(() => getDailyBean(), []);
   const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year), [catalog, year]);
   const [deepLink, setDeepLink] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchRef = useRef(null);
   const genreExplorerRef = useRef(null);
+
+  // Search catalog for artists/albums/songs
+  const searchResults = useMemo(() => {
+    if (!catalog || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    const results = [];
+    for (const artist of Object.values(catalog)) {
+      if (artist.name.toLowerCase().includes(q)) {
+        results.push({ type: 'artist', name: artist.name });
+      }
+      for (const album of (artist.albums || [])) {
+        if (album.title?.toLowerCase().includes(q)) {
+          results.push({ type: 'album', name: album.title, meta: artist.name, artist: artist.name });
+        }
+        for (const track of (album.tracks || [])) {
+          if (track.title?.toLowerCase().includes(q)) {
+            results.push({ type: 'song', name: track.title, meta: `${artist.name} — ${album.title}`, artist: artist.name, album: album.title });
+          }
+        }
+      }
+      if (results.length >= 8) break;
+    }
+    return results.slice(0, 8);
+  }, [catalog, searchQuery]);
+
+  // Close search dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const scrollToExplorer = useCallback((artistName, albumTitle) => {
     setLens('music');
@@ -535,13 +573,42 @@ export default function App() {
                 </p>
                 <p className="counter-greeting-sub">Use the timeline above to travel through the years. Switch lenses to see music, coffee, or economics through time.</p>
               </div>
-              <div className="counter-bean">
-                <span className="kpi-label">Bean of the Moment</span>
-                <span className="bean-name">{dailyBean.name}</span>
-                <span className="bean-origin">{dailyBean.origin}</span>
-                <span className="bean-notes">{dailyBean.notes}</span>
-                <span className="bean-process">{dailyBean.process} process</span>
-              </div>
+              {lens === 'music' ? (
+                <div className="counter-search" ref={searchRef}>
+                  <span className="kpi-label">Search</span>
+                  <input
+                    type="text"
+                    className="counter-search-input"
+                    placeholder="Artists, albums, songs..."
+                    value={searchQuery}
+                    onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                    onFocus={() => setSearchOpen(true)}
+                  />
+                  {searchOpen && searchResults.length > 0 && (
+                    <div className="counter-search-results">
+                      {searchResults.map((r, i) => (
+                        <div key={i} className="counter-search-item" onClick={() => {
+                          setSearchQuery('');
+                          setSearchOpen(false);
+                          scrollToExplorer(r.artist || r.name, r.album || null);
+                        }}>
+                          <span className="counter-search-type">{r.type}</span>
+                          <span className="counter-search-name">{r.name}</span>
+                          {r.meta && <span className="counter-search-meta">{r.meta}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="counter-bean">
+                  <span className="kpi-label">Bean of the Moment</span>
+                  <span className="bean-name">{dailyBean.name}</span>
+                  <span className="bean-origin">{dailyBean.origin}</span>
+                  <span className="bean-notes">{dailyBean.notes}</span>
+                  <span className="bean-process">{dailyBean.process} process</span>
+                </div>
+              )}
               {lens === 'music' && yearAlbums.length > 0 && (
                 <div className="counter-albums">
                   <span className="kpi-label">Releases from {year}</span>

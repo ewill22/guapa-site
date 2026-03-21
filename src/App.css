@@ -250,6 +250,83 @@
   margin-top: 4px;
 }
 
+/* Counter Search — replaces bean in music lens */
+.counter-search {
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
+}
+.counter-search-input {
+  background: transparent;
+  border: 1px solid var(--gray-800);
+  border-radius: 4px;
+  padding: 8px 12px;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.counter-search-input::placeholder {
+  color: var(--gray-600);
+}
+.counter-search-input:focus {
+  border-color: var(--yellow);
+}
+.counter-search-results {
+  position: absolute;
+  top: 100%;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-radius: 6px;
+  z-index: 50;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.counter-search-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.counter-search-item:last-child {
+  border-bottom: none;
+}
+.counter-search-item:hover {
+  background: var(--gray-800);
+}
+.counter-search-type {
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-600);
+  width: 40px;
+  flex-shrink: 0;
+}
+.counter-search-name {
+  font-size: 0.8rem;
+  color: var(--white);
+  font-weight: 500;
+}
+.counter-search-meta {
+  font-size: 0.65rem;
+  color: var(--gray-600);
+  margin-left: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
 /* Counter Album Tiles — 4x2 grid in counter-bottom */
 .counter-albums {
   padding: var(--space-md) var(--space-lg);
