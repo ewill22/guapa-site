@@ -303,13 +303,19 @@
 .counter-search-item:hover {
   background: var(--gray-800);
 }
+.counter-search-icon {
+  font-size: 0.85rem;
+  width: 20px;
+  flex-shrink: 0;
+  text-align: center;
+}
 .counter-search-type {
   font-size: 0.55rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--gray-600);
-  width: 40px;
+  width: 34px;
   flex-shrink: 0;
 }
 .counter-search-name {

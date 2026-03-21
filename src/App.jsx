@@ -592,6 +592,7 @@ export default function App() {
                           setSearchOpen(false);
                           scrollToExplorer(r.artist || r.name, r.album || null);
                         }}>
+                          <span className="counter-search-icon">{r.type === 'artist' ? '🎤' : r.type === 'album' ? '💿' : '♫'}</span>
                           <span className="counter-search-type">{r.type}</span>
                           <span className="counter-search-name">{r.name}</span>
                           {r.meta && <span className="counter-search-meta">{r.meta}</span>}
