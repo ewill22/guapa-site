@@ -644,6 +644,7 @@
 @media (max-width: 768px) {
   .ge {
     overflow: hidden;
+    width: calc(100vw - 3rem);
   }
 
   .ge-tabs {
