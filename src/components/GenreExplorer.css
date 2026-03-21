@@ -224,6 +224,7 @@
   position: relative;
   box-sizing: border-box;
   max-width: 1060px;
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -309,6 +310,8 @@
   border-top: 1px solid var(--gray-800);
   padding-top: 20px;
   max-width: 1060px;
+  width: 100%;
+  box-sizing: border-box;
   margin-left: auto;
   margin-right: auto;
 }
@@ -334,6 +337,7 @@
   color: var(--yellow);
   margin: 0 0 6px;
   letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
 }
 
 .ge-disco-bio {
@@ -460,6 +464,7 @@
   margin: 0;
   line-height: 1.2;
   letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
 }
 
 .ge-album-actions {
@@ -678,9 +683,10 @@
   }
 
   .ge-artists {
-    padding: 12px;
+    padding: 10px;
     max-width: 100%;
     width: 100%;
+    box-sizing: border-box;
   }
 
   .ge-artists-grid {
@@ -690,8 +696,12 @@
   .ge-disco {
     max-width: 100%;
     width: 100%;
-    padding-left: 0;
-    padding-right: 0;
+    box-sizing: border-box;
+  }
+
+  .ge-album {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .ge-album-header {
