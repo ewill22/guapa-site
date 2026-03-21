@@ -439,6 +439,15 @@ export default function App() {
                       <div className="kpi-progress">
                         <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
                       </div>
+                      {dailyArtist && (
+                        <span className="kpi-sub" style={{ marginTop: '4px' }}>
+                          up next: {(() => {
+                            const idx = dailyArtist.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
+                            const next = dailyArtist.schedule[idx + 1];
+                            return next ? `${next.song} — ${next.album}` : 'Aux Cord';
+                          })()}
+                        </span>
+                      )}
                     </div>
                   </>
                 ) : nowPlaying?.auxCord ? (
@@ -585,16 +594,6 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-                {/* Up Next — tucked under the timeline */}
-                {nowPlaying && !nowPlaying.auxCord && dailyArtist && (
-                  <div className="up-next">
-                    up next: {(() => {
-                      const idx = dailyArtist.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
-                      const next = dailyArtist.schedule[idx + 1];
-                      return next ? `${next.song} — ${next.album}` : 'Aux Cord';
-                    })()}
-                  </div>
-                )}
               </div>
 
             </div>
