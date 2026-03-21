@@ -759,7 +759,7 @@ html, body {
   .event-bars { width: 100%; }
   .live-badge { margin-left: 0; }
   .counter-timeline { padding: var(--space-sm); }
-  .counter-greeting, .counter-bean { padding: var(--space-sm) var(--space-md); }
+  .counter-greeting, .counter-bean, .counter-search, .counter-albums { padding: var(--space-sm) var(--space-md); }
   .newsletter-form { flex-direction: column; }
   .blurb-metric { flex-wrap: wrap; }
 }
