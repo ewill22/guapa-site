@@ -273,6 +273,7 @@ export default function App() {
   }, []);
 
   // Tick now playing every 5 seconds
+  const prevAlbumRef = useRef(null);
   useEffect(() => {
     if (!dailyArtist) return;
     setNowPlaying(getNowPlaying(dailyArtist));
@@ -281,6 +282,25 @@ export default function App() {
     }, 5000);
     return () => clearInterval(interval);
   }, [dailyArtist]);
+
+  // Sync timeline year to currently playing album
+  useEffect(() => {
+    if (!nowPlaying) return;
+    if (nowPlaying.auxCord) {
+      // Aux cord open — go to random year (only once on transition)
+      if (prevAlbumRef.current !== '__aux__') {
+        setYear(Math.floor(Math.random() * (2026 - 1960 + 1)) + 1960);
+        prevAlbumRef.current = '__aux__';
+      }
+    } else if (nowPlaying.year && !nowPlaying.waiting) {
+      // Playing a track — sync year to album's release year
+      const key = `${nowPlaying.album}_${nowPlaying.year}`;
+      if (prevAlbumRef.current !== key) {
+        setYear(nowPlaying.year);
+        prevAlbumRef.current = key;
+      }
+    }
+  }, [nowPlaying]);
 
   // Dev timeline bars — commit counts per day
   const devBars = useMemo(() => {
