@@ -175,7 +175,7 @@ html {
 .up-next {
   font-size: 0.6rem;
   color: var(--gray-600);
-  text-align: right;
+  text-align: left;
   margin-top: 6px;
   font-style: italic;
   overflow: hidden;
