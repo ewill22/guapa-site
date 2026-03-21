@@ -410,7 +410,7 @@ export default function App() {
               {/* KPI Tiles — stacked vertically: Artist, Album, Song */}
               <div className="counter-tiles">
                 <div className="kpi-tile kpi-tile--artist" style={{ cursor: dailyArtist ? 'pointer' : 'default' }} onClick={() => dailyArtist && scrollToExplorer(dailyArtist.artist)}>
-                  <span className="kpi-label">Artist of the Day{dailyArtist?.isThrowback ? ' — Throwback' : ''}</span>
+                  <span className="kpi-label">Artist of the Day</span>
                   <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
                   {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
                 </div>
