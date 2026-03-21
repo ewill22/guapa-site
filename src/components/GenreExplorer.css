@@ -150,20 +150,20 @@
 }
 
 .ge-sub-legend-item {
-  font-size: 0.58rem;
+  font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--gray-600);
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .ge-sub-legend-item::before {
   content: "";
   display: inline-block;
-  width: 12px;
+  width: 16px;
   height: 2px;
 }
 
