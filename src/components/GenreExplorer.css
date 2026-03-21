@@ -665,11 +665,6 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .ge {
-    padding: 0;
-    max-width: 100vw;
-  }
-
   .ge-tabs {
     gap: 4px;
   }
@@ -690,9 +685,9 @@
 
   .ge-artists {
     padding: 10px;
-    max-width: 100%;
-    width: 100%;
-    box-sizing: border-box;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .ge-artists-grid {
@@ -700,14 +695,9 @@
   }
 
   .ge-disco {
-    max-width: 100%;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .ge-album {
-    max-width: 100%;
-    box-sizing: border-box;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   .ge-album-header {
