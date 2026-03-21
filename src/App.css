@@ -725,6 +725,10 @@ html {
   .counter-top {
     grid-template-columns: 1fr;
   }
+  .counter-timeline {
+    order: -1;
+    border-bottom: 1px solid var(--gray-800);
+  }
   .counter-tiles {
     flex-direction: row;
     border-right: none;
