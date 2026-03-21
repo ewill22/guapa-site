@@ -204,6 +204,9 @@ html {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.up-next--mobile {
+  display: none;
+}
 
 /* Bottom row: greeting + coffee bean, 50/50 */
 .counter-bottom {
@@ -753,6 +756,12 @@ html {
   .counter-timeline {
     order: -1;
     border-bottom: 1px solid var(--gray-800);
+  }
+  .counter-timeline > .up-next {
+    display: none;
+  }
+  .up-next--mobile {
+    display: block;
   }
   .counter-tiles {
     flex-direction: row;

@@ -463,6 +463,15 @@ export default function App() {
                         <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
                       </div>
                     </div>
+                    {dailyArtist && (
+                      <div className="up-next up-next--mobile">
+                        up next: {(() => {
+                          const idx = dailyArtist.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
+                          const next = dailyArtist.schedule[idx + 1];
+                          return next ? `${next.song} — ${next.album}` : 'Aux Cord';
+                        })()}
+                      </div>
+                    )}
                   </>
                 ) : nowPlaying?.auxCord ? (
                   <>
