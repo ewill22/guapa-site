@@ -7,6 +7,13 @@ html {
   touch-action: manipulation;
 }
 
+/* Prevent horizontal overflow on mobile */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
 /* Dashboard Hero */
 .dashboard-hero {
   padding: var(--space-lg) var(--space-md);
@@ -748,6 +755,7 @@ html {
 
 @media (max-width: 768px) {
   .blurbs-list { grid-template-columns: 1fr; }
+  .blurbs-section { overflow: hidden; }
 }
 
 @media (max-width: 600px) {
