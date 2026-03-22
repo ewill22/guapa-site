@@ -402,7 +402,6 @@ export default function App() {
     if (!aux) return;
     setAuxSchedule(aux);
     setNowPlaying(getAuxNowPlaying(aux));
-    setDeepLink({ artist: artistName, album: albumTitle || null });
     try {
       localStorage.setItem('guapa_aux', JSON.stringify({
         artist: artistName, album: albumTitle || null, startedAt: aux.startedAt,
