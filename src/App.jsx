@@ -834,15 +834,8 @@ export default function App() {
                         <div key={i} className={`counter-search-item${nowPlaying?.auxCord ? ' counter-search-item--aux' : ''}`} onClick={() => {
                           setSearchQuery('');
                           setSearchOpen(false);
-                          if (nowPlaying?.auxCord) {
-                            // Aux Cord is open — trigger playback
-                            const artistName = r.artist || r.name;
-                            const albumTarget = r.type === 'album' ? r.name : null;
-                            startAuxCord(artistName, albumTarget);
-                          } else {
-                            const albumTarget = r.type === 'album' ? r.name : (r.album || null);
-                            scrollToExplorer(r.artist || r.name, albumTarget);
-                          }
+                          const albumTarget = r.type === 'album' ? r.name : (r.album || null);
+                          scrollToExplorer(r.artist || r.name, albumTarget);
                         }}>
                           <span className="counter-search-icon">{r.type === 'artist' ? '🎤' : r.type === 'album' ? '💿' : '♫'}</span>
                           <span className="counter-search-type">{r.type}</span>
