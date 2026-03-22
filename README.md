@@ -1,8 +1,22 @@
-# Guapa — Creative Collective
+# Guapa Inc
 
-React + Vite site for the Guapa creative collective. Deployed automatically to GitHub Pages on every push to `main`.
+React + Vite website for Guapa Inc — a creative collective and data solutions company based in New Jersey.
 
 **Live:** https://ewill22.github.io/guapa-site *(custom domain coming)*
+
+## What It Is
+
+Two sides that reinforce each other:
+
+- **Creative Side** — record store, coffee shop, timeline. Portfolio pieces showing what clean data and polished frontends can do.
+- **Serious Side** — Guapa Data Solutions. Real estate analytics, marketing consulting. The creative work serves as proof of quality.
+
+## Tech Stack
+
+- **Framework:** Vite + React
+- **Styling:** CSS (no Tailwind, no CSS-in-JS)
+- **Fonts:** Instrument Sans (UI) + Newsreader italic (editorial)
+- **Deployment:** GitHub Actions CI/CD to GitHub Pages (auto-deploys on push to `main`)
 
 ## Quick Start
 
@@ -11,66 +25,33 @@ npm install
 npm run dev
 ```
 
-Opens at `http://localhost:3000`
+## Site Structure
 
-## Project Structure
+**Hybrid:** The homepage is a React SPA. Sub-pages are static HTML in `public/`.
 
-```
-guapa-site/
-├── public/                    # Static files served as-is
-│   ├── favicon.ico
-│   ├── music.html             # Music page (standalone)
-│   ├── music.css
-│   ├── coffee.html            # Coffee page (standalone)
-│   ├── shop.html              # Shop page (standalone)
-│   ├── shop.css
-│   ├── styles.css             # Shared base styles for static pages
-│   └── assets/
-│       ├── guapa_logo_dark.png
-│       ├── lockup_light.png
-│       ├── tshirt-pink.webp
-│       └── tshirt-grey.webp
-├── src/
-│   ├── main.jsx               # React entry point
-│   ├── App.jsx                # Home page
-│   ├── App.css                # Home page styles
-│   ├── styles/
-│   │   └── global.css         # Design system (colors, fonts, reset)
-│   ├── components/
-│   │   ├── Nav.jsx/css        # Site navigation
-│   │   ├── Banner.jsx/css     # Yellow italic top banner
-│   │   └── Footer.jsx/css     # Site footer
-│   └── data/
-│       ├── timeline.js        # Lens/year event data
-│       └── taxonomy.js        # Taxonomy branch data
-├── .github/workflows/
-│   └── deploy.yml             # GitHub Actions — build + deploy to Pages
-├── index.html
-├── vite.config.js
-└── package.json
-```
+| Route | Type | Description |
+|-------|------|-------------|
+| `/` | React | Main page — daily artist rotation, genre explorer, coffee counter |
+| `/music.html` | Static | Standalone genre explorer |
+| `/coffee.html` | Static | Roaster timeline |
+| `/shop.html` | Static | Merch (coming soon) |
+| `/data-solutions.html` | Static | Product cards + lead form |
 
-## Architecture
+## Backend Pipeline
 
-**Hybrid:** The homepage is a React SPA, while Music, Coffee, and Shop are static HTML pages served from `/public`.
+A separate repo (`guapa-data`) runs a daily enrichment pipeline at 5am:
 
-- `/` → React app (timeline + taxonomy + newspaper front page)
-- `/music.html` → Static HTML
-- `/coffee.html` → Static HTML
-- `/shop.html` → Static HTML
+1. Cleans and dedupes the music catalog
+2. Pulls Spotify metadata, covers, and links
+3. Classifies genres at the album level (9 genres, 35 subgenres)
+4. Exports `music-catalog.json` and auto-pushes to this repo
 
-All asset paths in React use `import.meta.env.BASE_URL`. Static pages use relative paths (no leading slash). Home links on static pages use `href="index.html"`.
+The frontend picks it up on the next deploy — no manual steps.
 
 ## Deployment
 
-Handled automatically via GitHub Actions on push to `main`. No manual steps needed.
+Automatic via GitHub Actions on every push to `main`. `vite.config.js` has `base: '/guapa-site/'` for GitHub Pages — remove when custom domain is added.
 
-To deploy manually, trigger the workflow from the **Actions** tab in GitHub.
+## Design
 
-**Note:** `vite.config.js` has `base: '/guapa-site/'` for GitHub Pages subdirectory hosting. Remove this line when a custom domain is connected.
-
-## Design System
-
-- Background: `#0a0a0a`, light text
-- Fonts: Instrument Sans (main), Newsreader (serif/italic)
-- Accents: pink `#e8a0b0`, yellow `#f0c014`, blue `#6ab0e8`, green `#7ec89b`, amber `#c89b6a`
+Dark theme (`#0a0a0a` background), flat colors only, no gradients. See `CLAUDE.md` for full design tokens and component specs.
