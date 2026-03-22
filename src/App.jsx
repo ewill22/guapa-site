@@ -866,7 +866,19 @@ export default function App() {
                   <span className="bean-process">{dailyBean.process} process</span>
                 </div>
               )}
-              {lens === 'music' && yearAlbums.length > 0 && (
+              {lens === 'music' && nowPlaying?.isAux && nowPlaying.cover ? (
+                <div className="counter-albums counter-aux-feature" onClick={() => scrollToExplorer(nowPlaying.artist, nowPlaying.album)}>
+                  <div className="aux-feature-art" style={{ backgroundImage: `url(${nowPlaying.cover})` }} />
+                  <div className="aux-feature-info">
+                    <span className="kpi-label">Now on Aux Cord</span>
+                    <span className="aux-feature-album">{nowPlaying.album}</span>
+                    <span className="aux-feature-year">{nowPlaying.year}</span>
+                    <p className="aux-feature-desc">
+                      {editorial?.get(normalizeName(nowPlaying.artist))?.description || `Spinning ${nowPlaying.artist}'s ${nowPlaying.year} catalog on the aux cord.`}
+                    </p>
+                  </div>
+                </div>
+              ) : lens === 'music' && yearAlbums.length > 0 ? (
                 <div className="counter-albums">
                   <span className="kpi-label">Releases from {year}</span>
                   <div className="counter-albums-grid">
@@ -879,7 +891,7 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-              )}
+              ) : null}
             </div>
 
           </div>

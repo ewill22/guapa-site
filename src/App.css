@@ -450,6 +450,55 @@ html {
   color: var(--gray-600);
 }
 
+/* Aux Cord Feature View — replaces album grid during aux playback */
+.counter-aux-feature {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-md);
+  cursor: pointer;
+}
+.aux-feature-art {
+  width: 120px;
+  min-width: 120px;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+  border: 2px solid var(--yellow);
+  box-shadow: 0 0 12px rgba(240, 192, 20, 0.15);
+}
+.aux-feature-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.aux-feature-album {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--white);
+  line-height: 1.2;
+}
+.aux-feature-year {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--yellow);
+}
+.aux-feature-desc {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  line-height: 1.4;
+  margin: 2px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* ========================================
    TIMELINE (inside counter)
 ======================================== */
@@ -830,6 +879,10 @@ html {
     border-left: none;
     border-top: none;
     border-bottom: 1px solid var(--gray-800);
+  }
+  .aux-feature-art {
+    width: 90px;
+    min-width: 90px;
   }
   .counter-greeting, .counter-bean, .counter-search, .counter-albums {
     padding: var(--space-sm) var(--space-md);
