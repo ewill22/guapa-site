@@ -159,7 +159,7 @@ function buildMergedData(catalog, editorialData, editorial) {
   return merged;
 }
 
-export default function GenreExplorer({ year, catalog, editorial, deepLink, onDeepLinkHandled }) {
+export default function GenreExplorer({ year, catalog, editorial, deepLink, onDeepLinkHandled, auxCordOpen, onAuxPick }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
   const [discoArtist, setDiscoArtist] = useState(null);
@@ -537,6 +537,11 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
                 {discoArtist.name}
                 {discoAlbums && <span className="ge-disco-album-count">{discoAlbums.length} album{discoAlbums.length !== 1 ? 's' : ''}</span>}
               </h2>
+              {auxCordOpen && onAuxPick && (
+                <button className="ge-aux-btn" onClick={() => onAuxPick(discoArtist.name)}>
+                  ▶ Play on Aux Cord
+                </button>
+              )}
             </div>
           </div>
 
@@ -564,6 +569,9 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
                           <span className="ge-album-artist">{album.artistName}</span>
                           <h3 className="ge-album-title">{album.title}</h3>
                           <div className="ge-album-actions">
+                            {auxCordOpen && onAuxPick && (
+                              <button className="ge-link ge-link--aux" onClick={e => { e.stopPropagation(); onAuxPick(album.artistName || discoArtist.name, album.title); }}>▶ Aux</button>
+                            )}
                             <a href={spotifyUrl} target="_blank" rel="noopener" className="ge-link ge-link--spotify" onClick={e => e.stopPropagation()}>Spotify</a>
                             <a href={buyUrl} target="_blank" rel="noopener" className="ge-link ge-link--buy" onClick={e => e.stopPropagation()}>Buy Vinyl</a>
                             <a href={wikiUrl} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>

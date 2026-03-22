@@ -160,6 +160,18 @@ html {
   color: var(--green) !important;
   font-style: italic;
 }
+.kpi-sub--aux {
+  color: var(--gray-600);
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+/* Aux Cord playing — yellow accent on artist tile */
+.kpi-tile--aux-playing {
+  border-left: 2px solid var(--yellow);
+}
+.kpi-tile--aux-playing .kpi-label {
+  color: var(--yellow);
+}
 
 /* Aux cord logo */
 .kpi-tile--aux-logo {
@@ -340,6 +352,12 @@ html {
 }
 .counter-search-item:hover {
   background: var(--gray-800);
+}
+.counter-search-item--aux {
+  border-left: 2px solid var(--yellow);
+}
+.counter-search-item--aux:hover {
+  background: rgba(240, 192, 20, 0.06);
 }
 .counter-search-icon {
   font-size: 0.85rem;

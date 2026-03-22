@@ -542,6 +542,38 @@
   border-color: rgba(156, 163, 175, 0.25);
 }
 
+.ge-link--aux {
+  color: var(--yellow);
+  background: rgba(240, 192, 20, 0.08);
+  border-color: rgba(240, 192, 20, 0.15);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.ge-link--aux:hover {
+  background: rgba(240, 192, 20, 0.18);
+  border-color: rgba(240, 192, 20, 0.3);
+}
+
+/* Aux Cord play button on disco header */
+.ge-aux-btn {
+  background: transparent;
+  border: 1px solid var(--yellow);
+  color: var(--yellow);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: all 0.2s;
+}
+
+.ge-aux-btn:hover {
+  background: rgba(240, 192, 20, 0.12);
+}
+
 /* Tracklist */
 .ge-tracklist {
   padding: 0;

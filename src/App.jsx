@@ -131,6 +131,55 @@ function getDailyArtist(catalog, editorial) {
   };
 }
 
+// Build an Aux Cord schedule from a catalog artist (full discography or single album)
+function buildAuxSchedule(catalog, artistName, albumTitle) {
+  const artist = Object.values(catalog).find(a => a.name.toLowerCase() === artistName.toLowerCase());
+  if (!artist || !artist.albums?.length) return null;
+
+  let albums;
+  if (albumTitle) {
+    const match = artist.albums.find(a => a.title.toLowerCase() === albumTitle.toLowerCase());
+    albums = match ? [match] : [];
+  } else {
+    albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
+  }
+  if (!albums.length) return null;
+
+  const schedule = [];
+  let elapsed = 0;
+  for (const album of albums) {
+    for (const track of (album.tracks || [])) {
+      const dur = track.duration_ms || 210000;
+      schedule.push({
+        artist: artist.name,
+        album: album.title,
+        song: track.title,
+        trackNum: track.track_number,
+        cover: album.cover_art_small || album.cover_art_large,
+        year: album.release_year,
+        durationMs: dur,
+        startMs: elapsed,
+        artistUrl: `music.html?artist=${encodeURIComponent(artist.name)}`,
+        albumUrl: `music.html?artist=${encodeURIComponent(artist.name)}&album=${encodeURIComponent(album.title)}`,
+      });
+      elapsed += dur;
+    }
+  }
+  if (!schedule.length) return null;
+
+  return {
+    artist: artist.name,
+    artistUrl: `music.html?artist=${encodeURIComponent(artist.name)}`,
+    totalMs: elapsed,
+    totalTracks: schedule.length,
+    albumCount: albums.length,
+    schedule,
+    startedAt: Date.now(),
+    isAux: true,
+    auxAlbum: albumTitle || null,
+  };
+}
+
 // Find what's currently playing based on time of day (starts 8am EST)
 function getNowPlaying(dailyArtist) {
   if (!dailyArtist || !dailyArtist.schedule.length) return null;
@@ -184,6 +233,45 @@ function getNowPlaying(dailyArtist) {
     }
   }
   return { auxCord: false, ...dailyArtist.schedule[0], progress: 0, trackElapsedMs: 0, albumProgress: 0 };
+}
+
+// Find what's playing in an Aux Cord session (relative to startedAt timestamp)
+function getAuxNowPlaying(auxSchedule) {
+  if (!auxSchedule || !auxSchedule.schedule.length) return null;
+  const elapsedMs = Date.now() - auxSchedule.startedAt;
+
+  if (elapsedMs >= auxSchedule.totalMs) {
+    return { auxCord: true, auxFinished: true, artist: auxSchedule.artist };
+  }
+
+  for (let i = auxSchedule.schedule.length - 1; i >= 0; i--) {
+    if (elapsedMs >= auxSchedule.schedule[i].startMs) {
+      const track = auxSchedule.schedule[i];
+      const trackElapsed = elapsedMs - track.startMs;
+      const progress = Math.min(trackElapsed / track.durationMs, 1);
+
+      const albumTracks = auxSchedule.schedule.filter(t => t.album === track.album);
+      const albumStartMs = albumTracks[0].startMs;
+      const lastTrack = albumTracks[albumTracks.length - 1];
+      const albumEndMs = lastTrack.startMs + lastTrack.durationMs;
+      const albumProgress = Math.min((elapsedMs - albumStartMs) / (albumEndMs - albumStartMs), 1);
+      const artistProgress = Math.min(elapsedMs / auxSchedule.totalMs, 1);
+
+      return {
+        auxCord: false,
+        isAux: true,
+        auxAlbum: auxSchedule.auxAlbum,
+        ...track,
+        progress,
+        trackElapsedMs: trackElapsed,
+        albumProgress,
+        albumTrackIndex: albumTracks.findIndex(t => t === track) + 1,
+        albumTrackCount: albumTracks.length,
+        artistProgress,
+      };
+    }
+  }
+  return { auxCord: false, isAux: true, ...auxSchedule.schedule[0], progress: 0, trackElapsedMs: 0, albumProgress: 0 };
 }
 
 // Coffee beans of the moment — rotates daily
@@ -248,6 +336,7 @@ export default function App() {
 
   const dailyArtist = useMemo(() => (catalog && editorial) ? getDailyArtist(catalog, editorial) : null, [catalog, editorial]);
   const [nowPlaying, setNowPlaying] = useState(null);
+  const [auxSchedule, setAuxSchedule] = useState(null);
   const dailyBean = useMemo(() => getDailyBean(), []);
   const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year), [catalog, year]);
   const [deepLink, setDeepLink] = useState(null);
@@ -306,16 +395,43 @@ export default function App() {
     }
   }, []);
 
+  // Aux Cord: pick an artist or album to play
+  const startAuxCord = useCallback((artistName, albumTitle) => {
+    if (!catalog) return;
+    const aux = buildAuxSchedule(catalog, artistName, albumTitle);
+    if (!aux) return;
+    setAuxSchedule(aux);
+    setNowPlaying(getAuxNowPlaying(aux));
+    // Deep link to the aux artist in Genre Explorer
+    setDeepLink({ artist: artistName, album: albumTitle || null });
+  }, [catalog]);
+
   // Tick now playing every 5 seconds
   const prevAlbumRef = useRef(null);
   useEffect(() => {
     if (!dailyArtist) return;
-    setNowPlaying(getNowPlaying(dailyArtist));
-    const interval = setInterval(() => {
+    // Initial state
+    if (auxSchedule) {
+      setNowPlaying(getAuxNowPlaying(auxSchedule));
+    } else {
       setNowPlaying(getNowPlaying(dailyArtist));
+    }
+    const interval = setInterval(() => {
+      if (auxSchedule) {
+        const auxNow = getAuxNowPlaying(auxSchedule);
+        if (auxNow?.auxFinished) {
+          // Aux cord artist finished — reopen aux cord
+          setAuxSchedule(null);
+          setNowPlaying({ auxCord: true, artist: dailyArtist.artist });
+        } else {
+          setNowPlaying(auxNow);
+        }
+      } else {
+        setNowPlaying(getNowPlaying(dailyArtist));
+      }
     }, 5000);
     return () => clearInterval(interval);
-  }, [dailyArtist]);
+  }, [dailyArtist, auxSchedule]);
 
   // Sync timeline year + genre explorer to currently playing album
   const initialDeepLinked = useRef(false);
@@ -449,10 +565,17 @@ export default function App() {
 
               {/* KPI Tiles — stacked vertically: Artist, Album, Song */}
               <div className="counter-tiles">
-                <div className="kpi-tile kpi-tile--artist" style={{ cursor: dailyArtist ? 'pointer' : 'default' }} onClick={() => dailyArtist && scrollToExplorer(dailyArtist.artist)}>
-                  <span className="kpi-label">Artist of the Day</span>
-                  <span className="kpi-value">{dailyArtist?.artist || '...'}</span>
-                  {dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>}
+                <div className={`kpi-tile kpi-tile--artist${nowPlaying?.isAux ? ' kpi-tile--aux-playing' : ''}`} style={{ cursor: dailyArtist ? 'pointer' : 'default' }} onClick={() => {
+                  const artist = nowPlaying?.isAux ? nowPlaying.artist : dailyArtist?.artist;
+                  if (artist) scrollToExplorer(artist);
+                }}>
+                  <span className="kpi-label">{nowPlaying?.isAux ? 'Aux Cord' : 'Artist of the Day'}</span>
+                  <span className="kpi-value">{nowPlaying?.isAux ? nowPlaying.artist : (dailyArtist?.artist || '...')}</span>
+                  {nowPlaying?.isAux ? (
+                    <span className="kpi-sub">{auxSchedule?.albumCount || 0} album{auxSchedule?.albumCount !== 1 ? 's' : ''} — {auxSchedule?.totalTracks || 0} tracks</span>
+                  ) : (
+                    dailyArtist && <span className="kpi-sub">{dailyArtist.albumCount} albums — {dailyArtist.totalTracks} tracks</span>
+                  )}
                   {nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting && (
                     <div className="kpi-artist-progress">
                       <div className="kpi-artist-progress-bar" style={{ width: `${(nowPlaying.artistProgress * 100).toFixed(1)}%` }} />
@@ -482,11 +605,12 @@ export default function App() {
                         <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
                       </div>
                     </div>
-                    {dailyArtist && (
+                    {(dailyArtist || auxSchedule) && (
                       <div className="up-next up-next--mobile">
                         up next: {(() => {
-                          const idx = dailyArtist.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
-                          const next = dailyArtist.schedule[idx + 1];
+                          const sched = auxSchedule || dailyArtist;
+                          const idx = sched.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
+                          const next = sched.schedule[idx + 1];
                           return next ? `${next.song} — ${next.album}` : 'Aux Cord';
                         })()}
                       </div>
@@ -497,6 +621,7 @@ export default function App() {
                     <div className="kpi-tile kpi-tile--aux">
                       <span className="kpi-label">Discography wrapped</span>
                       <span className="kpi-value kpi-value--aux">Aux Cord is Open</span>
+                      <span className="kpi-sub kpi-sub--aux">Search or browse to play an artist or album</span>
                     </div>
                     <div className="kpi-tile kpi-tile--song kpi-tile--aux-logo">
                       <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="kpi-aux-logo" style={{ filter: `hue-rotate(${hashStr(getTodayEST() + 'aux') % 360}deg)` }} />
@@ -636,11 +761,12 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-                {nowPlaying && !nowPlaying.auxCord && dailyArtist && (
+                {nowPlaying && !nowPlaying.auxCord && (dailyArtist || auxSchedule) && (
                   <div className="up-next">
                     up next: {(() => {
-                      const idx = dailyArtist.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
-                      const next = dailyArtist.schedule[idx + 1];
+                      const sched = auxSchedule || dailyArtist;
+                      const idx = sched.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
+                      const next = sched.schedule[idx + 1];
                       return next ? `${next.song} — ${next.album}` : 'Aux Cord';
                     })()}
                   </div>
@@ -675,11 +801,18 @@ export default function App() {
                   {searchOpen && searchResults.length > 0 && (
                     <div className="counter-search-results">
                       {searchResults.map((r, i) => (
-                        <div key={i} className="counter-search-item" onClick={() => {
+                        <div key={i} className={`counter-search-item${nowPlaying?.auxCord ? ' counter-search-item--aux' : ''}`} onClick={() => {
                           setSearchQuery('');
                           setSearchOpen(false);
-                          const albumTarget = r.type === 'album' ? r.name : (r.album || null);
-                          scrollToExplorer(r.artist || r.name, albumTarget);
+                          if (nowPlaying?.auxCord) {
+                            // Aux Cord is open — trigger playback
+                            const artistName = r.artist || r.name;
+                            const albumTarget = r.type === 'album' ? r.name : null;
+                            startAuxCord(artistName, albumTarget);
+                          } else {
+                            const albumTarget = r.type === 'album' ? r.name : (r.album || null);
+                            scrollToExplorer(r.artist || r.name, albumTarget);
+                          }
                         }}>
                           <span className="counter-search-icon">{r.type === 'artist' ? '🎤' : r.type === 'album' ? '💿' : '♫'}</span>
                           <span className="counter-search-type">{r.type}</span>
@@ -775,7 +908,7 @@ export default function App() {
               {/* Genre Explorer for music lens */}
               {lens === 'music' && (
                 <div ref={genreExplorerRef}>
-                  <GenreExplorer year={year} catalog={catalog} editorial={editorial} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} />
+                  <GenreExplorer year={year} catalog={catalog} editorial={editorial} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} auxCordOpen={!!nowPlaying?.auxCord} onAuxPick={startAuxCord} />
                 </div>
               )}
 
