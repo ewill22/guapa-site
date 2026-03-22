@@ -29,7 +29,7 @@ npm run dev
 
 ## Site Structure
 
-**Hybrid:** The homepage is a React SPA. Sub-pages are static HTML in `public/`.
+**Hybrid approach:** The homepage is a **React SPA** (Single Page Application — one page that dynamically updates content without reloading, making it feel fast and app-like). The sub-pages (Music, Coffee, Merch, Data Solutions) are **static HTML** — simpler, standalone pages that don't need React's interactivity. They live in the `public/` folder and are served as-is.
 
 | Route | Type | Description |
 |-------|------|-------------|
