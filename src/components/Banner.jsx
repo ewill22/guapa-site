@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './Banner.css';
 
 const QUOTES = [
@@ -6,6 +7,6 @@ const QUOTES = [
 ];
 
 export default function Banner() {
-  const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  const [quote] = useState(() => QUOTES[Math.floor(Math.random() * QUOTES.length)]);
   return <div className="top-banner">{quote}</div>;
 }
