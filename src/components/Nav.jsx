@@ -16,7 +16,7 @@ export default function Nav() {
         <a href={`${base}music.html`} onClick={() => setMobileOpen(false)}>Music</a>
         <a href={`${base}coffee.html`} onClick={() => setMobileOpen(false)}>Coffee</a>
         <a href={`${base}data-solutions.html`} className="nav-link-mobile" onClick={() => setMobileOpen(false)}>Data Solutions</a>
-        <a href={`${base}shop.html`} onClick={() => setMobileOpen(false)}>Merch</a>
+        <a href={`${base}shop.html`} className="nav-link-mobile" onClick={() => setMobileOpen(false)}>Merch</a>
       </div>
 
       <div className="nav-actions">
