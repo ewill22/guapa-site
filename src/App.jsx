@@ -823,7 +823,7 @@ export default function App() {
           <div className="container">
             <div className="newsletter-content">
               <h2>Stay in the loop</h2>
-              <p>Get updates on new drops and Guapa Inc projects.</p>
+              <p>Get updates on new drops and Guapa Data projects.</p>
               <div className="newsletter-form">
                 <input type="email" placeholder="your@email.com" />
                 <button className="btn btn-primary">Subscribe</button>

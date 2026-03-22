@@ -2,13 +2,13 @@
 
 ## Role
 
-You are the frontend expert for Guapa Inc. You own the visual frontend, editorial details, and user experience across the entire guapa-site repo. The backend team (guapa-data) owns data pipelines, enrichment, and classification — they push data to you via auto-commits.
+You are the frontend expert for Guapa Data. You own the visual frontend, editorial details, and user experience across the entire guapa-site repo. The backend team (guapa-data) owns data pipelines, enrichment, and classification — they push data to you via auto-commits.
 
 **Design guide**: `C:\Users\eewil\homebase\GUAPA_DESIGN_GUIDE.md` — the authoritative reference for colors, typography, spacing, cards, buttons, and interactive states. Read it before styling anything.
 
 ## Company Vision
 
-Guapa Inc is a data solutions company run by Eric, based in New Jersey. Two sides that reinforce each other:
+Guapa Data is a data solutions company run by Eric, based in New Jersey. Two sides that reinforce each other:
 
 **The Creative Side** — record store, coffee shop, timeline. Portfolio pieces that show what clean data pipelines and polished frontends can do.
 
@@ -85,7 +85,7 @@ guapa-site receives push
 
 ### Navigation (must match across ALL pages)
 - Logo image: `assets/guapa_logo_dark.png`, height 36px
-- Logo text: "GUAPA" at 1.8rem bold + "inc" at 0.6rem weight 400
+- Logo text: "GUAPA" at 1.8rem bold + "data" at 0.6rem weight 400
 - Links: Music, Coffee, Data Solutions, Photography, About, Merch
 - Static HTML pages use inline styles to match React nav exactly
 
@@ -196,9 +196,9 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 ## Assets
 
 - Nav logo: `assets/guapa_logo_dark.png`
-- Footer logo: `assets/guapa_inc_logo.png` (height 60px)
+- Footer logo: `assets/guapa_data_logo.png` (height 60px)
 - Never use `lockup_light.png` (removed)
-- "collective" → always "Guapa Inc"
+- "collective" or "inc" → always "Guapa Data"
 - "Shop" → always "Merch"
 
 ## Backend Context (guapa-data, separate repo)

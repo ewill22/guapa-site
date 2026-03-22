@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <img src={`${base}assets/guapa_inc_logo.png`} alt="Guapa Inc" className="footer-logo" />
+            <img src={`${base}assets/guapa_data_logo.png`} alt="Guapa Data" className="footer-logo" />
           </div>
           <div className="footer-links">
             <h4>Explore</h4>
@@ -27,8 +27,8 @@ export default function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          <p>© 2026 Guapa Inc</p>
-          <p className="footer-affiliate">Guapa Inc earns a small commission from purchases made through links on this page.</p>
+          <p>© 2026 Guapa Data</p>
+          <p className="footer-affiliate">Guapa Data earns a small commission from purchases made through links on this page.</p>
         </div>
       </div>
     </footer>
