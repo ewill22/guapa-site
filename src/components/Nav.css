@@ -22,12 +22,22 @@
 .nav-actions { display: flex; align-items: center; gap: 1.2rem; }
 .nav-social { color: var(--gray-400); transition: color 0.2s; display: flex; }
 .nav-social:hover { color: var(--pink); }
+.nav-pill {
+  border: 1px solid var(--yellow); color: var(--yellow);
+  padding: 0.4rem 0.8rem; border-radius: 4px;
+  font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+}
+@media (hover: hover) {
+  .nav-pill:hover { background: var(--yellow); color: var(--black); }
+}
+.nav-pill:active { background: var(--yellow); color: var(--black); }
 .nav-cart {
   background: var(--pink); color: var(--black);
   padding: 0.4rem 0.8rem; border-radius: 4px;
   font-size: 0.85rem; font-weight: 600; transition: background 0.2s;
 }
 .nav-cart:hover { background: var(--pink-hover); }
+.nav-link-mobile { display: none; }
 
 
 .nav-toggle {
@@ -52,4 +62,5 @@
   .nav-links--open { opacity: 1; pointer-events: all; }
   .nav-toggle { display: flex; }
   .nav-actions { display: none; }
+  .nav-link-mobile { display: block; }
 }
