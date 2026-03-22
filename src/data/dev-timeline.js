@@ -20,6 +20,9 @@ export const DEV_COMMITS = {
   '2026-03-17': 31,
   '2026-03-18': 21,
   '2026-03-19': 30,
+  '2026-03-20': 17,
+  '2026-03-21': 84,
+  '2026-03-22': 32,
 };
 
 // Daily summaries — what got done each active day
@@ -86,5 +89,23 @@ export const DEV_BLURBS = {
     { type: 'update', text: 'Deep-linking from KPI tiles and album art to Genre Explorer with auto-scroll to specific albums and pink highlight. Floating Latest/First/Close nav rail alongside discography.' },
     { type: 'update', text: 'Subgenre status legend (Emerging/Rising/Peak/Fading). Escape closes everything and scrolls to top. Mobile polish: tracklist sizing, zoom support, responsive nav rail.' },
     { type: 'metric', label: 'Commits', value: '30', change: 'Now Playing + Genre Explorer day' },
+  ],
+  '2026-03-20': [
+    { type: 'update', text: 'Mobile deep dive. Fixed iOS Safari auto-zoom, horizontal overflow, and genre tab wrapping. Replaced all scrollIntoView with custom safeScrollTo helper.' },
+    { type: 'update', text: 'Search bar moved into counter. Search results now deep-link to albums with icons. Subgenre status colors reworked — emerging green, fading muted red dashed.' },
+    { type: 'metric', label: 'Commits', value: '17', change: 'Mobile polish day' },
+  ],
+  '2026-03-21': [
+    { type: 'news', text: 'Album-level genre tags wired up from backend catalog. Subgenres now visible based on real album data, not just editorial ranges. Hybrid visibility system live.' },
+    { type: 'update', text: 'Daily artist rotation rewritten — no-repeat cycle system with throwback/modern pools. Epoch set to March 21. Stable against catalog changes.' },
+    { type: 'update', text: 'Progress bars added at three levels: artist (pink), album (yellow), song (blue). Up-next moved below song tile on mobile. CLAUDE.md fully rewritten.' },
+    { type: 'metric', label: 'Commits', value: '84', change: 'All-time record — rotation + catalog tags + progress bars' },
+  ],
+  '2026-03-22': [
+    { type: 'news', text: 'Rebrand: Guapa Inc → Guapa Data. Updated across all pages, nav, footer, title, README. Footer logo replaced with styled text lockup.' },
+    { type: 'update', text: 'Nav redesigned — Data Solutions and Merch moved to pill buttons on desktop (yellow outlined + pink). FTC affiliate disclosure added to footer.' },
+    { type: 'update', text: 'Genre Explorer polish: bigger tabs stretching full width, nav rail switched to arrow icons, subgenre flicker fix, SUBGENRE status label, "Explore any genre below" prompt.' },
+    { type: 'update', text: 'Banner now randomly alternates between two quotes on page load. Locked to initial render so lens switching doesn\'t change it.' },
+    { type: 'metric', label: 'Commits', value: '32', change: 'Rebrand + nav redesign + genre polish' },
   ],
 };
