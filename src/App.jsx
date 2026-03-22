@@ -256,28 +256,28 @@ export default function App() {
   const searchRef = useRef(null);
   const genreExplorerRef = useRef(null);
 
-  // Search catalog for artists/albums/songs
+  // Search catalog for artists/albums/songs — artists always listed first
   const searchResults = useMemo(() => {
     if (!catalog || searchQuery.length < 2) return [];
     const q = searchQuery.toLowerCase();
-    const results = [];
+    const artists = [], albums = [], songs = [];
     for (const artist of Object.values(catalog)) {
       if (artist.name.toLowerCase().includes(q)) {
-        results.push({ type: 'artist', name: artist.name });
+        artists.push({ type: 'artist', name: artist.name });
       }
       for (const album of (artist.albums || [])) {
         if (album.title?.toLowerCase().includes(q)) {
-          results.push({ type: 'album', name: album.title, meta: artist.name, artist: artist.name });
+          albums.push({ type: 'album', name: album.title, meta: artist.name, artist: artist.name });
         }
         for (const track of (album.tracks || [])) {
           if (track.title?.toLowerCase().includes(q)) {
-            results.push({ type: 'song', name: track.title, meta: `${artist.name} — ${album.title}`, artist: artist.name, album: album.title });
+            songs.push({ type: 'song', name: track.title, meta: `${artist.name} — ${album.title}`, artist: artist.name, album: album.title });
           }
         }
       }
-      if (results.length >= 8) break;
+      if (artists.length + albums.length + songs.length >= 20) break;
     }
-    return results.slice(0, 8);
+    return [...artists, ...albums, ...songs].slice(0, 8);
   }, [catalog, searchQuery]);
 
   // Close search dropdown on click outside
