@@ -454,11 +454,11 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
                   <button className="ge-nav-btn" onClick={() => {
                     const el = discoListRef.current?.querySelector('.ge-album:first-child');
                     safeScrollTo(el);
-                  }}>Latest Album</button>
+                  }}><span className="ge-nav-label">Latest Album</span><span className="ge-nav-arrow">&uarr;</span></button>
                   <button className="ge-nav-btn" onClick={() => {
                     const el = discoListRef.current?.querySelector('.ge-album:last-child');
                     safeScrollTo(el);
-                  }}>First Album</button>
+                  }}><span className="ge-nav-label">First Album</span><span className="ge-nav-arrow">&darr;</span></button>
                   <button className="ge-nav-btn ge-nav-btn--close" onClick={closeAll}>&times;</button>
                 </div>
               )}
