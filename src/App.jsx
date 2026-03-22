@@ -395,15 +395,43 @@ export default function App() {
     }
   }, []);
 
-  // Aux Cord: pick an artist or album to play
+  // Aux Cord: pick an artist or album to play (persisted to localStorage)
   const startAuxCord = useCallback((artistName, albumTitle) => {
     if (!catalog) return;
     const aux = buildAuxSchedule(catalog, artistName, albumTitle);
     if (!aux) return;
     setAuxSchedule(aux);
     setNowPlaying(getAuxNowPlaying(aux));
-    // Deep link to the aux artist in Genre Explorer
     setDeepLink({ artist: artistName, album: albumTitle || null });
+    try {
+      localStorage.setItem('guapa_aux', JSON.stringify({
+        artist: artistName, album: albumTitle || null, startedAt: aux.startedAt,
+      }));
+    } catch {}
+  }, [catalog]);
+
+  const stopAuxCord = useCallback(() => {
+    setAuxSchedule(null);
+    try { localStorage.removeItem('guapa_aux'); } catch {}
+  }, []);
+
+  // Restore aux cord from localStorage on mount
+  useEffect(() => {
+    if (!catalog) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem('guapa_aux'));
+      if (!saved?.artist || !saved?.startedAt) return;
+      const aux = buildAuxSchedule(catalog, saved.artist, saved.album);
+      if (!aux) return;
+      aux.startedAt = saved.startedAt;
+      // Check if it's still playing
+      const elapsed = Date.now() - aux.startedAt;
+      if (elapsed >= aux.totalMs) {
+        localStorage.removeItem('guapa_aux');
+        return;
+      }
+      setAuxSchedule(aux);
+    } catch {}
   }, [catalog]);
 
   // Tick now playing every 5 seconds
@@ -422,6 +450,7 @@ export default function App() {
         if (auxNow?.auxFinished) {
           // Aux cord artist finished — reopen aux cord
           setAuxSchedule(null);
+          try { localStorage.removeItem('guapa_aux'); } catch {}
           setNowPlaying({ auxCord: true, artist: dailyArtist.artist });
         } else {
           setNowPlaying(auxNow);
@@ -569,7 +598,9 @@ export default function App() {
                   const artist = nowPlaying?.isAux ? nowPlaying.artist : dailyArtist?.artist;
                   if (artist) scrollToExplorer(artist);
                 }}>
-                  <span className="kpi-label">{nowPlaying?.isAux ? 'Aux Cord' : 'Artist of the Day'}</span>
+                  <span className="kpi-label">{nowPlaying?.isAux ? 'Aux Cord' : 'Artist of the Day'}
+                    {nowPlaying?.isAux && <button className="kpi-aux-stop" onClick={e => { e.stopPropagation(); stopAuxCord(); }}>Stop</button>}
+                  </span>
                   <span className="kpi-value">{nowPlaying?.isAux ? nowPlaying.artist : (dailyArtist?.artist || '...')}</span>
                   {nowPlaying?.isAux ? (
                     <span className="kpi-sub">{auxSchedule?.albumCount || 0} album{auxSchedule?.albumCount !== 1 ? 's' : ''} — {auxSchedule?.totalTracks || 0} tracks</span>

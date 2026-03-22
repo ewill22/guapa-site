@@ -172,6 +172,22 @@ html {
 .kpi-tile--aux-playing .kpi-label {
   color: var(--yellow);
 }
+.kpi-aux-stop {
+  background: transparent;
+  border: 1px solid var(--gray-600);
+  color: var(--gray-400);
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-family: inherit;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.2s;
+}
+.kpi-aux-stop:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+}
 
 /* Aux cord logo */
 .kpi-tile--aux-logo {
