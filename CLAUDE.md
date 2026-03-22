@@ -86,13 +86,15 @@ guapa-site receives push
 ### Navigation (must match across ALL pages)
 - Logo image: `assets/guapa_logo_dark.png`, height 36px
 - Logo text: "GUAPA" at 1.8rem bold + "data" at 0.6rem weight 400
-- Links: Music, Coffee, Data Solutions, Photography, About, Merch
+- Desktop nav links (left): Music, Coffee
+- Desktop nav actions (right): Data Solutions (yellow outlined pill), Merch → (pink pill), Instagram icon
+- Mobile hamburger: Music, Coffee, Data Solutions, Merch
 - Static HTML pages use inline styles to match React nav exactly
 
 ### Main Page (React — `src/App.jsx`)
 
 1. **Nav** (`src/components/Nav.jsx`)
-2. **Yellow italic banner** ("yearning for something to keep him up at night")
+2. **Yellow italic banner** ("who are you really? and what were you before?")
 3. **Coffee Shop Counter** (L-shaped layout):
    - **Top row (desktop)**: KPI tiles + Timeline
    - **Top row (mobile ≤900px)**: Timeline first (`order: -1`), then KPI tiles
@@ -102,7 +104,7 @@ guapa-site receives push
    - **Guapa lens**: Weekly dev blurbs (Fri–Thu grouping)
    - **Other lenses**: Text blurbs for coffee/economics
 5. **Newsletter** (pink background, email signup)
-6. **Footer** (`src/components/Footer.jsx`)
+6. **Footer** (`src/components/Footer.jsx`) — logo lockup + links + FTC affiliate disclosure
 
 ### KPI Tiles (Now Playing System)
 Three tiles stacked vertically, each with a color-matched progress bar:
