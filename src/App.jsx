@@ -292,10 +292,14 @@ function getDailyBean() {
 }
 
 // Pull albums from catalog for a given year, shuffled by date seed
-function getAlbumsForYear(catalog, year) {
+function getAlbumsForYear(catalog, year, editorial) {
   if (!catalog) return [];
   const albums = [];
   Object.values(catalog).forEach(artist => {
+    if (editorial) {
+      const entry = editorial.get(normalizeName(artist.name));
+      if (!entry || !entry.confirmed) return;
+    }
     (artist.albums || []).forEach(album => {
       if (album.release_year === year) {
         albums.push({
@@ -338,7 +342,7 @@ export default function App() {
   const [nowPlaying, setNowPlaying] = useState(null);
   const [auxSchedule, setAuxSchedule] = useState(null);
   const dailyBean = useMemo(() => getDailyBean(), []);
-  const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year), [catalog, year]);
+  const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year, editorial), [catalog, year, editorial]);
   const [deepLink, setDeepLink] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
