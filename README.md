@@ -1,6 +1,8 @@
 # Guapa Inc
 
-React + Vite website for Guapa Inc — a data solutions company based in New Jersey.
+Website for Guapa Inc — a data solutions company based in New Jersey.
+
+Built with **React** (a JavaScript framework that builds interactive, app-like pages in the browser — no full page reloads) and **Vite** (a build tool that bundles the code and serves it fast during development). The site auto-deploys to **GitHub Pages** (free static hosting from GitHub) every time code is pushed — no manual uploads or server management needed.
 
 **Live:** https://ewill22.github.io/guapa-site *(custom domain coming)*
 
