@@ -138,11 +138,11 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     if (activeGenre && selectedSub) {
       const genre = MUSIC_DATA[activeGenre];
       const sub = genre?.subgenres[selectedSub];
-      if (sub && sub.status[year] === 'hidden') {
+      if (sub && !isSubVisible(sub, year)) {
         setSelectedSub(null);
       }
     }
-  }, [year, activeGenre, selectedSub, discoArtist]);
+  }, [year, activeGenre, selectedSub, discoArtist, isSubVisible]);
 
   // Scroll to specific album after discography loads
   useEffect(() => {
