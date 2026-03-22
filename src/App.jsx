@@ -69,37 +69,27 @@ function shufflePool(pool, cycleId) {
 }
 
 // Days since rotation epoch
-const ROTATION_EPOCH = '2026-03-21'; // rotation starts today
-function daysSinceEpoch(dateStr) {
-  const epoch = new Date(ROTATION_EPOCH + 'T00:00:00');
-  const d = new Date(dateStr + 'T00:00:00');
-  return Math.floor((d - epoch) / 86400000);
-}
-
-// Pick the daily artist — rotation-based, no repeats until entire pool is exhausted
-// Alternates between modern (2000+) and throwback (<2000) artists by day
+// Pick the daily artist — hash-based, stable against catalog changes
+// Each day's pick depends only on the date + artist names, not pool size
 function getDailyArtist(catalog) {
   const artists = Object.values(catalog).filter(a => a.albums && a.albums.length > 0);
   if (!artists.length) return null;
   const today = getTodayEST();
-  const dayNum = daysSinceEpoch(today);
 
   // Split into modern vs throwback based on begin_year
   const modern = artists.filter(a => (a.begin_year || 2000) >= 1991);
   const throwback = artists.filter(a => (a.begin_year || 2000) < 1991);
 
-  // Alternate days: even = throwback, odd = modern
-  const isThrowbackDay = dayNum % 2 === 0;
+  // Alternate days: even dates = throwback, odd = modern
+  const dayOfYear = Math.floor((new Date(today + 'T00:00:00') - new Date(today.slice(0, 4) + '-01-01T00:00:00')) / 86400000);
+  const isThrowbackDay = dayOfYear % 2 === 0;
   const pool = (isThrowbackDay && throwback.length) ? throwback : (modern.length ? modern : artists);
 
-  // Position within this pool's rotation (each pool gets picked every other day)
-  const poolDayIndex = Math.floor(dayNum / 2) + (isThrowbackDay ? 0 : 0);
-  const cycleIndex = Math.floor(poolDayIndex / pool.length);
-  const posInCycle = poolDayIndex % pool.length;
-
-  // Shuffle pool deterministically for this cycle, pick by position
-  const shuffled = shufflePool(pool, `cycle${cycleIndex}${isThrowbackDay ? 'T' : 'M'}`);
-  const artist = shuffled[posInCycle];
+  // Score each artist by hashing date + name — pick the highest scorer
+  // This is stable: adding/removing artists doesn't change other artists' scores
+  const scored = pool.map(a => ({ artist: a, score: hashStr(today + a.name) }));
+  scored.sort((a, b) => b.score - a.score);
+  const artist = scored[0].artist;
 
   // Build chronological playback schedule from full discography
   const albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
