@@ -1,6 +1,6 @@
 # Guapa Inc
 
-React + Vite website for Guapa Inc — a creative collective and data solutions company based in New Jersey.
+React + Vite website for Guapa Inc — a data solutions company based in New Jersey.
 
 **Live:** https://ewill22.github.io/guapa-site *(custom domain coming)*
 
