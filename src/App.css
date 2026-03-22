@@ -628,7 +628,7 @@ html {
 }
 
 .blurbs-section {
-  margin-top: var(--space-lg);
+  margin-top: var(--space-sm);
 }
 
 .blurbs-header {
