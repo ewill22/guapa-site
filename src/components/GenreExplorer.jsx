@@ -359,7 +359,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
             <span className="ge-artists-meta" style={{
               color: { emerging: 'var(--green, #7ec89b)', rising: 'var(--blue, #88a8d4)', peak: 'var(--pink)', fading: '#a05050' }[MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'fading' : MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year]] || undefined
             }}>
-              {MUSIC_DATA[activeGenre]?.name} — {(MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'FADING' : MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year]?.toUpperCase())} — {year}
+              {MUSIC_DATA[activeGenre]?.name} — subgenre {(MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'FADING' : MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year]?.toUpperCase())} — {year}
             </span>
           </div>
           <div className="ge-artists-grid">
