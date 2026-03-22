@@ -176,8 +176,7 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - `music.html` — original genre explorer (still works standalone)
 - `coffee.html` — roaster timeline
 - `shop.html` — product grid, coming soon
-- `data-solutions.html` — three product cards + lead form (Formspree `mojnzoqn`)
-- `photography.html` — fine art prints by Bryan Williams
+- `data-solutions.html` — three product cards + lead form (details below)
 
 ### Data Solutions Page (`public/data-solutions.html`)
 - Three products: Real Estate Analytics (In Development), Natural Wine Assistant (Concept), Marketing Analytics Consulting (Available Now)
