@@ -28,6 +28,7 @@ export default function Footer() {
         </div>
         <div className="footer-bottom">
           <p>© 2026 Guapa Inc</p>
+          <p className="footer-affiliate">Guapa Inc earns a small commission from purchases made through links on this page.</p>
         </div>
       </div>
     </footer>

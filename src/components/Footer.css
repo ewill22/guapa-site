@@ -19,6 +19,7 @@
 .footer-links a:hover { color: var(--white); }
 .footer-bottom { padding-top: var(--space-lg); border-top: 1px solid var(--gray-800); }
 .footer-bottom p { font-size: 0.8rem; color: var(--gray-600); }
+.footer-affiliate { font-size: 0.7rem !important; margin-top: 4px; }
 
 @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--space-lg); } }
 @media (max-width: 768px) {
