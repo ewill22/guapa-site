@@ -10,10 +10,10 @@ html {
 /* Dashboard Hero */
 .dashboard-hero {
   padding: var(--space-lg) var(--space-md);
-  max-width: 1400px;
+  max-width: 100%;
+  width: 1400px;
   margin: 0 auto;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 /* ========================================
@@ -23,7 +23,6 @@ html {
   border: 1px solid var(--gray-800);
   border-radius: var(--radius-lg);
   background: var(--gray-900);
-  overflow: hidden;
   box-sizing: border-box;
   max-width: 100%;
 }
@@ -800,6 +799,10 @@ html {
   }
   .counter-greeting, .counter-bean, .counter-search, .counter-albums {
     padding: var(--space-sm) var(--space-md);
+  }
+  .counter-search-results {
+    left: var(--space-md);
+    right: var(--space-md);
   }
 }
 
