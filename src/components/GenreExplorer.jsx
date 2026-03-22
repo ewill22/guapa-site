@@ -22,6 +22,125 @@ function safeScrollTo(el, block = 'start') {
   window.scrollTo({ top, behavior: 'smooth' });
 }
 
+// Map catalog genre names → editorial keys
+const GENRE_KEY_MAP = {
+  'POP': 'pop', 'ROCK': 'rock', 'SOUL / R&B': 'soul', 'HIP HOP': 'hiphop',
+  'ELECTRONIC': 'electronic', 'COUNTRY': 'country', 'FOLK': 'folk',
+  'JAZZ': 'jazz', 'BLUES': 'blues', 'METAL': 'metal',
+};
+
+const GENRE_ICONS = {
+  metal: '🤘', pop: '🎀', rock: '🎸', soul: '💫', hiphop: '🎤',
+  electronic: '🎛️', country: '🤠', folk: '🍃', jazz: '🎷', blues: '🔵',
+};
+
+function subKey(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/_+$/, '');
+}
+
+function buildStatus(minYr, maxYr) {
+  const s = {};
+  for (let y = 1920; y <= 2030; y++) s[y] = 'hidden';
+  if (!minYr || !maxYr) return s;
+  const span = maxYr - minYr;
+  for (let y = minYr; y <= maxYr; y++) {
+    const pos = span > 0 ? (y - minYr) / span : 0.5;
+    if (pos < 0.15) s[y] = 'emerging';
+    else if (pos < 0.35) s[y] = 'rising';
+    else if (pos > 0.85) s[y] = 'fading';
+    else s[y] = 'peak';
+  }
+  // Extend fading 3 years past last album
+  for (let y = maxYr + 1; y <= Math.min(maxYr + 3, 2030); y++) s[y] = 'fading';
+  return s;
+}
+
+function buildMergedData(catalog, editorialData) {
+  // Deep clone editorial data
+  const merged = {};
+  for (const [gk, genre] of Object.entries(editorialData)) {
+    merged[gk] = {
+      ...genre,
+      subgenres: {},
+    };
+    for (const [sk, sub] of Object.entries(genre.subgenres)) {
+      merged[gk].subgenres[sk] = {
+        ...sub,
+        artists: { ...sub.artists },
+      };
+    }
+  }
+
+  if (!catalog) return merged;
+
+  // Index editorial artist names for fast lookup
+  const editorialNames = new Set();
+  for (const genre of Object.values(editorialData)) {
+    for (const sub of Object.values(genre.subgenres)) {
+      for (const artist of Object.values(sub.artists)) {
+        editorialNames.add(artist.name.toLowerCase());
+      }
+    }
+  }
+
+  // Add catalog-only artists
+  for (const [, catArtist] of Object.entries(catalog)) {
+    if (editorialNames.has(catArtist.name.toLowerCase())) continue;
+    if (!catArtist.genre || !catArtist.subgenre) continue;
+
+    const gk = GENRE_KEY_MAP[catArtist.genre] || subKey(catArtist.genre);
+    const sk = subKey(catArtist.subgenre);
+
+    // Ensure genre exists
+    if (!merged[gk]) {
+      merged[gk] = {
+        name: catArtist.genre,
+        icon: GENRE_ICONS[gk] || '🎵',
+        status: buildStatus(1920, 2030),
+        subgenres: {},
+      };
+    }
+
+    // Ensure subgenre exists
+    if (!merged[gk].subgenres[sk]) {
+      // Compute year range from all catalog artists in this subgenre
+      let subMin = Infinity, subMax = -Infinity;
+      for (const a of Object.values(catalog)) {
+        if ((a.subgenre || '') === catArtist.subgenre) {
+          for (const alb of (a.albums || [])) {
+            if (alb.release_year) {
+              if (alb.release_year < subMin) subMin = alb.release_year;
+              if (alb.release_year > subMax) subMax = alb.release_year;
+            }
+          }
+        }
+      }
+      merged[gk].subgenres[sk] = {
+        name: catArtist.subgenre,
+        icon: '',
+        status: buildStatus(subMin === Infinity ? null : subMin, subMax === -Infinity ? null : subMax),
+        artists: {},
+      };
+    }
+
+    // Add artist
+    const ak = subKey(catArtist.name);
+    const albumCount = (catArtist.albums || []).length;
+    merged[gk].subgenres[sk].artists[ak] = {
+      name: catArtist.name,
+      icon: '',
+      description: '',
+      albums: (catArtist.albums || []).slice(0, 3).map(a => ({
+        title: a.title,
+        year: a.release_year,
+      })),
+      _albumCount: albumCount,
+    };
+  }
+
+  return merged;
+}
+
 export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandled }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
@@ -36,6 +155,9 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   const discoRef = useRef(null);
 
   const base = import.meta.env.BASE_URL;
+
+  // Merge editorial + catalog data
+  const mergedData = useMemo(() => buildMergedData(catalog, MUSIC_DATA), [catalog]);
 
   // Build subgenre year ranges from catalog album-level tags
   // { "KRAUTROCK / SYNTH": { min: 1970, max: 2003 }, ... }
@@ -74,7 +196,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     let editorialArtist = null;
     let foundGenre = null;
     let foundSub = null;
-    for (const [genreId, genre] of Object.entries(MUSIC_DATA)) {
+    for (const [genreId, genre] of Object.entries(mergedData)) {
       for (const [subId, sub] of Object.entries(genre.subgenres)) {
         for (const [artId, artist] of Object.entries(sub.artists)) {
           if (artist.name.toLowerCase() === target) {
@@ -129,14 +251,14 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     }
     setLoading(false);
     onDeepLinkHandled?.();
-  }, [deepLink, catalog, onDeepLinkHandled]);
+  }, [deepLink, catalog, onDeepLinkHandled, mergedData]);
 
   // Reset selections when year changes (keep genre open)
   // Skip if a discography is showing — don't wipe it when year syncs to playing album
   useEffect(() => {
     if (discoArtist) return;
     if (activeGenre && selectedSub) {
-      const genre = MUSIC_DATA[activeGenre];
+      const genre = mergedData[activeGenre];
       const sub = genre?.subgenres[selectedSub];
       if (sub && !isSubVisible(sub, year)) {
         setSelectedSub(null);
@@ -162,16 +284,16 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
 
   // Genre tabs with visible subgenre counts
   const genreTabs = useMemo(() => {
-    return Object.entries(MUSIC_DATA).map(([id, genre]) => {
+    return Object.entries(mergedData).map(([id, genre]) => {
       const visibleCount = Object.values(genre.subgenres).filter(s => isSubVisible(s, year)).length;
       return { id, name: genre.name, icon: genre.icon, visibleCount };
     });
-  }, [year, isSubVisible]);
+  }, [year, isSubVisible, mergedData]);
 
   // Visible subgenres for active genre
   const visibleSubgenres = useMemo(() => {
     if (!activeGenre) return [];
-    const genre = MUSIC_DATA[activeGenre];
+    const genre = mergedData[activeGenre];
     if (!genre) return [];
     return Object.entries(genre.subgenres)
       .filter(([, sub]) => isSubVisible(sub, year))
@@ -179,15 +301,15 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
         id, ...sub,
         status: sub.status[year] === 'hidden' ? 'fading' : sub.status[year]
       }));
-  }, [activeGenre, year, isSubVisible]);
+  }, [activeGenre, year, isSubVisible, mergedData]);
 
   // Artists for selected subgenre
   const artists = useMemo(() => {
     if (!activeGenre || !selectedSub) return [];
-    const sub = MUSIC_DATA[activeGenre]?.subgenres[selectedSub];
+    const sub = mergedData[activeGenre]?.subgenres[selectedSub];
     if (!sub) return [];
     return Object.entries(sub.artists).map(([id, a]) => ({ id, ...a }));
-  }, [activeGenre, selectedSub]);
+  }, [activeGenre, selectedSub, mergedData]);
 
   const closeAll = useCallback(() => {
     setActiveGenre(null);
@@ -287,7 +409,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   const originStory = useMemo(() => {
     if (!activeGenre || visibleSubgenres.length > 0) return null;
     const origin = GENRE_ORIGINS[activeGenre];
-    const genre = MUSIC_DATA[activeGenre];
+    const genre = mergedData[activeGenre];
     if (origin && year < origin.emergeYear) {
       return { genre: genre.name, year: origin.emergeYear, story: origin.story, preExist: true };
     }
@@ -322,13 +444,17 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
               onClick={() => handleSubClick(sub.id)}
             >
               <div className="ge-sub-header">
-                <span className="ge-sub-icon">{sub.icon}</span>
+                {sub.icon && <span className="ge-sub-icon">{sub.icon}</span>}
                 <span className="ge-sub-name">{sub.name}</span>
+                <span className="ge-sub-count">{Object.keys(sub.artists).length}</span>
               </div>
               <div className="ge-sub-artists">
-                {Object.values(sub.artists).map(a => (
+                {Object.values(sub.artists).slice(0, 6).map(a => (
                   <span key={a.name}>{a.name}</span>
                 ))}
+                {Object.keys(sub.artists).length > 6 && (
+                  <span className="ge-sub-more">+{Object.keys(sub.artists).length - 6} more</span>
+                )}
               </div>
             </div>
           ))}
@@ -354,12 +480,12 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       {selectedSub && artists.length > 0 && (
         <div className="ge-artists" ref={artistPanelRef}>
           <div className="ge-artists-header">
-            <span>{MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.icon}</span>
-            <span>{MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.name}</span>
+            <span>{mergedData[activeGenre]?.subgenres[selectedSub]?.icon}</span>
+            <span>{mergedData[activeGenre]?.subgenres[selectedSub]?.name}</span>
             <span className="ge-artists-meta" style={{
-              color: { emerging: 'var(--green, #7ec89b)', rising: 'var(--blue, #88a8d4)', peak: 'var(--pink)', fading: '#a05050' }[MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'fading' : MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year]] || undefined
+              color: { emerging: 'var(--green, #7ec89b)', rising: 'var(--blue, #88a8d4)', peak: 'var(--pink)', fading: '#a05050' }[mergedData[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'fading' : mergedData[activeGenre]?.subgenres[selectedSub]?.status[year]] || undefined
             }}>
-              {MUSIC_DATA[activeGenre]?.name} — SUBGENRE {(MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'FADING' : MUSIC_DATA[activeGenre]?.subgenres[selectedSub]?.status[year]?.toUpperCase())} — {year}
+              {mergedData[activeGenre]?.name} — SUBGENRE {(mergedData[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'FADING' : mergedData[activeGenre]?.subgenres[selectedSub]?.status[year]?.toUpperCase())} — {year}
             </span>
           </div>
           <div className="ge-artists-grid">
@@ -369,11 +495,11 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
                 className={`ge-artist-card ${discoArtist?.name === artist.name ? 'active' : ''}`}
                 onClick={() => handleArtistClick(artist)}
               >
-                <span className="ge-artist-icon">{artist.icon}</span>
+                {artist.icon && <span className="ge-artist-icon">{artist.icon}</span>}
                 <div>
                   <h4 className="ge-artist-name">{artist.name}</h4>
-                  <p className="ge-artist-desc">{artist.description}</p>
-                  <span className="ge-artist-count">{artist.albums.length} album{artist.albums.length !== 1 ? 's' : ''}</span>
+                  {artist.description && <p className="ge-artist-desc">{artist.description}</p>}
+                  <span className="ge-artist-count">{(artist._albumCount || artist.albums.length)} album{(artist._albumCount || artist.albums.length) !== 1 ? 's' : ''}</span>
                 </div>
               </div>
             ))}
@@ -385,7 +511,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       {discoArtist && (
         <div className="ge-disco" ref={discoRef}>
           <div className="ge-disco-header">
-            <span className="ge-disco-icon">{discoArtist.icon}</span>
+            {discoArtist.icon && <span className="ge-disco-icon">{discoArtist.icon}</span>}
             <div>
               <h2 className="ge-disco-name">
                 {discoArtist.name}

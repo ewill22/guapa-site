@@ -137,6 +137,22 @@
   content: "\2022  ";
 }
 
+.ge-sub-count {
+  font-size: 0.6rem;
+  color: var(--gray-600);
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.ge-sub-more {
+  font-style: italic;
+  color: var(--gray-600);
+}
+
+.ge-sub-more::before {
+  content: none;
+}
+
 /* Subgenre legend */
 .ge-sub-legend {
   grid-column: 1 / -1;
