@@ -755,11 +755,24 @@ html {
    RESPONSIVE
 ======================================== */
 @media (max-width: 900px) {
-  .counter-top {
-    grid-template-columns: 1fr;
+  /* Flatten counter into single column for mobile reorder */
+  .counter {
+    display: flex;
+    flex-direction: column;
   }
+  .counter-top, .counter-bottom {
+    display: contents;
+  }
+
+  /* Mobile order: greeting → tiles → albums → timeline → search */
+  .counter-greeting  { order: 1; }
+  .counter-tiles     { order: 2; }
+  .counter-albums    { order: 3; }
+  .counter-timeline  { order: 4; }
+  .counter-search    { order: 5; }
+  .counter-bean      { order: 5; } /* same slot as search (only one shows) */
+
   .counter-timeline {
-    order: -1;
     border-bottom: 1px solid var(--gray-800);
   }
   .counter-timeline > .up-next {
@@ -776,16 +789,14 @@ html {
   .kpi-tile {
     padding: var(--space-sm);
   }
-  .counter-bottom {
-    grid-template-columns: 1fr;
-  }
   .counter-greeting {
     border-right: none;
     border-bottom: 1px solid var(--gray-800);
   }
   .counter-albums {
     border-left: none;
-    border-top: 1px solid var(--gray-800);
+    border-top: none;
+    border-bottom: 1px solid var(--gray-800);
   }
   .counter-greeting, .counter-bean, .counter-search, .counter-albums {
     padding: var(--space-sm) var(--space-md);
