@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { MUSIC_DATA, GENRE_ORIGINS } from '../data/music-data';
+import { isConfirmed } from '../data/confirmed-artists';
 import './GenreExplorer.css';
 
 function formatDuration(ms) {
@@ -83,10 +84,11 @@ function buildMergedData(catalog, editorialData) {
     }
   }
 
-  // Add catalog-only artists
+  // Add catalog-only artists (must be guapa-confirmed)
   for (const [, catArtist] of Object.entries(catalog)) {
     if (editorialNames.has(catArtist.name.toLowerCase())) continue;
     if (!catArtist.genre || !catArtist.subgenre) continue;
+    if (!isConfirmed(catArtist.name)) continue;
 
     const gk = GENRE_KEY_MAP[catArtist.genre] || subKey(catArtist.genre);
     const sk = subKey(catArtist.subgenre);
@@ -165,6 +167,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     if (!catalog) return {};
     const ranges = {};
     for (const artist of Object.values(catalog)) {
+      if (!isConfirmed(artist.name)) continue;
       for (const album of (artist.albums || [])) {
         const sub = album.subgenre || artist.subgenre;
         const yr = album.release_year;

@@ -8,6 +8,7 @@ import {
   hashStr,
 } from './data/timeline';
 import { BLURBS } from './data/blurbs';
+import { isConfirmed } from './data/confirmed-artists';
 import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
 import './App.css';
 
@@ -72,7 +73,7 @@ function shufflePool(pool, cycleId) {
 // Pick the daily artist — hash-based, stable against catalog changes
 // Each day's pick depends only on the date + artist names, not pool size
 function getDailyArtist(catalog) {
-  const artists = Object.values(catalog).filter(a => a.albums && a.albums.length > 0);
+  const artists = Object.values(catalog).filter(a => a.albums && a.albums.length > 0 && isConfirmed(a.name));
   if (!artists.length) return null;
   const today = getTodayEST();
 

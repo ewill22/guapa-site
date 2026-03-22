@@ -35,7 +35,7 @@ The creative work sells the serious work. A potential client explores the record
 ```
 5am daily:
   guapa-data runs dq_enrich.py
-    → cleans/dedupes albums (2,401 albums, 144 artists)
+    → cleans/dedupes albums (~15,000 albums, 824 artists)
     → pulls Spotify metadata + covers + links
     → classifies genres at album level (classify_genres.py)
     → exports slim music-catalog.json
@@ -49,6 +49,7 @@ guapa-site receives push
 - Backend commits show as `[auto]` in git log — these are safe, just catalog updates
 - Backend owns: data quality, enrichment, genre classification, album-level tagging
 - Frontend owns: how that data is displayed, UX, editorial content, styling
+- Catalog: 824 artists, ~15K albums, 10 genres, 56 subgenres (as of 2026-03-22)
 
 ## Design System
 
@@ -94,7 +95,7 @@ guapa-site receives push
 ### Main Page (React — `src/App.jsx`)
 
 1. **Nav** (`src/components/Nav.jsx`)
-2. **Yellow italic banner** ("who are you really? and what were you before?")
+2. **Yellow italic banner** (randomly alternates between two quotes on page load, locked via useState initializer)
 3. **Coffee Shop Counter** (L-shaped layout):
    - **Top row (desktop)**: KPI tiles + Timeline
    - **Top row (mobile ≤900px)**: Timeline first (`order: -1`), then KPI tiles
@@ -119,12 +120,10 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Tiles are clickable — deep-link into Genre Explorer
 
 ### Daily Artist Rotation (`getDailyArtist` in App.jsx)
-- **Rotation-based**: no repeats until entire pool is exhausted
-- **Two pools**: throwback (`begin_year < 1991`) and modern (`begin_year >= 1991`), alternating days
-- **Pool sizes**: ~123 throwback (246 days no repeat), ~21 modern (42 days no repeat)
-- **Deterministic**: `shufflePool(pool, cycleId)` sorts by `hashStr(cycleId + artistName)`, steps through one per day
-- **Stable**: catalog changes don't shift picks (sorted by name hash, not array index)
-- **Epoch**: 2026-03-21 (rotation start date)
+- **Hash-based scoring**: each artist scored by `hashStr(today + artistName)`, highest score wins
+- **Two pools**: throwback (`begin_year < 1991`) ~679 artists, modern (`begin_year >= 1991`) ~145 artists
+- **Alternation**: day-of-year parity (even = throwback, odd = modern)
+- **Permanently stable**: adding/removing artists never shifts other days' picks (no epoch, no rotation index)
 - **Schedule**: plays discography chronologically starting 8am EST, tracks advance by `duration_ms`
 - **Aux Cord**: when discography finishes, random year, deep link cleared
 
@@ -137,9 +136,13 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 
 ### Genre Explorer (`src/components/GenreExplorer.jsx`)
 
-**Data sources**:
-- `src/data/music-data.js` — editorial data: genre hierarchy, artist icons/descriptions, curated albums, status ranges per year (`S()` function)
-- `public/data/music-catalog.json` — full catalog: 144 artists, 2,218+ albums with tracks, cover art, Spotify/Wiki/Amazon links, **album-level genre/subgenre tags**
+**Data sources** (merged via `buildMergedData()` at runtime):
+- `src/data/music-data.js` — editorial data: 144 artists with icons/descriptions, curated albums, hand-crafted status ranges (`S()` function)
+- `public/data/music-catalog.json` — full catalog: 824 artists, ~15K albums with tracks, cover art, Spotify/Wiki/Amazon links, **album-level genre/subgenre tags**
+- `buildMergedData(catalog, MUSIC_DATA)` merges both: editorial takes priority, catalog-only artists (680) auto-generated into correct genre/subgenre slots
+- New genres (METAL) and subgenres auto-created from catalog tags
+- `buildStatus(minYr, maxYr)` computes status ranges for auto-generated subgenres
+- `GENRE_KEY_MAP` maps catalog genre strings (e.g. 'POP') to editorial keys (e.g. 'pop')
 
 **Subgenre visibility** (hybrid editorial + catalog):
 - Editorial `S()` status ranges provide cultural labels (emerging/rising/peak/fading/hidden)
@@ -210,8 +213,8 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Real estate analytics: Atlantic County NJ, 388k+ parcel records, MLS via SJSRMLS
 - Parcel map: standalone HTML at localhost:8000 (not integrated into React yet)
 - `dq_enrich.py`: daily enrichment pipeline (clean, dedup, spotify, wiki, covers, genre classify)
-- `classify_genres.py`: album-level genre/subgenre classification (9 genres, 35 subgenres)
-- 31 new artist candidates pre-classified, ready to add to editorial data
+- `classify_genres.py`: album-level genre/subgenre classification (10 genres, 56 subgenres)
+- Spotify album enrichment needed for 680 newer catalog artists (artist-level Spotify URL exists as fallback)
 
 ## Product Design Principles (Data Solutions)
 

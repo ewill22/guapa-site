@@ -45,7 +45,7 @@ A separate repo (`guapa-data`) runs a daily enrichment pipeline at 5am:
 
 1. Cleans and dedupes the music catalog
 2. Pulls Spotify metadata, covers, and links
-3. Classifies genres at the album level (9 genres, 35 subgenres)
+3. Classifies genres at the album level (10 genres, 56 subgenres)
 4. Exports `music-catalog.json` and auto-pushes to this repo
 
 The frontend picks it up on the next deploy — no manual steps.
