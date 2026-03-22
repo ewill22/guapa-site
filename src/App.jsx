@@ -698,6 +698,7 @@ export default function App() {
                     <span className="ge-sub-legend-item ge-sub-legend--peak">Peak</span>
                     <span className="ge-sub-legend-item ge-sub-legend--fading">Fading</span>
                   </div>
+                  <p className="ge-pick-genre">pick a genre</p>
                 </div>
               ) : (
                 <div className="counter-bean">
