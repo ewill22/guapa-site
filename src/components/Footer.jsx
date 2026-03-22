@@ -8,7 +8,10 @@ export default function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="footer-brand">
-            <img src={`${base}assets/guapa_data_logo.png`} alt="Guapa Data" className="footer-logo" />
+            <div className="footer-logo-lockup">
+              <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="footer-logo" />
+              <span className="footer-logo-text">GUAPA <span className="footer-logo-sub">data</span></span>
+            </div>
           </div>
           <div className="footer-links">
             <h4>Explore</h4>

@@ -196,7 +196,7 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 ## Assets
 
 - Nav logo: `assets/guapa_logo_dark.png`
-- Footer logo: `assets/guapa_data_logo.png` (height 60px)
+- Footer logo: same `guapa_logo_dark.png` + styled "GUAPA data" text (matches nav lockup)
 - Never use `lockup_light.png` (removed)
 - "collective" or "inc" → always "Guapa Data"
 - "Shop" → always "Merch"
