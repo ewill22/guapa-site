@@ -637,6 +637,24 @@
   font-size: 0.7rem;
 }
 
+.ge-track--playing {
+  background: rgba(240, 192, 20, 0.06);
+  border-radius: 3px;
+}
+.ge-track--playing .ge-track-num,
+.ge-track--playing .ge-track-title {
+  color: var(--yellow);
+}
+.ge-track-now {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--yellow);
+  text-align: right;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
 .ge-track-dur {
   font-size: 0.72rem;
   color: var(--gray-600);

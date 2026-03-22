@@ -159,7 +159,7 @@ function buildMergedData(catalog, editorialData, editorial) {
   return merged;
 }
 
-export default function GenreExplorer({ year, catalog, editorial, deepLink, onDeepLinkHandled, auxCordOpen, onAuxPick }) {
+export default function GenreExplorer({ year, catalog, editorial, deepLink, onDeepLinkHandled, auxCordOpen, onAuxPick, nowPlaying }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
   const [discoArtist, setDiscoArtist] = useState(null);
@@ -585,8 +585,13 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
                             <span className="ge-th-title">Title</span>
                             <span className="ge-th-dur">Time</span>
                           </div>
-                          {tracks.map((t, ti) => (
-                            <div key={ti} className="ge-track">
+                          {tracks.map((t, ti) => {
+                            const isNowPlaying = nowPlaying && !nowPlaying.auxCord && !nowPlaying.waiting
+                              && nowPlaying.artist?.toLowerCase() === (album.artistName || discoArtist.name)?.toLowerCase()
+                              && nowPlaying.album?.toLowerCase() === album.title?.toLowerCase()
+                              && nowPlaying.song?.toLowerCase() === t.title?.toLowerCase();
+                            return (
+                            <div key={ti} className={`ge-track${isNowPlaying ? ' ge-track--playing' : ''}`}>
                               <span className="ge-track-num">{t.track_number || ti + 1}</span>
                               <span className="ge-track-title">
                                 {t.title}
@@ -595,8 +600,10 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
                                 )}
                               </span>
                               <span className="ge-track-dur">{formatDuration(t.duration_ms)}</span>
+                              {isNowPlaying && <span className="ge-track-now">Now Playing</span>}
                             </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       )}
                     </div>

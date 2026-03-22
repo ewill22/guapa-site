@@ -947,7 +947,7 @@ export default function App() {
               {/* Genre Explorer for music lens */}
               {lens === 'music' && (
                 <div ref={genreExplorerRef}>
-                  <GenreExplorer year={year} catalog={catalog} editorial={editorial} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} auxCordOpen={!!nowPlaying?.auxCord} onAuxPick={startAuxCord} />
+                  <GenreExplorer year={year} catalog={catalog} editorial={editorial} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} auxCordOpen={!!nowPlaying?.auxCord} onAuxPick={startAuxCord} nowPlaying={nowPlaying} />
                 </div>
               )}
 
