@@ -157,7 +157,8 @@
 .ge-sub-legend {
   grid-column: 1 / -1;
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 8px 16px;
   justify-content: center;
   padding-top: 6px;
 }

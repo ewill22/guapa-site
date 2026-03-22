@@ -12,6 +12,8 @@ html {
   padding: var(--space-lg) var(--space-md);
   max-width: 1400px;
   margin: 0 auto;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* ========================================
@@ -21,6 +23,9 @@ html {
   border: 1px solid var(--gray-800);
   border-radius: var(--radius-lg);
   background: var(--gray-900);
+  overflow: hidden;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 /* Top row: tiles + timeline side by side */
 .counter-top {
@@ -781,6 +786,9 @@ html {
   .counter-albums {
     border-left: none;
     border-top: 1px solid var(--gray-800);
+  }
+  .counter-greeting, .counter-bean, .counter-search, .counter-albums {
+    padding: var(--space-sm) var(--space-md);
   }
 }
 
