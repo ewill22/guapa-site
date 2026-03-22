@@ -8,7 +8,7 @@ import {
   hashStr,
 } from './data/timeline';
 import { BLURBS } from './data/blurbs';
-import { isConfirmed } from './data/confirmed-artists';
+import { loadEditorial, normalizeName } from './data/load-editorial';
 import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
 import './App.css';
 
@@ -72,8 +72,12 @@ function shufflePool(pool, cycleId) {
 // Days since rotation epoch
 // Pick the daily artist — hash-based, stable against catalog changes
 // Each day's pick depends only on the date + artist names, not pool size
-function getDailyArtist(catalog) {
-  const artists = Object.values(catalog).filter(a => a.albums && a.albums.length > 0 && isConfirmed(a.name));
+function getDailyArtist(catalog, editorial) {
+  const artists = Object.values(catalog).filter(a => {
+    if (!a.albums || !a.albums.length) return false;
+    const entry = editorial.get(normalizeName(a.name));
+    return entry && entry.confirmed;
+  });
   if (!artists.length) return null;
   const today = getTodayEST();
 
@@ -227,20 +231,22 @@ export default function App() {
   const [year, setYear] = useState(null);
   const [devDay, setDevDay] = useState(DEV_DAYS.length - 1);
   const [catalog, setCatalog] = useState(null);
+  const [editorial, setEditorial] = useState(null);
 
   const base = import.meta.env.BASE_URL;
   const isGuapa = lens === 'guapa';
   const lc = isGuapa ? GUAPA_COLOR : LENS_COLORS[lens];
 
-  // Load music catalog for daily pick
+  // Load music catalog and editorial CSV
   useEffect(() => {
     fetch(`${base}data/music-catalog.json`)
       .then(r => r.json())
       .then(setCatalog)
       .catch(() => {});
+    loadEditorial(base).then(setEditorial).catch(() => {});
   }, [base]);
 
-  const dailyArtist = useMemo(() => catalog ? getDailyArtist(catalog) : null, [catalog]);
+  const dailyArtist = useMemo(() => (catalog && editorial) ? getDailyArtist(catalog, editorial) : null, [catalog, editorial]);
   const [nowPlaying, setNowPlaying] = useState(null);
   const dailyBean = useMemo(() => getDailyBean(), []);
   const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year), [catalog, year]);
@@ -769,7 +775,7 @@ export default function App() {
               {/* Genre Explorer for music lens */}
               {lens === 'music' && (
                 <div ref={genreExplorerRef}>
-                  <GenreExplorer year={year} catalog={catalog} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} />
+                  <GenreExplorer year={year} catalog={catalog} editorial={editorial} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} />
                 </div>
               )}
 

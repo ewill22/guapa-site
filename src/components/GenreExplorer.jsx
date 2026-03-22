@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { MUSIC_DATA, GENRE_ORIGINS } from '../data/music-data';
-import { isConfirmed } from '../data/confirmed-artists';
+import { normalizeName } from '../data/load-editorial';
 import './GenreExplorer.css';
 
 function formatDuration(ms) {
@@ -56,7 +56,7 @@ function buildStatus(minYr, maxYr) {
   return s;
 }
 
-function buildMergedData(catalog, editorialData) {
+function buildMergedData(catalog, editorialData, editorial) {
   // Deep clone editorial data
   const merged = {};
   for (const [gk, genre] of Object.entries(editorialData)) {
@@ -72,6 +72,21 @@ function buildMergedData(catalog, editorialData) {
     }
   }
 
+  // Overlay CSV icon/description on editorial artists (CSV is source of truth)
+  if (editorial) {
+    for (const genre of Object.values(merged)) {
+      for (const sub of Object.values(genre.subgenres)) {
+        for (const artist of Object.values(sub.artists)) {
+          const csvEntry = editorial.get(normalizeName(artist.name));
+          if (csvEntry) {
+            if (csvEntry.icon) artist.icon = csvEntry.icon;
+            if (csvEntry.description) artist.description = csvEntry.description;
+          }
+        }
+      }
+    }
+  }
+
   if (!catalog) return merged;
 
   // Index editorial artist names for fast lookup
@@ -84,11 +99,12 @@ function buildMergedData(catalog, editorialData) {
     }
   }
 
-  // Add catalog-only artists (must be guapa-confirmed)
+  // Add catalog-only artists (must be confirmed in editorial CSV)
   for (const [, catArtist] of Object.entries(catalog)) {
     if (editorialNames.has(catArtist.name.toLowerCase())) continue;
     if (!catArtist.genre || !catArtist.subgenre) continue;
-    if (!isConfirmed(catArtist.name)) continue;
+    const csvEntry = editorial && editorial.get(normalizeName(catArtist.name));
+    if (!csvEntry || !csvEntry.confirmed) continue;
 
     const gk = GENRE_KEY_MAP[catArtist.genre] || subKey(catArtist.genre);
     const sk = subKey(catArtist.subgenre);
@@ -125,13 +141,13 @@ function buildMergedData(catalog, editorialData) {
       };
     }
 
-    // Add artist
+    // Add artist — use CSV icon/description if authored
     const ak = subKey(catArtist.name);
     const albumCount = (catArtist.albums || []).length;
     merged[gk].subgenres[sk].artists[ak] = {
       name: catArtist.name,
-      icon: '',
-      description: '',
+      icon: csvEntry.icon || '',
+      description: csvEntry.description || '',
       albums: (catArtist.albums || []).slice(0, 3).map(a => ({
         title: a.title,
         year: a.release_year,
@@ -143,7 +159,7 @@ function buildMergedData(catalog, editorialData) {
   return merged;
 }
 
-export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandled }) {
+export default function GenreExplorer({ year, catalog, editorial, deepLink, onDeepLinkHandled }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
   const [discoArtist, setDiscoArtist] = useState(null);
@@ -159,7 +175,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
   const base = import.meta.env.BASE_URL;
 
   // Merge editorial + catalog data
-  const mergedData = useMemo(() => buildMergedData(catalog, MUSIC_DATA), [catalog]);
+  const mergedData = useMemo(() => buildMergedData(catalog, MUSIC_DATA, editorial), [catalog, editorial]);
 
   // Build subgenre year ranges from catalog album-level tags
   // { "KRAUTROCK / SYNTH": { min: 1970, max: 2003 }, ... }
@@ -167,7 +183,8 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
     if (!catalog) return {};
     const ranges = {};
     for (const artist of Object.values(catalog)) {
-      if (!isConfirmed(artist.name)) continue;
+      const csvEntry = editorial && editorial.get(normalizeName(artist.name));
+      if (!csvEntry || !csvEntry.confirmed) continue;
       for (const album of (artist.albums || [])) {
         const sub = album.subgenre || artist.subgenre;
         const yr = album.release_year;
@@ -180,7 +197,7 @@ export default function GenreExplorer({ year, catalog, deepLink, onDeepLinkHandl
       }
     }
     return ranges;
-  }, [catalog]);
+  }, [catalog, editorial]);
 
   // Check if a subgenre is visible: editorial status OR catalog albums span this year
   const isSubVisible = useCallback((sub, yr) => {
