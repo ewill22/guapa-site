@@ -599,8 +599,8 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
                                   <a href={`https://open.spotify.com/track/${t.spotify_id}`} target="_blank" rel="noopener" className="ge-track-play" onClick={e => e.stopPropagation()}>&#9654;</a>
                                 )}
                               </span>
-                              <span className="ge-track-dur">{formatDuration(t.duration_ms)}</span>
                               {isNowPlaying && <span className="ge-track-now">Now Playing</span>}
+                              <span className="ge-track-dur">{formatDuration(t.duration_ms)}</span>
                             </div>
                             );
                           })}
