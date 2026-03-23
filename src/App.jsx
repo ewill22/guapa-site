@@ -762,7 +762,7 @@ export default function App() {
                           ))}
                         </div>
                         <button className={`live-badge ${year === 2026 ? 'live-badge--active' : ''}${nowPlaying?.auxCord ? ' live-badge--aux' : ''}`} onClick={() => setYear(2026)}>
-                          <span className="live-dot" />{nowPlaying?.auxCord ? 'Aux Cord' : 'Live'}
+                          <span className="live-dot" />Live
                         </button>
                       </div>
 
