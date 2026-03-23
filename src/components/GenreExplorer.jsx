@@ -159,7 +159,7 @@ function buildMergedData(catalog, editorialData, editorial) {
   return merged;
 }
 
-export default function GenreExplorer({ year, catalog, editorial, deepLink, onDeepLinkHandled, auxCordOpen, onAuxPick, nowPlaying }) {
+export default function GenreExplorer({ year, catalog, editorial, deepLink, onDeepLinkHandled, auxCordOpen, onAuxPick, nowPlaying, onYearChange }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
   const [discoArtist, setDiscoArtist] = useState(null);
@@ -250,6 +250,14 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
         const catArtist = catalog[key];
         const albums = [...catArtist.albums]
           .sort((a, b) => (b.release_year || 0) - (a.release_year || 0));
+        // Jump to artist's first album year if subgenre isn't visible at current year
+        if (foundSub && onYearChange) {
+          const sub = mergedData[foundGenre]?.subgenres[foundSub];
+          if (sub && !isSubVisible(sub, year)) {
+            const firstYear = catArtist.albums.reduce((min, a) => a.release_year && a.release_year < min ? a.release_year : min, Infinity);
+            if (firstYear !== Infinity) onYearChange(firstYear);
+          }
+        }
         setDiscoAlbums(albums.map(a => ({
           ...a,
           artistName: catArtist.name,
@@ -271,7 +279,7 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
     }
     setLoading(false);
     onDeepLinkHandled?.();
-  }, [deepLink, catalog, onDeepLinkHandled, mergedData]);
+  }, [deepLink, catalog, onDeepLinkHandled, mergedData, year, isSubVisible, onYearChange]);
 
   // Reset selections when year changes — close disco if subgenre no longer visible
   useEffect(() => {
