@@ -273,18 +273,18 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
     onDeepLinkHandled?.();
   }, [deepLink, catalog, onDeepLinkHandled, mergedData]);
 
-  // Reset selections when year changes (keep genre open)
-  // Skip if a discography is showing — don't wipe it when year syncs to playing album
+  // Reset selections when year changes — close disco if subgenre no longer visible
   useEffect(() => {
-    if (discoArtist) return;
     if (activeGenre && selectedSub) {
       const genre = mergedData[activeGenre];
       const sub = genre?.subgenres[selectedSub];
       if (sub && !isSubVisible(sub, year)) {
         setSelectedSub(null);
+        setDiscoArtist(null);
+        setDiscoAlbums(null);
       }
     }
-  }, [year, activeGenre, selectedSub, discoArtist, isSubVisible]);
+  }, [year, activeGenre, selectedSub, isSubVisible]);
 
   // Scroll to specific album after discography loads
   useEffect(() => {
