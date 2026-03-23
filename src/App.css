@@ -596,6 +596,15 @@ html {
   background: var(--green);
   animation: pulse 2s ease-in-out infinite;
 }
+.live-badge--aux-playing {
+  color: var(--yellow);
+  background: rgba(240, 192, 20, 0.1);
+  border-color: rgba(240, 192, 20, 0.15);
+}
+.live-badge--aux-playing:hover { color: var(--yellow); border-color: rgba(240, 192, 20, 0.3); }
+.live-badge--aux-playing .live-dot {
+  background: var(--yellow);
+}
 
 /* Slider */
 .slider-row {
