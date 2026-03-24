@@ -548,7 +548,7 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
                 {discoAlbums && <span className="ge-disco-album-count">{discoAlbums.length} album{discoAlbums.length !== 1 ? 's' : ''}</span>}
               </h2>
               {auxCordOpen && onAuxPick && (
-                <button className="ge-aux-btn" onClick={() => { onAuxPick(discoArtist.name); window.scrollTo({ top: 0, behavior: 'smooth' }); const a = discoAlbums?.reduce((earliest, cur) => (!earliest || (cur.release_year || 9999) < (earliest.release_year || 9999)) ? cur : earliest, null); const sp = a?.url_spotify || (a?.spotify_id ? `https://open.spotify.com/album/${a.spotify_id}` : null); if (sp) window.open(sp, '_blank'); }}>
+                <button className="ge-aux-btn" onClick={() => { onAuxPick(discoArtist.name); window.scrollTo({ top: 0, behavior: 'smooth' }); const catKey = catalog && Object.keys(catalog).find(k => catalog[k].name.toLowerCase() === discoArtist.name.toLowerCase()); const sorted = catKey ? [...(catalog[catKey].albums || [])].map((a, i) => ({ ...a, _i: i })).sort((x, y) => (x.release_year || 0) - (y.release_year || 0) || x._i - y._i) : []; const a = sorted[0]; const sp = a?.url_spotify || (a?.spotify_id ? `https://open.spotify.com/album/${a.spotify_id}` : null); if (sp) window.open(sp, '_blank'); }}>
                   ▶ Play on Aux Cord
                 </button>
               )}
