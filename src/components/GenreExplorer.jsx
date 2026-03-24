@@ -28,11 +28,13 @@ const GENRE_KEY_MAP = {
   'POP': 'pop', 'ROCK': 'rock', 'SOUL / R&B': 'soul', 'HIP HOP': 'hiphop',
   'ELECTRONIC': 'electronic', 'COUNTRY': 'country', 'FOLK': 'folk',
   'JAZZ': 'jazz', 'BLUES': 'blues', 'METAL': 'metal',
+  'LATIN': 'latin',
 };
 
 const GENRE_ICONS = {
   metal: '🤘', pop: '🎀', rock: '🎸', soul: '💫', hiphop: '🎤',
   electronic: '🎛️', country: '🤠', folk: '🍃', jazz: '🎷', blues: '🔵',
+  latin: '🌴',
 };
 
 function subKey(name) {
