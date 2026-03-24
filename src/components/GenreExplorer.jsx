@@ -548,7 +548,7 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
                 {discoAlbums && <span className="ge-disco-album-count">{discoAlbums.length} album{discoAlbums.length !== 1 ? 's' : ''}</span>}
               </h2>
               {auxCordOpen && onAuxPick && (
-                <button className="ge-aux-btn" onClick={() => { onAuxPick(discoArtist.name); window.scrollTo({ top: 0, behavior: 'smooth' }); const a = discoAlbums?.[0]; const sp = a?.url_spotify || (a?.spotify_id ? `https://open.spotify.com/album/${a.spotify_id}` : null); if (sp) window.open(sp, '_blank'); }}>
+                <button className="ge-aux-btn" onClick={() => { onAuxPick(discoArtist.name); window.scrollTo({ top: 0, behavior: 'smooth' }); const a = discoAlbums?.[discoAlbums.length - 1]; const sp = a?.url_spotify || (a?.spotify_id ? `https://open.spotify.com/album/${a.spotify_id}` : null); if (sp) window.open(sp, '_blank'); }}>
                   ▶ Play on Aux Cord
                 </button>
               )}
