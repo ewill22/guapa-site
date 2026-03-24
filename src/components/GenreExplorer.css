@@ -100,7 +100,7 @@
 
 .ge-sub.rising { border-color: var(--blue, #88a8d4); }
 .ge-sub.peak { border-color: var(--pink); }
-.ge-sub.fading { border-color: #a05050; border-style: dashed; opacity: 0.7; }
+.ge-sub.fading { border-color: #a05050; opacity: 0.85; }
 .ge-sub.emerging { border-color: var(--green, #7ec89b); border-style: dashed; }
 
 .ge-sub-header {
