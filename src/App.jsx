@@ -355,6 +355,8 @@ export default function App() {
     const q = searchQuery.toLowerCase();
     const artists = [], albums = [], songs = [];
     for (const artist of Object.values(catalog)) {
+      const entry = editorial && editorial.get(normalizeName(artist.name));
+      if (!entry || !entry.confirmed) continue;
       if (artist.name.toLowerCase().includes(q)) {
         artists.push({ type: 'artist', name: artist.name });
       }
@@ -371,7 +373,7 @@ export default function App() {
       if (artists.length + albums.length + songs.length >= 20) break;
     }
     return [...artists, ...albums, ...songs].slice(0, 8);
-  }, [catalog, searchQuery]);
+  }, [catalog, searchQuery, editorial]);
 
   // Close search dropdown on click outside
   useEffect(() => {
