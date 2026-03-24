@@ -929,7 +929,7 @@ html {
   .timeline-header { flex-wrap: wrap; gap: var(--space-sm); }
   .timeline-nav-row { gap: 10px; }
   .year-display h2 { font-size: 2.2rem; }
-  .event-bars { width: 100%; }
+  .event-bars { width: 100%; padding-right: 52px; }
   .counter-timeline { padding: var(--space-sm); }
   .counter-greeting, .counter-bean, .counter-search, .counter-albums { padding: var(--space-sm) var(--space-md); }
   .newsletter-form { flex-direction: column; }
