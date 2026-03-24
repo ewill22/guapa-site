@@ -929,8 +929,7 @@ html {
   .timeline-header { flex-wrap: wrap; gap: var(--space-sm); }
   .timeline-nav-row { gap: 10px; width: 100%; justify-content: center; }
   .year-display h2 { font-size: 2.2rem; min-width: auto; }
-  .event-bars { flex: 1; min-width: 0; }
-  .live-badge { position: static; flex-shrink: 0; }
+  .event-bars { width: 100%; }
   .counter-timeline { padding: var(--space-sm); }
   .counter-greeting, .counter-bean, .counter-search, .counter-albums { padding: var(--space-sm) var(--space-md); }
   .newsletter-form { flex-direction: column; }
