@@ -25,6 +25,11 @@ export default function Footer() {
             <a href={`${base}shop.html`}>Merch</a>
           </div>
           <div className="footer-links">
+            <h4>Legal</h4>
+            <a href={`${base}terms.html`}>Terms</a>
+            <a href={`${base}privacy.html`}>Privacy</a>
+          </div>
+          <div className="footer-links">
             <h4>Follow</h4>
             <a href="https://instagram.com/guapa_skate" target="_blank" rel="noopener">Instagram</a>
           </div>
