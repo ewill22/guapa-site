@@ -6,6 +6,18 @@ You are the frontend expert for Guapa Data. You own the visual frontend, editori
 
 **Design guide**: `C:\Users\eewil\homebase\GUAPA_DESIGN_GUIDE.md` — the authoritative reference for colors, typography, spacing, cards, buttons, and interactive states. Read it before styling anything.
 
+## Teams
+
+Three teams work in this repo:
+
+| Team | Owns | Notes |
+|------|------|-------|
+| **Frontend** | React app, static pages, CSS, components, UX | Main development team |
+| **Content / Editorial** | `public/data/artist-editorial.csv`, `public/data/album-editorial.csv`, artist & album descriptions, icons | Works in batches of 5 artists. Drafts content, Eric reviews and confirms. |
+| **Backend** (guapa-data) | `music-catalog.json`, data pipelines, enrichment, genre classification | Separate repo, auto-pushes daily |
+
+The Content team writes in the **Guapa voice**: punchy, opinionated, fragment-heavy. Short sentences. Lead with the iconic detail. No filler.
+
 ## Company Vision
 
 Guapa Data is a data solutions company run by Eric, based in New Jersey. Two sides that reinforce each other:
@@ -50,6 +62,44 @@ guapa-site receives push
 - Backend owns: data quality, enrichment, genre classification, album-level tagging
 - Frontend owns: how that data is displayed, UX, editorial content, styling
 - Catalog: 824 artists, ~15K albums, 10 genres, 56 subgenres (as of 2026-03-22)
+
+## Editorial / Content Pipeline
+
+The Content team maintains two CSV files in `public/data/`:
+
+### `artist-editorial.csv`
+| Column | Purpose |
+|--------|---------|
+| `name` | Artist display name (matches catalog) |
+| `confirmed` | `yes` = live on site. Eric flips this after review. |
+| `icon` | Single emoji for the artist |
+| `description` | 1-2 sentence artist blurb in the Guapa voice |
+| `original` | `yes` = one of the founding 145 editorial artists. Permanent flag, never changes. |
+| `drafted` | `yes` = content written, awaiting Eric's review |
+
+### `album-editorial.csv`
+| Column | Purpose |
+|--------|---------|
+| `artist_name` | Must match artist name in catalog |
+| `album_title` | Must match album title in catalog |
+| `year` | Release year |
+| `description` | 1-2 sentence album blurb — highlight standout tracks, in the Guapa voice |
+
+### Workflow
+1. Pick 5 unconfirmed artists per batch
+2. Write artist description + icon, set `drafted=yes`
+3. Write album descriptions for 4-5 key albums per artist
+4. Eric reviews — flips `confirmed=yes` when approved
+5. `sync-editorial-csv.py` (runs in CI) auto-adds new catalog artists as `confirmed=no`
+
+### Guapa Voice
+Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No filler, no hedging. Examples:
+- "That tritone. The Devil's interval. Tony Iommi played it and invented a genre on a rainy day in Birmingham."
+- "Sinnerman is ten minutes of relentless piano and percussion. Strange Fruit from a Black woman's mouth hits different."
+
+### Frontend Integration
+- `src/data/load-editorial.js` — fetches and parses `artist-editorial.csv` at runtime
+- Album editorial loader TBD — will follow same pattern when frontend is ready to display album blurbs
 
 ## Design System
 

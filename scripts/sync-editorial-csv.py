@@ -57,6 +57,8 @@ def main():
                 "confirmed": "no",
                 "icon": "",
                 "description": "",
+                "original": "",
+                "drafted": "",
             })
 
     if not new_rows:
@@ -66,7 +68,7 @@ def main():
     # Append new rows
     rows.extend(new_rows)
     with open(CSV_PATH, "w", newline="", encoding="utf-8-sig") as f:
-        w = csv.DictWriter(f, fieldnames=["name", "confirmed", "icon", "description"])
+        w = csv.DictWriter(f, fieldnames=["name", "confirmed", "icon", "description", "original", "drafted"])
         w.writeheader()
         w.writerows(rows)
 

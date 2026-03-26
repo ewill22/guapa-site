@@ -39,6 +39,14 @@ npm run dev
 | `/shop.html` | Static | Merch (coming soon) |
 | `/data-solutions.html` | Static | Product cards + lead form |
 
+## Teams
+
+| Team | Owns |
+|------|------|
+| **Frontend** | React app, static pages, CSS, components, UX |
+| **Content / Editorial** | Artist & album descriptions, icons (`public/data/artist-editorial.csv`, `public/data/album-editorial.csv`) |
+| **Backend** (guapa-data) | Data pipelines, enrichment, genre classification (separate repo) |
+
 ## Backend Pipeline
 
 A separate repo (`guapa-data`) runs a daily enrichment pipeline at 5am:
@@ -49,6 +57,15 @@ A separate repo (`guapa-data`) runs a daily enrichment pipeline at 5am:
 4. Exports `music-catalog.json` and auto-pushes to this repo
 
 The frontend picks it up on the next deploy — no manual steps.
+
+## Editorial Pipeline
+
+The Content team writes artist and album descriptions in batches of 5. Editorial lives in two CSVs in `public/data/`:
+
+- **`artist-editorial.csv`** — artist name, icon, description, confirmed/drafted status
+- **`album-editorial.csv`** — per-album blurbs highlighting standout tracks
+
+New catalog artists are auto-added to the editorial CSV by `scripts/sync-editorial-csv.py` during CI. The Content team drafts descriptions, Eric reviews and confirms.
 
 ## Deployment
 

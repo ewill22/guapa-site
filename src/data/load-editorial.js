@@ -29,6 +29,8 @@ export function parseEditorialCSV(text) {
   const confIdx = cols.indexOf('confirmed');
   const iconIdx = cols.indexOf('icon');
   const descIdx = cols.indexOf('description');
+  const origIdx = cols.indexOf('original');
+  const draftIdx = cols.indexOf('drafted');
 
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i].trim();
@@ -42,6 +44,8 @@ export function parseEditorialCSV(text) {
       confirmed: (fields[confIdx] || '').toLowerCase() === 'yes',
       icon: fields[iconIdx] || '',
       description: fields[descIdx] || '',
+      original: (fields[origIdx] || '').toLowerCase() === 'yes',
+      drafted: (fields[draftIdx] || '').toLowerCase() === 'yes',
     };
 
     // Index by lowercase name and "the " variants, with unicode normalization
