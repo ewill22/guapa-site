@@ -478,10 +478,10 @@ export default function App() {
       return;
     }
     if (nowPlaying.auxCord) {
-      // Aux cord open — random year, clear selection
+      // Aux cord open — random year, keep daily artist selected
       if (prevAlbumRef.current !== '__aux__') {
         setYear(randYear());
-        if (initialDeepLinked.current) setDeepLink(null);
+        if (dailyArtist) setDeepLink({ artist: dailyArtist.artist, album: null });
         prevAlbumRef.current = '__aux__';
       }
     } else if (nowPlaying.year && !nowPlaying.waiting) {
