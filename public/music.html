@@ -2658,8 +2658,12 @@
             // Sort A-Z by artist name
             releases.sort((a, b) => a.artist.localeCompare(b.artist));
 
-            // Show new releases below timeline (timeline stays visible)
+            // Show new releases below timeline, hide genre explorer content
             document.getElementById('newReleasesSection').style.display = '';
+            document.getElementById('genreTabs').style.display = 'none';
+            document.getElementById('genreGroups').style.display = 'none';
+            document.getElementById('artistPanel').style.display = 'none';
+            document.getElementById('rankingsSection').style.display = 'none';
 
             // Header
             const dateStr = data.date;
