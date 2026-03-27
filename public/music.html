@@ -905,106 +905,6 @@
             letter-spacing: 0.05em;
             margin-left: 10px;
         }
-        .nr-album {
-            background: var(--gray-900);
-            border: 1px solid var(--gray-800);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-        }
-        .nr-album-header {
-            display: flex;
-            gap: var(--space-md);
-            padding: var(--space-md);
-        }
-        .nr-album-art {
-            width: 120px;
-            height: 120px;
-            min-width: 120px;
-            border-radius: var(--radius-sm);
-            background: var(--gray-800);
-            background-size: cover;
-            background-position: center;
-        }
-        .nr-album-info {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 4px;
-            min-width: 0;
-        }
-        .nr-album-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--white);
-            margin: 0;
-        }
-        .nr-album-meta {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-        }
-        .nr-album-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-            flex-wrap: wrap;
-        }
-        .nr-link {
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 4px 10px;
-            border-radius: 3px;
-            text-decoration: none;
-            transition: opacity 0.2s;
-        }
-        .nr-link:hover { opacity: 0.8; }
-        .nr-link--spotify {
-            color: #1DB954;
-            background: rgba(29, 185, 84, 0.1);
-        }
-        .nr-link--buy {
-            color: var(--pink);
-            background: rgba(232, 160, 176, 0.1);
-        }
-        .nr-tracklist {
-            border-top: 1px solid var(--gray-800);
-            padding: var(--space-sm) var(--space-md);
-        }
-        .nr-tracklist-header {
-            display: grid;
-            grid-template-columns: 28px 1fr 44px;
-            padding: 4px 0;
-            font-size: 0.6rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--gray-600);
-            border-bottom: 1px solid var(--gray-800);
-            margin-bottom: 2px;
-        }
-        .nr-track {
-            display: grid;
-            grid-template-columns: 28px 1fr 44px;
-            padding: 3px 0;
-            font-size: 0.78rem;
-            color: var(--gray-400);
-            align-items: center;
-        }
-        .nr-track-num {
-            color: var(--gray-600);
-            font-size: 0.7rem;
-        }
-        .nr-track-title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .nr-track-dur {
-            text-align: right;
-            font-size: 0.7rem;
-            color: var(--gray-600);
-        }
         .nr-alpha-nav {
             display: flex;
             gap: 4px;
@@ -1025,13 +925,6 @@
         }
         .nr-alpha-btn:hover { color: var(--white); border-color: var(--gray-600); }
         .nr-alpha-btn.active { color: var(--yellow); border-color: var(--yellow); }
-
-        @media (max-width: 600px) {
-            .nr-album-art { width: 80px; height: 80px; min-width: 80px; }
-            .nr-album-title { font-size: 0.9rem; }
-            .nr-album-header { padding: var(--space-sm); gap: var(--space-sm); }
-            .nr-tracklist { padding: var(--space-xs) var(--space-sm); }
-        }
     </style>
 </head>
 <body>
@@ -2783,12 +2676,15 @@
             if (letters.length > 1) {
                 alphaHtml = '<div class="nr-alpha-nav">';
                 for (const letter of letters) {
-                    alphaHtml += `<button class="nr-alpha-btn" onclick="document.getElementById('nr-${letter}').scrollIntoView({behavior:'smooth',block:'start'})">${letter}</button>`;
+                    alphaHtml += `<button class="nr-alpha-btn" onclick="document.getElementById(\'nr-${letter}\').scrollIntoView({behavior:\'smooth\',block:\'start\'})">${letter}</button>`;
                 }
                 alphaHtml += '</div>';
             }
 
-            // Releases
+            // Clean track titles (remove wrapping quotes from MusicBrainz)
+            const cleanTitle = (t) => t.replace(/^"(.*)"$/, '$1');
+
+            // Releases — reuse disco-* classes from discography section
             let html = alphaHtml;
             let lastLetter = '';
             for (const rel of releases) {
@@ -2796,8 +2692,8 @@
                 const id = letter !== lastLetter ? ` id="nr-${letter}"` : '';
                 lastLetter = letter;
 
-                const coverStyle = rel.cover_art
-                    ? `background-image: url('${rel.cover_art.small || rel.cover_art.large || ''}')`
+                const coverUrl = rel.cover_art
+                    ? (rel.cover_art.large || rel.cover_art.small || '')
                     : '';
 
                 const runtime = rel.runtime_ms ? formatRuntime(rel.runtime_ms) : '';
@@ -2806,33 +2702,35 @@
 
                 // Action links
                 const amazonQuery = encodeURIComponent(`${rel.artist} ${rel.album} vinyl`);
-                let actions = '';
-                actions += `<a href="https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20" target="_blank" rel="noopener" class="nr-link nr-link--buy">Buy Vinyl</a>`;
+                let actions = `<a href="https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20" target="_blank" rel="noopener" class="disco-link disco-link--buy">Buy Vinyl</a>`;
 
                 // Tracklist
                 let tracklistHtml = '';
                 if (rel.tracks && rel.tracks.length > 0) {
-                    // Clean track titles (remove wrapping quotes from MusicBrainz)
-                    const cleanTitle = (t) => t.replace(/^"(.*)"$/, '$1');
-                    tracklistHtml = `<div class="nr-tracklist">
-                        <div class="nr-tracklist-header"><span>#</span><span>Title</span><span style="text-align:right">Time</span></div>
-                        ${rel.tracks.map(t => `<div class="nr-track">
-                            <span class="nr-track-num">${t.track_number}</span>
-                            <span class="nr-track-title">${cleanTitle(t.title)}</span>
-                            <span class="nr-track-dur">${formatDur(t.duration_ms)}</span>
+                    tracklistHtml = `<div class="disco-tracklist">
+                        <div class="disco-tracklist-header">
+                            <span class="th-num">#</span>
+                            <span class="th-title">Title</span>
+                            <span class="th-duration">Time</span>
+                        </div>
+                        ${rel.tracks.map(t => `<div class="disco-track">
+                            <span class="disco-track-num">${t.track_number}</span>
+                            <span class="disco-track-title">${cleanTitle(t.title)}</span>
+                            <span class="disco-track-duration">${formatDur(t.duration_ms)}</span>
                         </div>`).join('')}
                     </div>`;
                 }
 
                 html += `<div class="nr-artist-group"${id}>
                     <h3 class="nr-artist-name">${rel.artist}<span class="nr-subgenre">${rel.subgenre || rel.genre}</span></h3>
-                    <div class="nr-album">
-                        <div class="nr-album-header">
-                            <div class="nr-album-art" style="${coverStyle}"></div>
-                            <div class="nr-album-info">
-                                <h4 class="nr-album-title">${rel.album}</h4>
-                                <span class="nr-album-meta">${meta}</span>
-                                <div class="nr-album-actions">${actions}</div>
+                    <div class="disco-album disco-album--latest">
+                        <div class="disco-album-header">
+                            <div class="disco-album-art" style="background-image: url('${coverUrl}'); background-size: cover; background-position: center;"></div>
+                            <div class="disco-album-info">
+                                <span class="disco-album-year">New Release · ${meta}</span>
+                                <span class="disco-album-artist">${rel.subgenre || rel.genre}</span>
+                                <h3 class="disco-album-title">${rel.album}</h3>
+                                <div class="disco-album-actions">${actions}</div>
                             </div>
                         </div>
                         ${tracklistHtml}
