@@ -8,7 +8,7 @@ import {
   hashStr,
 } from './data/timeline';
 import { BLURBS } from './data/blurbs';
-import { loadEditorial, normalizeName } from './data/load-editorial';
+import { loadEditorial, loadAlbumEditorial, normalizeName } from './data/load-editorial';
 import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
 import './App.css';
 
@@ -324,6 +324,7 @@ export default function App() {
   const [devDay, setDevDay] = useState(DEV_DAYS.length - 1);
   const [catalog, setCatalog] = useState(null);
   const [editorial, setEditorial] = useState(null);
+  const [albumEditorial, setAlbumEditorial] = useState(null);
 
   const base = import.meta.env.BASE_URL;
   const isGuapa = lens === 'guapa';
@@ -336,6 +337,7 @@ export default function App() {
       .then(setCatalog)
       .catch(() => {});
     loadEditorial(base).then(setEditorial).catch(() => {});
+    loadAlbumEditorial(base).then(setAlbumEditorial).catch(() => {});
   }, [base]);
 
   const dailyArtist = useMemo(() => (catalog && editorial) ? getDailyArtist(catalog, editorial) : null, [catalog, editorial]);
@@ -953,7 +955,7 @@ export default function App() {
               {/* Genre Explorer for music lens */}
               {lens === 'music' && (
                 <div ref={genreExplorerRef}>
-                  <GenreExplorer year={year} catalog={catalog} editorial={editorial} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} auxCordOpen={!!nowPlaying?.auxCord} onAuxPick={startAuxCord} nowPlaying={nowPlaying} onYearChange={setYear} />
+                  <GenreExplorer year={year} catalog={catalog} editorial={editorial} albumEditorial={albumEditorial} deepLink={deepLink} onDeepLinkHandled={() => setDeepLink(null)} auxCordOpen={!!nowPlaying?.auxCord} onAuxPick={startAuxCord} nowPlaying={nowPlaying} onYearChange={setYear} />
                 </div>
               )}
 

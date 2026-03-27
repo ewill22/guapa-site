@@ -161,7 +161,7 @@ function buildMergedData(catalog, editorialData, editorial) {
   return merged;
 }
 
-export default function GenreExplorer({ year, catalog, editorial, deepLink, onDeepLinkHandled, auxCordOpen, onAuxPick, nowPlaying, onYearChange }) {
+export default function GenreExplorer({ year, catalog, editorial, albumEditorial, deepLink, onDeepLinkHandled, auxCordOpen, onAuxPick, nowPlaying, onYearChange }) {
   const [activeGenre, setActiveGenre] = useState(null);
   const [selectedSub, setSelectedSub] = useState(null);
   const [discoArtist, setDiscoArtist] = useState(null);
@@ -586,6 +586,11 @@ export default function GenreExplorer({ year, catalog, editorial, deepLink, onDe
                             <a href={buyUrl} target="_blank" rel="noopener" className="ge-link ge-link--buy" onClick={e => e.stopPropagation()}>Buy Vinyl</a>
                             <a href={wikiUrl} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>
                           </div>
+                          {(() => {
+                            const albKey = normalizeName(album.artistName || discoArtist.name) + '|||' + normalizeName(album.title);
+                            const albDesc = albumEditorial?.get(albKey)?.description;
+                            return albDesc ? <p className="ge-album-desc">{albDesc}</p> : null;
+                          })()}
                         </div>
                       </div>
                       {tracks.length > 0 && (

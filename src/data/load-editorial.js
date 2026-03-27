@@ -7,6 +7,44 @@ export async function loadEditorial(baseUrl) {
   return parseEditorialCSV(text);
 }
 
+// Load and parse album-editorial.csv at runtime
+// Returns Map keyed by "artist_name|||album_title" (lowercase) → { description }
+export async function loadAlbumEditorial(baseUrl) {
+  const res = await fetch(`${baseUrl}data/album-editorial.csv`);
+  if (!res.ok) return new Map();
+  const text = await res.text();
+  return parseAlbumEditorialCSV(text);
+}
+
+export function parseAlbumEditorialCSV(text) {
+  const map = new Map();
+  const lines = text.split('\n');
+  if (lines.length < 2) return map;
+
+  let header = lines[0];
+  if (header.charCodeAt(0) === 0xFEFF) header = header.slice(1);
+
+  const cols = parseCSVRow(header);
+  const artistIdx = cols.indexOf('artist_name');
+  const albumIdx = cols.indexOf('album_title');
+  const descIdx = cols.indexOf('description');
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    const fields = parseCSVRow(line);
+    const artist = fields[artistIdx] || '';
+    const album = fields[albumIdx] || '';
+    const desc = fields[descIdx] || '';
+    if (!artist || !album || !desc) continue;
+
+    const key = normalizeName(artist) + '|||' + normalizeName(album);
+    map.set(key, { description: desc });
+  }
+
+  return map;
+}
+
 // Normalize curly quotes, unicode hyphens to ASCII equivalents
 export function normalizeName(name) {
   return name
