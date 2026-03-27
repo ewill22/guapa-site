@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Music | Guapa</title>
+    <title>Record Store | Guapa</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="music.css">
@@ -852,6 +852,186 @@
         @media (max-width: 768px) {
             .ranking-row { grid-template-columns: 40px 1fr 70px 35px; padding: 8px 12px; }
         }
+
+        /* ========================================
+           NEW RELEASES (Fri-Sun)
+        ======================================== */
+        .new-releases {
+            margin-bottom: var(--space-xl);
+        }
+        .nr-header {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: var(--space-lg);
+            flex-wrap: wrap;
+        }
+        .nr-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0;
+        }
+        .nr-date {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+        .nr-count {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+            margin-left: auto;
+        }
+        .nr-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+        }
+        .nr-artist-group {
+            scroll-margin-top: 20px;
+        }
+        .nr-artist-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0 0 var(--space-sm) 0;
+            letter-spacing: -0.01em;
+        }
+        .nr-artist-name .nr-subgenre {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 10px;
+        }
+        .nr-album {
+            background: var(--gray-900);
+            border: 1px solid var(--gray-800);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        .nr-album-header {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-md);
+        }
+        .nr-album-art {
+            width: 120px;
+            height: 120px;
+            min-width: 120px;
+            border-radius: var(--radius-sm);
+            background: var(--gray-800);
+            background-size: cover;
+            background-position: center;
+        }
+        .nr-album-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+            min-width: 0;
+        }
+        .nr-album-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0;
+        }
+        .nr-album-meta {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+        .nr-album-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .nr-link {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 4px 10px;
+            border-radius: 3px;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .nr-link:hover { opacity: 0.8; }
+        .nr-link--spotify {
+            color: #1DB954;
+            background: rgba(29, 185, 84, 0.1);
+        }
+        .nr-link--buy {
+            color: var(--pink);
+            background: rgba(232, 160, 176, 0.1);
+        }
+        .nr-tracklist {
+            border-top: 1px solid var(--gray-800);
+            padding: var(--space-sm) var(--space-md);
+        }
+        .nr-tracklist-header {
+            display: grid;
+            grid-template-columns: 28px 1fr 44px;
+            padding: 4px 0;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gray-600);
+            border-bottom: 1px solid var(--gray-800);
+            margin-bottom: 2px;
+        }
+        .nr-track {
+            display: grid;
+            grid-template-columns: 28px 1fr 44px;
+            padding: 3px 0;
+            font-size: 0.78rem;
+            color: var(--gray-400);
+            align-items: center;
+        }
+        .nr-track-num {
+            color: var(--gray-600);
+            font-size: 0.7rem;
+        }
+        .nr-track-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .nr-track-dur {
+            text-align: right;
+            font-size: 0.7rem;
+            color: var(--gray-600);
+        }
+        .nr-alpha-nav {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-md);
+        }
+        .nr-alpha-btn {
+            background: transparent;
+            border: 1px solid var(--gray-800);
+            border-radius: 3px;
+            color: var(--gray-500);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 7px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .nr-alpha-btn:hover { color: var(--white); border-color: var(--gray-600); }
+        .nr-alpha-btn.active { color: var(--yellow); border-color: var(--yellow); }
+
+        @media (max-width: 600px) {
+            .nr-album-art { width: 80px; height: 80px; min-width: 80px; }
+            .nr-album-title { font-size: 0.9rem; }
+            .nr-album-header { padding: var(--space-sm); gap: var(--space-sm); }
+            .nr-tracklist { padding: var(--space-xs) var(--space-sm); }
+        }
     </style>
 </head>
 <body>
@@ -863,7 +1043,7 @@
         </a>
         
         <div class="nav-links">
-            <a href="music.html">Music</a>
+            <a href="music.html">Record Store</a>
             <a href="coffee.html">Coffee</a>
             <a href="data-solutions.html" class="nav-link-mobile">Data Solutions</a>
             <a href="shop.html" class="nav-link-mobile">Merch</a>
@@ -890,7 +1070,7 @@
     <main class="music-page">
         <!-- Page Header -->
         <header class="music-header">
-            <h1><a href="music.html" style="color: inherit; text-decoration: none;">Music</a></h1>
+            <h1><a href="music.html" style="color: inherit; text-decoration: none;">Record Store</a></h1>
             <div class="search-container">
                 <input type="text" class="search-input" id="searchInput" placeholder="Search..." autocomplete="off">
                 <div class="search-results" id="searchResults"></div>
@@ -905,8 +1085,18 @@
                 <!-- Broadcast Banner -->
                 <div class="broadcast-banner" id="broadcastBanner" style="display: none;"></div>
 
+                <!-- New Releases Section (Fri-Sun) -->
+                <section class="new-releases" id="newReleasesSection" style="display: none;">
+                    <div class="nr-header">
+                        <h2 class="nr-title">New This Week</h2>
+                        <span class="nr-date" id="nrDate"></span>
+                        <span class="nr-count" id="nrCount"></span>
+                    </div>
+                    <div class="nr-list" id="nrList"></div>
+                </section>
+
                 <!-- Music Journey Section -->
-                <section class="journey-section">
+                <section class="journey-section" id="journeySection">
                     <nav class="decade-nav">
                         <button class="decade-btn" data-year="1960">60s</button>
                         <button class="decade-btn" data-year="1970">70s</button>
@@ -1025,7 +1215,7 @@
                 </div>
                 <div class="footer-links">
                     <h4>Explore</h4>
-                    <a href="music.html">Music</a>
+                    <a href="music.html">Record Store</a>
                     <a href="coffee.html">Coffee</a>
                 </div>
                 <div class="footer-links">
@@ -2528,12 +2718,140 @@
             rankingsYearFilter = currentYear;
         }
 
+        // -----------------------------------------------------------------------
+        // NEW RELEASES (Fri-Sun view)
+        // -----------------------------------------------------------------------
+        function formatDur(ms) {
+            if (!ms) return '--:--';
+            const s = Math.floor(ms / 1000);
+            return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+        }
+
+        function formatRuntime(ms) {
+            if (!ms) return '';
+            const mins = Math.round(ms / 60000);
+            return `${mins} min`;
+        }
+
+        function isNewReleasesDay() {
+            const day = new Date().getDay(); // 0=Sun, 5=Fri, 6=Sat
+            return day === 0 || day === 5 || day === 6;
+        }
+
+        async function loadNewReleases() {
+            if (!isNewReleasesDay()) return null;
+            try {
+                const r = await fetch('data/new-releases.json');
+                if (!r.ok) return null;
+                return await r.json();
+            } catch { return null; }
+        }
+
+        function renderNewReleases(data) {
+            if (!data || !data.by_genre) return;
+
+            // Flatten all releases, exclude reissues
+            const releases = [];
+            for (const [genre, items] of Object.entries(data.by_genre)) {
+                for (const item of items) {
+                    if (item.release_type === 'reissue') continue;
+                    releases.push({ ...item, genre });
+                }
+            }
+            if (releases.length === 0) return;
+
+            // Sort A-Z by artist name
+            releases.sort((a, b) => a.artist.localeCompare(b.artist));
+
+            // Show section, hide journey
+            document.getElementById('newReleasesSection').style.display = '';
+            document.getElementById('journeySection').style.display = 'none';
+            document.getElementById('rankingsSection').style.display = 'none';
+
+            // Header
+            const dateStr = data.date;
+            const d = new Date(dateStr + 'T00:00:00');
+            const formatted = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+            document.getElementById('nrDate').textContent = formatted;
+            document.getElementById('nrCount').textContent = `${releases.length} new release${releases.length !== 1 ? 's' : ''}`;
+
+            // Alpha nav
+            const letters = [...new Set(releases.map(r => r.artist[0].toUpperCase()))].sort();
+            let alphaHtml = '';
+            if (letters.length > 1) {
+                alphaHtml = '<div class="nr-alpha-nav">';
+                for (const letter of letters) {
+                    alphaHtml += `<button class="nr-alpha-btn" onclick="document.getElementById('nr-${letter}').scrollIntoView({behavior:'smooth',block:'start'})">${letter}</button>`;
+                }
+                alphaHtml += '</div>';
+            }
+
+            // Releases
+            let html = alphaHtml;
+            let lastLetter = '';
+            for (const rel of releases) {
+                const letter = rel.artist[0].toUpperCase();
+                const id = letter !== lastLetter ? ` id="nr-${letter}"` : '';
+                lastLetter = letter;
+
+                const coverStyle = rel.cover_art
+                    ? `background-image: url('${rel.cover_art.small || rel.cover_art.large || ''}')`
+                    : '';
+
+                const runtime = rel.runtime_ms ? formatRuntime(rel.runtime_ms) : '';
+                const trackCount = rel.total_tracks || (rel.tracks ? rel.tracks.length : 0);
+                const meta = [trackCount ? `${trackCount} tracks` : '', runtime].filter(Boolean).join(' · ');
+
+                // Action links
+                const amazonQuery = encodeURIComponent(`${rel.artist} ${rel.album} vinyl`);
+                let actions = '';
+                actions += `<a href="https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20" target="_blank" rel="noopener" class="nr-link nr-link--buy">Buy Vinyl</a>`;
+
+                // Tracklist
+                let tracklistHtml = '';
+                if (rel.tracks && rel.tracks.length > 0) {
+                    // Clean track titles (remove wrapping quotes from MusicBrainz)
+                    const cleanTitle = (t) => t.replace(/^"(.*)"$/, '$1');
+                    tracklistHtml = `<div class="nr-tracklist">
+                        <div class="nr-tracklist-header"><span>#</span><span>Title</span><span style="text-align:right">Time</span></div>
+                        ${rel.tracks.map(t => `<div class="nr-track">
+                            <span class="nr-track-num">${t.track_number}</span>
+                            <span class="nr-track-title">${cleanTitle(t.title)}</span>
+                            <span class="nr-track-dur">${formatDur(t.duration_ms)}</span>
+                        </div>`).join('')}
+                    </div>`;
+                }
+
+                html += `<div class="nr-artist-group"${id}>
+                    <h3 class="nr-artist-name">${rel.artist}<span class="nr-subgenre">${rel.subgenre || rel.genre}</span></h3>
+                    <div class="nr-album">
+                        <div class="nr-album-header">
+                            <div class="nr-album-art" style="${coverStyle}"></div>
+                            <div class="nr-album-info">
+                                <h4 class="nr-album-title">${rel.album}</h4>
+                                <span class="nr-album-meta">${meta}</span>
+                                <div class="nr-album-actions">${actions}</div>
+                            </div>
+                        </div>
+                        ${tracklistHtml}
+                    </div>
+                </div>`;
+            }
+
+            document.getElementById('nrList').innerHTML = html;
+        }
+
         // Initial render
         updateDecadeButtons();
         renderAlbumBars();
         renderGenreTabs();
         renderGenreGroups();
         renderRankings();
+
+        // Check for new releases (Fri-Sun)
+        loadNewReleases().then(data => {
+            if (data) renderNewReleases(data);
+        });
 
         // Check for artist deep link
         handleArtistParam();
