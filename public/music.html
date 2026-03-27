@@ -978,16 +978,6 @@
                 <!-- Broadcast Banner -->
                 <div class="broadcast-banner" id="broadcastBanner" style="display: none;"></div>
 
-                <!-- New Releases Section (Fri-Sun) -->
-                <section class="new-releases" id="newReleasesSection" style="display: none;">
-                    <div class="nr-header">
-                        <h2 class="nr-title">New This Week</h2>
-                        <span class="nr-date" id="nrDate"></span>
-                        <span class="nr-count" id="nrCount"></span>
-                    </div>
-                    <div class="nr-list" id="nrList"></div>
-                </section>
-
                 <!-- Music Journey Section -->
                 <section class="journey-section" id="journeySection">
                     <nav class="decade-nav">
@@ -1051,6 +1041,16 @@
                             <div class="no-rankings">Loading rankings...</div>
                         </div>
                     </div>
+                </section>
+
+                <!-- New Releases Section (Fri-Sun, below timeline) -->
+                <section class="new-releases" id="newReleasesSection" style="display: none;">
+                    <div class="nr-header">
+                        <h2 class="nr-title">New This Week</h2>
+                        <span class="nr-date" id="nrDate"></span>
+                        <span class="nr-count" id="nrCount"></span>
+                    </div>
+                    <div class="nr-list" id="nrList"></div>
                 </section>
 
                 <!-- Discography Section (shown when artist selected) -->
@@ -2658,10 +2658,8 @@
             // Sort A-Z by artist name
             releases.sort((a, b) => a.artist.localeCompare(b.artist));
 
-            // Show section, hide journey
+            // Show new releases below timeline (timeline stays visible)
             document.getElementById('newReleasesSection').style.display = '';
-            document.getElementById('journeySection').style.display = 'none';
-            document.getElementById('rankingsSection').style.display = 'none';
 
             // Header
             const dateStr = data.date;
