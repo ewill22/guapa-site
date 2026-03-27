@@ -2734,8 +2734,10 @@
         }
 
         function isNewReleasesDay() {
-            const day = new Date().getDay(); // 0=Sun, 5=Fri, 6=Sat
-            return day === 0 || day === 5 || day === 6;
+            // TODO: remove override after testing
+            return true;
+            // const day = new Date().getDay(); // 0=Sun, 5=Fri, 6=Sat
+            // return day === 0 || day === 5 || day === 6;
         }
 
         async function loadNewReleases() {
