@@ -504,8 +504,8 @@
   line-height: 1.5;
   margin: 0;
   flex: 1;
-  display: flex;
-  align-items: center;
+  padding-top: 34px;
+  align-self: flex-start;
 }
 
 /* Action Links */
