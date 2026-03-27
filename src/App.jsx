@@ -851,13 +851,6 @@ export default function App() {
                       ))}
                     </div>
                   )}
-                  <div className="ge-sub-legend">
-                    <span className="ge-sub-legend-item ge-sub-legend--emerging">Emerging</span>
-                    <span className="ge-sub-legend-item ge-sub-legend--rising">Rising</span>
-                    <span className="ge-sub-legend-item ge-sub-legend--peak">Peak</span>
-                    <span className="ge-sub-legend-item ge-sub-legend--fading">Fading</span>
-                  </div>
-                  <p className="ge-pick-genre">Explore any genre below</p>
                 </div>
               ) : (
                 <div className="counter-bean">
@@ -866,6 +859,17 @@ export default function App() {
                   <span className="bean-origin">{dailyBean.origin}</span>
                   <span className="bean-notes">{dailyBean.notes}</span>
                   <span className="bean-process">{dailyBean.process} process</span>
+                </div>
+              )}
+              {lens === 'music' && (
+                <div className="counter-search-footer">
+                  <div className="ge-sub-legend">
+                    <span className="ge-sub-legend-item ge-sub-legend--emerging">Emerging</span>
+                    <span className="ge-sub-legend-item ge-sub-legend--rising">Rising</span>
+                    <span className="ge-sub-legend-item ge-sub-legend--peak">Peak</span>
+                    <span className="ge-sub-legend-item ge-sub-legend--fading">Fading</span>
+                  </div>
+                  <p className="ge-pick-genre">Explore any genre below</p>
                 </div>
               )}
               {lens === 'music' && nowPlaying?.isAux && nowPlaying.cover ? (

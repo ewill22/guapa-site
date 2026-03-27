@@ -868,13 +868,14 @@ html {
     display: contents;
   }
 
-  /* Mobile order: greeting → search → tiles → albums → timeline */
-  .counter-greeting  { order: 1; }
-  .counter-search    { order: 2; }
-  .counter-bean      { order: 2; } /* same slot as search (only one shows) */
-  .counter-tiles     { order: 3; }
-  .counter-albums    { order: 4; }
-  .counter-timeline  { order: 5; }
+  /* Mobile order: greeting → search → tiles → albums → timeline → legend */
+  .counter-greeting       { order: 1; }
+  .counter-search         { order: 2; }
+  .counter-bean           { order: 2; } /* same slot as search (only one shows) */
+  .counter-tiles          { order: 3; }
+  .counter-albums         { order: 4; }
+  .counter-timeline       { order: 5; }
+  .counter-search-footer  { order: 6; }
 
   .counter-timeline {
     border-bottom: 1px solid var(--gray-800);
@@ -906,7 +907,7 @@ html {
     width: 90px;
     min-width: 90px;
   }
-  .counter-greeting, .counter-bean, .counter-search, .counter-albums {
+  .counter-greeting, .counter-bean, .counter-search, .counter-albums, .counter-search-footer {
     padding: var(--space-sm) var(--space-md);
   }
   .counter-search-results {
@@ -931,7 +932,7 @@ html {
   .year-display h2 { font-size: 2.2rem; min-width: auto; }
   .event-bars { width: 100%; }
   .counter-timeline { padding: var(--space-sm); }
-  .counter-greeting, .counter-bean, .counter-search, .counter-albums { padding: var(--space-sm) var(--space-md); }
+  .counter-greeting, .counter-bean, .counter-search, .counter-albums, .counter-search-footer { padding: var(--space-sm) var(--space-md); }
   .newsletter-form { flex-direction: column; }
   .blurb-metric { flex-wrap: wrap; }
 }
