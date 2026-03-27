@@ -868,13 +868,13 @@ html {
     display: contents;
   }
 
-  /* Mobile order: greeting → tiles → albums → timeline → search */
+  /* Mobile order: greeting → search → tiles → albums → timeline */
   .counter-greeting  { order: 1; }
-  .counter-tiles     { order: 2; }
-  .counter-albums    { order: 3; }
-  .counter-timeline  { order: 4; }
-  .counter-search    { order: 5; }
-  .counter-bean      { order: 5; } /* same slot as search (only one shows) */
+  .counter-search    { order: 2; }
+  .counter-bean      { order: 2; } /* same slot as search (only one shows) */
+  .counter-tiles     { order: 3; }
+  .counter-albums    { order: 4; }
+  .counter-timeline  { order: 5; }
 
   .counter-timeline {
     border-bottom: 1px solid var(--gray-800);
