@@ -29,7 +29,7 @@
   padding: 9px 10px;
   font-family: var(--font-main);
   font-size: 0.8rem;
-  flex: 1 1 calc(20% - 6px);
+  flex: 1 1 calc(16.66% - 6px);
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
