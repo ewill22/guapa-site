@@ -595,7 +595,16 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                 </div>
               )}
               {auxCordOpen && onAuxPick && (
-                <button className="ge-aux-btn" onClick={() => { onAuxPick(discoArtist.name); window.scrollTo({ top: 0, behavior: 'smooth' }); const catKey = catalog && Object.keys(catalog).find(k => catalog[k].name.toLowerCase() === discoArtist.name.toLowerCase()); const sorted = catKey ? [...(catalog[catKey].albums || [])].map((a, i) => ({ ...a, _i: i })).sort((x, y) => (x.release_year || 0) - (y.release_year || 0) || x._i - y._i) : []; const a = sorted[0]; const sp = a?.url_spotify || (a?.spotify_id ? `https://open.spotify.com/album/${a.spotify_id}` : null); if (sp) window.open(sp, '_blank'); }}>
+                <button className="ge-aux-btn" onClick={() => {
+                  // Open Spotify for earliest album before triggering aux (popup blockers need sync window.open)
+                  if (discoAlbums?.length) {
+                    const earliest = discoAlbums[discoAlbums.length - 1];
+                    const sp = earliest.url_spotify || (earliest.spotify_id ? `https://open.spotify.com/album/${earliest.spotify_id}` : null);
+                    if (sp) window.open(sp, '_blank');
+                  }
+                  onAuxPick(discoArtist.name);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}>
                   ▶ Play on Aux Cord
                 </button>
               )}
