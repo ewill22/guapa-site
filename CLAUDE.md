@@ -34,9 +34,9 @@ The creative work sells the serious work. A potential client explores the record
 - **Styling**: CSS (no Tailwind, no CSS-in-JS)
 - **Fonts**: Instrument Sans (UI) + Newsreader italic only (editorial headlines, about, newsletter)
 - **Deployment**: GitHub Actions CI/CD → GitHub Pages (every push to main auto-deploys)
-- **Live URL**: https://ewill22.github.io/guapa-site (custom domain pending)
+- **Live URL**: https://guapa.space (custom domain active, CNAME in `public/CNAME`)
 - **Repo**: https://github.com/ewill22/guapa-site (username: ewill22)
-- **Base path**: `vite.config.js` has `base: '/guapa-site/'` — remove when custom domain is added
+- **Base path**: `vite.config.js` has `base: '/'`
 - **Workflow**: `.github/workflows/deploy.yml` (uses `npm install`, not `npm ci`)
 - **npm/node**: NOT available in bash shell — run npm commands in a separate terminal
 
@@ -146,10 +146,10 @@ Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No fill
 
 1. **Nav** (`src/components/Nav.jsx`)
 2. **Yellow italic banner** (randomly alternates between two quotes on page load, locked via useState initializer)
-3. **Coffee Shop Counter** (L-shaped layout):
-   - **Top row (desktop)**: KPI tiles + Timeline
-   - **Top row (mobile ≤900px)**: Timeline first (`order: -1`), then KPI tiles
-   - **Bottom row**: Welcome greeting | Search bar w/ legend (music lens) or Bean of the Moment | Album tiles (4x2 grid)
+3. **Coffee Shop Counter** (two-column desktop layout):
+   - **Left sidebar (desktop)**: KPI tiles (sticky, scrolls with you)
+   - **Right main**: Welcome greeting, timeline, search bar + legend (music lens) or Bean of the Moment
+   - **Mobile (≤900px)**: Everything flattens via `display: contents`, reordered: greeting(1) → search(2) → KPI tiles(3) → timeline(5) → legend(6) → genre explorer(7)
 4. **Below counter** — lens-specific content:
    - **Music lens** (default): Genre Explorer
    - **Guapa lens**: Weekly dev blurbs (Fri–Thu grouping)
@@ -175,13 +175,12 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - **Alternation**: day-of-year parity (even = throwback, odd = modern)
 - **Permanently stable**: adding/removing artists never shifts other days' picks (no epoch, no rotation index)
 - **Schedule**: plays discography chronologically starting 8am EST, tracks advance by `duration_ms`
-- **Aux Cord**: when discography finishes, random year, deep link cleared
+- **Aux Cord**: when discography finishes, random year
 
 ### On-Load Behavior
 - Year starts as `null` (no flash of random year)
 - Once `nowPlaying` resolves: year syncs to playing album's `release_year`
-- Genre Explorer auto-deep-links to playing artist's genre tab + subgenre + discography
-- `initialDeepLinked` ref prevents re-triggering on album changes
+- No auto-scroll or auto-deep-link to playing artist — user clicks KPI tile to navigate
 - Year-change effect skips when `discoArtist` is showing (prevents race condition)
 
 ### Genre Explorer (`src/components/GenreExplorer.jsx`)
@@ -228,7 +227,7 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Legend below: Emerging (green dashed) / Rising (blue) / Peak (pink) / Fading (red dashed)
 
 ### Sub-Pages (Static HTML in `public/`)
-- `music.html` — original genre explorer (still works standalone)
+- `music.html` — Record Store: year-based releases browser with search, discography, and timeline. Uses catalog + editorial CSV to show confirmed artists' albums grouped alphabetically by artist for the selected year.
 - `coffee.html` — roaster timeline
 - `shop.html` — product grid, coming soon
 - `data-solutions.html` — three product cards + lead form (details below)
@@ -297,6 +296,23 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 }
 .btn:active { /* same styles for touch feedback */ }
 ```
+
+### NEVER use `overflow-x: hidden` on intermediate containers
+`overflow-x: hidden` (or any `overflow` besides `visible`) on an intermediate ancestor breaks `position: sticky` and clips `position: absolute` dropdowns. It creates a new scroll context — sticky elements stick to *that container* instead of the viewport, and absolute elements get clipped at its boundary.
+
+**Broken by this in the past:** KPI sidebar (`position: sticky`), search results dropdown (`position: absolute`), disco nav rail (`position: sticky`).
+
+**Rules:**
+- NEVER put `overflow-x: hidden` on `.dashboard-hero`, `.page-layout`, `.ge`, `.blurbs-section`, or `.counter-top`
+- If you need to prevent horizontal scrollbar, put `overflow-x: hidden` on `html` (the root scroll container — doesn't break sticky)
+- For mobile overflow, fix the actual overflowing element (use `max-width: 100%` not `100vw`) instead of hiding overflow on parents
+- `max-width: 100vw` ignores parent padding — always use `max-width: 100%` instead
+
+### `display: contents` mobile reordering
+On mobile (≤900px), `.page-main`, `.counter`, `.counter-top`, `.counter-left`, `.counter-right`, `.counter-bottom` all use `display: contents` to dissolve into `.page-layout`'s flex context. This lets `order` values interleave KPI tiles with counter children. **Every visible child needs an explicit `order`** — elements without one default to 0 and jump to the top. Current order: greeting(1), search(2), KPI tiles(3), timeline(5), legend(6), genre explorer(7).
+
+### Scroll timing — use React effects, not inline timeouts
+Never scroll to a newly-rendered element using `setTimeout` inside the same function that sets state. The DOM may not exist yet. Instead, use a `useEffect` that watches the state change (e.g., `[discoAlbums]`) — React guarantees the effect runs after the DOM commits. Use a short `setTimeout` inside the effect (300ms) only for paint settling, not for waiting on React.
 
 ### Visual debugging (measure first, don't guess)
 When a layout issue is unclear, inject a JS debug bar that shows `getBoundingClientRect()` widths of suspect elements. Identify the actual overflowing element before writing CSS fixes.
