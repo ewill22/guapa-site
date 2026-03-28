@@ -324,6 +324,7 @@ export default function App() {
     try { const y = parseInt(localStorage.getItem('guapa_playing_year')); if (y >= 1960 && y <= 2026) return y; } catch {}
     return null;
   });
+  const yearFromStorage = useRef(year !== null); // true if we loaded a persisted year
   const setYear = useCallback((y) => {
     _setYear(y);
     if (y != null) try { localStorage.setItem('guapa_playing_year', String(y)); } catch {}
@@ -480,14 +481,25 @@ export default function App() {
       // Playing a track (daily or aux) — sync year to album's release year
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
-        setYear(nowPlaying.year);
-        prevAlbumRef.current = key;
+        // Skip first sync if we loaded year from localStorage — let it stick
+        if (yearFromStorage.current) {
+          yearFromStorage.current = false;
+          prevAlbumRef.current = key;
+        } else {
+          setYear(nowPlaying.year);
+          prevAlbumRef.current = key;
+        }
       }
     } else if (nowPlaying.auxCord) {
       // Aux cord open (not playing) — random year
       if (prevAlbumRef.current !== '__aux__') {
-        setYear(randYear());
-        prevAlbumRef.current = '__aux__';
+        if (yearFromStorage.current) {
+          yearFromStorage.current = false;
+          prevAlbumRef.current = '__aux__';
+        } else {
+          setYear(randYear());
+          prevAlbumRef.current = '__aux__';
+        }
       }
     }
   }, [nowPlaying]);
