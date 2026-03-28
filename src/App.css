@@ -916,6 +916,8 @@ html {
   .page-layout {
     flex-direction: column;
     gap: 0;
+    width: 100%;
+    max-width: 100vw;
   }
   .kpi-sidebar {
     position: static;
@@ -928,9 +930,17 @@ html {
   .counter {
     display: flex;
     flex-direction: column;
+    width: 100%;
   }
   .counter-top, .counter-left, .counter-right, .counter-bottom {
     display: contents;
+  }
+  /* Clamp all direct children that emerge from display:contents */
+  .counter-greeting, .counter-search, .counter-bean,
+  .counter-timeline, .counter-search-footer,
+  .counter-albums, .blurbs-section {
+    max-width: 100vw;
+    box-sizing: border-box;
   }
 
   /* Mobile order: greeting → search → tiles → albums → timeline → legend */
