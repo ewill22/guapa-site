@@ -267,8 +267,6 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
           artistSpotify: catArtist.url_spotify,
         })));
         setLoading(false);
-        // Scroll to discography after DOM renders
-        setTimeout(() => safeScrollTo(discoRef.current), 150);
         onDeepLinkHandled?.();
         return;
       }
@@ -298,20 +296,24 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     }
   }, [year, activeGenre, selectedSub, isSubVisible]);
 
-  // Scroll to specific album after discography loads
+  // Scroll to discography or specific album after it loads
   useEffect(() => {
-    if (!discoAlbums || !pendingAlbumRef.current) return;
+    if (!discoAlbums) return;
     const targetAlbum = pendingAlbumRef.current;
     pendingAlbumRef.current = null;
-    // Wait for DOM to render album cards, then scroll
     setTimeout(() => {
-      const el = discoListRef.current?.querySelector(`[data-album-title="${CSS.escape(targetAlbum)}"]`);
-      if (el) {
-        safeScrollTo(el);
-        setHighlightAlbum(targetAlbum);
-        setTimeout(() => setHighlightAlbum(null), 3000);
+      if (targetAlbum) {
+        const el = discoListRef.current?.querySelector(`[data-album-title="${CSS.escape(targetAlbum)}"]`);
+        if (el) {
+          safeScrollTo(el);
+          setHighlightAlbum(targetAlbum);
+          setTimeout(() => setHighlightAlbum(null), 3000);
+          return;
+        }
       }
-    }, 500);
+      // Default: scroll to disco header
+      safeScrollTo(discoRef.current);
+    }, 300);
   }, [discoAlbums]);
 
   // Genre tabs with visible subgenre counts
