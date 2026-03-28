@@ -2330,13 +2330,16 @@
             return true;
         }
 
-        // Random year on fresh load (skip if deep-linked via ?artist=)
+        // Set initial year: use playing year from main page if available, otherwise random
         if (!new URLSearchParams(window.location.search).get('artist')) {
-            const randomYear = MIN_YEAR + Math.floor(Math.random() * (MAX_YEAR - MIN_YEAR + 1));
-            yearSlider.value = randomYear;
-            currentYear = randomYear;
+            let initYear;
+            try { initYear = parseInt(localStorage.getItem('guapa_playing_year')); } catch {}
+            if (!initYear || initYear < MIN_YEAR || initYear > MAX_YEAR) {
+                initYear = MIN_YEAR + Math.floor(Math.random() * (MAX_YEAR - MIN_YEAR + 1));
+            }
+            yearSlider.value = initYear;
+            currentYear = initYear;
             currentYearDisplay.textContent = currentYear;
-
         }
 
         // -----------------------------------------------------------------------

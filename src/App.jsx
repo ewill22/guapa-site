@@ -469,18 +469,21 @@ export default function App() {
       if (year === null) setYear(randYear());
       return;
     }
-    if (nowPlaying.auxCord) {
-      // Aux cord open — random year
-      if (prevAlbumRef.current !== '__aux__') {
-        setYear(randYear());
-        prevAlbumRef.current = '__aux__';
-      }
-    } else if (nowPlaying.year && !nowPlaying.waiting) {
-      // Playing a track — sync year to album's release year
+    if (nowPlaying.year && (nowPlaying.isAux || !nowPlaying.auxCord)) {
+      // Playing a track (daily or aux) — sync year to album's release year
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
         setYear(nowPlaying.year);
         prevAlbumRef.current = key;
+        // Persist year for record store
+        try { localStorage.setItem('guapa_playing_year', String(nowPlaying.year)); } catch {}
+      }
+    } else if (nowPlaying.auxCord) {
+      // Aux cord open (not playing) — random year
+      if (prevAlbumRef.current !== '__aux__') {
+        setYear(randYear());
+        prevAlbumRef.current = '__aux__';
+        try { localStorage.removeItem('guapa_playing_year'); } catch {}
       }
     }
   }, [nowPlaying]);
