@@ -412,6 +412,7 @@
   border-radius: 8px;
   overflow: hidden;
   transition: border-color 0.2s;
+  position: relative;
 }
 
 .ge-album:hover {
@@ -496,19 +497,18 @@
   margin-top: 2px;
 }
 
-.ge-album-title-row {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-}
-
 .ge-album-desc {
-  font-size: 1rem;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  max-width: 45%;
+  font-size: 0.92rem;
   font-family: 'Newsreader', serif;
   font-style: italic;
   color: var(--gray-400);
   line-height: 1.5;
   margin: 0;
+  text-align: right;
 }
 
 /* Action Links */
@@ -809,9 +809,11 @@
     padding: 12px;
   }
 
-  .ge-album-title-row {
-    flex-direction: column;
-    gap: 4px;
+  .ge-album-desc {
+    position: static;
+    max-width: 100%;
+    text-align: left;
+    padding: 8px 12px 0;
   }
 
   .ge-album-art {
