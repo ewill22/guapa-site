@@ -307,6 +307,20 @@ html {
   color: var(--gray-600) !important;
 }
 
+/* Bottom row: search | legend | albums */
+.counter-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-top: 1px solid var(--gray-800);
+  align-items: center;
+}
+
+.counter-search-footer {
+  padding: var(--space-md) var(--space-lg);
+  border-left: 1px solid var(--gray-800);
+  text-align: center;
+}
+
 /* Coffee Bean of the Moment */
 .counter-bean {
   padding: var(--space-md) var(--space-lg);
@@ -431,10 +445,10 @@ html {
   max-width: 150px;
 }
 
-/* Counter Album Tiles — in counter-left column */
+/* Counter Album Tiles — bottom row right column */
 .counter-albums {
   padding: var(--space-md) var(--space-lg);
-  border-top: 1px solid var(--gray-800);
+  border-left: 1px solid var(--gray-800);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -902,7 +916,7 @@ html {
     display: flex;
     flex-direction: column;
   }
-  .counter-top, .counter-left {
+  .counter-top, .counter-left, .counter-bottom {
     display: contents;
   }
 
@@ -948,6 +962,9 @@ html {
   }
   .counter-greeting, .counter-bean, .counter-search, .counter-albums, .counter-search-footer {
     padding: var(--space-sm) var(--space-md);
+  }
+  .counter-search-footer {
+    border-left: none;
   }
   .counter-search-results {
     left: var(--space-md);
