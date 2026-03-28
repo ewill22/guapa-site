@@ -396,7 +396,8 @@ export default function App() {
       setTimeout(() => {
         const el = genreExplorerRef.current;
         if (el) {
-          const top = window.scrollY + el.getBoundingClientRect().top - (parseInt(getComputedStyle(el).scrollMarginTop) || 0);
+          const navOffset = 80; // clear sticky nav
+          const top = window.scrollY + el.getBoundingClientRect().top - navOffset;
           window.scrollTo({ top, behavior: 'smooth' });
         }
       }, 300);

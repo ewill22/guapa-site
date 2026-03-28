@@ -978,6 +978,12 @@ html {
   .counter-greeting, .counter-bean, .counter-search, .counter-albums, .counter-search-footer {
     padding: var(--space-sm) var(--space-md);
   }
+  .counter-search {
+    align-items: center;
+  }
+  .counter-search-input {
+    width: 100%;
+  }
   .counter-search-footer {
     border-left: none;
   }
