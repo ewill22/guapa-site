@@ -125,17 +125,40 @@
 .ge-sub.emerging .ge-sub-name { color: var(--green, #7ec89b); }
 
 .ge-sub-artists {
-  font-size: 0.65rem;
-  color: var(--gray-600);
-  padding-left: 2px;
-  line-height: 1.5;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 3px;
+  margin-top: 2px;
 }
 
-.ge-sub-artists span::before {
-  content: "\2022  ";
+.ge-sub-artist-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.68rem;
+  color: var(--gray-500);
+  line-height: 1.4;
+}
+
+.ge-sub-artist-icon {
+  font-size: 0.75rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.ge-sub-artist-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ge-sub-artist-alb {
+  font-size: 0.58rem;
+  color: var(--gray-700);
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
 .ge-sub-count {
@@ -143,15 +166,6 @@
   color: var(--gray-600);
   font-weight: 500;
   margin-left: auto;
-}
-
-.ge-sub-more {
-  font-style: italic;
-  color: var(--gray-600);
-}
-
-.ge-sub-more::before {
-  content: none;
 }
 
 /* Subgenre legend */
@@ -303,7 +317,13 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--white);
-  margin: 0 0 4px;
+  margin: 0 0 5px;
+}
+
+.ge-artist-links {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 6px;
 }
 
 .ge-artist-desc {

@@ -158,6 +158,8 @@ function buildMergedData(catalog, editorialData, editorial) {
       _albumCount: albumCount,
       _beginYear: years.length ? Math.min(...years) : null,
       _endYear: years.length ? Math.max(...years) : null,
+      url_spotify: catArtist.url_spotify || null,
+      url_wikipedia: catArtist.url_wikipedia || null,
     };
   }
 
@@ -175,6 +177,8 @@ function buildMergedData(catalog, editorialData, editorial) {
           const years = (ca.albums || []).map(a => a.release_year).filter(Boolean);
           artist._beginYear = years.length ? Math.min(...years) : null;
           artist._endYear = years.length ? Math.max(...years) : null;
+          if (!artist.url_spotify) artist.url_spotify = ca.url_spotify || null;
+          if (!artist.url_wikipedia) artist.url_wikipedia = ca.url_wikipedia || null;
         } else {
           // Fall back to editorial album years
           const years = (artist.albums || []).map(a => a.year).filter(Boolean);
@@ -516,12 +520,13 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                 <span className="ge-sub-count">{Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).length}</span>
               </div>
               <div className="ge-sub-artists">
-                {Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).slice(0, 6).map(a => (
-                  <span key={a.name}>{a.name}</span>
+                {Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).map(a => (
+                  <span key={a.name} className="ge-sub-artist-row">
+                    {a.icon && <span className="ge-sub-artist-icon">{a.icon}</span>}
+                    <span className="ge-sub-artist-name">{a.name}</span>
+                    <span className="ge-sub-artist-alb">{a._albumCount || a.albums?.length || 0}</span>
+                  </span>
                 ))}
-                {Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).length > 6 && (
-                  <span className="ge-sub-more">+{Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).length - 6} more</span>
-                )}
               </div>
             </div>
           ))}
@@ -565,6 +570,12 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                 {artist.icon && <span className="ge-artist-icon">{artist.icon}</span>}
                 <div>
                   <h4 className="ge-artist-name">{artist.name}</h4>
+                  {(artist.url_spotify || artist.url_wikipedia) && (
+                    <div className="ge-artist-links">
+                      {artist.url_spotify && <a href={artist.url_spotify} target="_blank" rel="noopener" className="ge-link ge-link--spotify" onClick={e => e.stopPropagation()}>Spotify</a>}
+                      {artist.url_wikipedia && <a href={artist.url_wikipedia} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>}
+                    </div>
+                  )}
                   {artist.description && <p className="ge-artist-desc">{artist.description}</p>}
                   <span className="ge-artist-count">{(artist._albumCount || artist.albums.length)} album{(artist._albumCount || artist.albums.length) !== 1 ? 's' : ''}</span>
                 </div>
