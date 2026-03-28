@@ -577,7 +577,14 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                         <div className="ge-album-info">
                           <span className="ge-album-year">{isLatest ? 'Latest \u00b7 ' : ''}{album.release_year || '?'}</span>
                           <span className="ge-album-artist">{album.artistName}</span>
-                          <h3 className="ge-album-title">{album.title}</h3>
+                          <div className="ge-album-title-row">
+                            <h3 className="ge-album-title">{album.title}</h3>
+                            {(() => {
+                              const albKey = normalizeName(album.artistName || discoArtist.name) + '|||' + normalizeName(album.title);
+                              const albDesc = albumEditorial?.get(albKey)?.description;
+                              return albDesc ? <p className="ge-album-desc">{albDesc}</p> : null;
+                            })()}
+                          </div>
                           <div className="ge-album-actions">
                             {auxCordOpen && onAuxPick && (
                               <button className="ge-link ge-link--aux" onClick={e => { e.stopPropagation(); onAuxPick(album.artistName || discoArtist.name, album.title); window.scrollTo({ top: 0, behavior: 'smooth' }); if (spotifyUrl && spotifyUrl !== '#') window.open(spotifyUrl, '_blank'); }}>▶ Aux</button>
@@ -587,11 +594,6 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                             <a href={wikiUrl} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>
                           </div>
                         </div>
-                        {(() => {
-                          const albKey = normalizeName(album.artistName || discoArtist.name) + '|||' + normalizeName(album.title);
-                          const albDesc = albumEditorial?.get(albKey)?.description;
-                          return albDesc ? <p className="ge-album-desc">{albDesc}</p> : null;
-                        })()}
                       </div>
                       {tracks.length > 0 && (
                         <div className="ge-tracklist">
