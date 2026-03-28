@@ -461,7 +461,6 @@ export default function App() {
   }, [dailyArtist, auxSchedule]);
 
   // Sync timeline year + genre explorer to currently playing album
-  const initialDeepLinked = useRef(false);
   const randYear = () => Math.floor(Math.random() * (2026 - 1960 + 1)) + 1960;
   useEffect(() => {
     if (!nowPlaying) return;
@@ -471,10 +470,9 @@ export default function App() {
       return;
     }
     if (nowPlaying.auxCord) {
-      // Aux cord open — random year, keep daily artist selected
+      // Aux cord open — random year
       if (prevAlbumRef.current !== '__aux__') {
         setYear(randYear());
-        if (dailyArtist) setDeepLink({ artist: dailyArtist.artist, album: null });
         prevAlbumRef.current = '__aux__';
       }
     } else if (nowPlaying.year && !nowPlaying.waiting) {
@@ -482,11 +480,6 @@ export default function App() {
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
         setYear(nowPlaying.year);
-        // Deep link to artist on initial load only
-        if (!initialDeepLinked.current && nowPlaying.artist) {
-          setDeepLink({ artist: nowPlaying.artist, album: null });
-          initialDeepLinked.current = true;
-        }
         prevAlbumRef.current = key;
       }
     }

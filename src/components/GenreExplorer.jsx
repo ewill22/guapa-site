@@ -307,7 +307,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     setTimeout(() => {
       const el = discoListRef.current?.querySelector(`[data-album-title="${CSS.escape(targetAlbum)}"]`);
       if (el) {
-        safeScrollTo(el, 'center');
+        safeScrollTo(el);
         setHighlightAlbum(targetAlbum);
         setTimeout(() => setHighlightAlbum(null), 3000);
       }
