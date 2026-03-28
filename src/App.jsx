@@ -589,6 +589,44 @@ export default function App() {
       <Nav />
       <Banner />
 
+      {/* Debug bar v2 — measure content widths vs parent */}
+      {(() => {
+        if (typeof window !== 'undefined' && window.innerWidth <= 900) {
+          const update = () => {
+            const bar = document.getElementById('__dbg');
+            if (!bar) return;
+            const vw = window.innerWidth;
+            const scrollW = document.documentElement.scrollWidth;
+            const els = [
+              ['.dashboard-hero', document.querySelector('.dashboard-hero')],
+              ['.page-layout', document.querySelector('.page-layout')],
+              ['.ge', document.querySelector('.ge')],
+              ['.ge-tabs', document.querySelector('.ge-tabs')],
+              ['.ge-subgenres', document.querySelector('.ge-subgenres')],
+              ['.ge-artists', document.querySelector('.ge-artists')],
+              ['.blurbs-section', document.querySelector('.blurbs-section')],
+            ];
+            bar.innerHTML = `<b>vw:${vw} scrollW:${scrollW}</b><br>` + els.map(([name, el]) => {
+              if (!el) return null;
+              const r = el.getBoundingClientRect();
+              const over = r.right > vw;
+              return `<span style="color:${over ? '#ff4444' : '#7ec89b'}">${name} w:${Math.round(r.width)} L:${Math.round(r.left)} R:${Math.round(r.right)}</span>`;
+            }).filter(Boolean).join('<br>');
+          };
+          setTimeout(update, 2000);
+          setTimeout(update, 5000);
+        }
+        return (
+          <div id="__dbg" style={{
+            position: 'fixed', bottom: 0, left: 0, right: 0,
+            background: 'rgba(0,0,0,0.95)', color: '#fff',
+            fontSize: '10px', padding: '6px 8px', zIndex: 9999,
+            fontFamily: 'monospace', lineHeight: 1.5,
+            display: window?.innerWidth <= 900 ? 'block' : 'none',
+          }} />
+        );
+      })()}
+
       <main>
         <section className="dashboard-hero">
 
