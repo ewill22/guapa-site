@@ -2265,15 +2265,8 @@
 
         function hideDiscography() {
             discoSection.style.display = 'none';
-            const active = activeDiscoArtist;
             activeDiscoArtist = null;
-            // Scroll back to the year releases area
-            const yrSection = document.querySelector('.yr-section');
-            if (yrSection) {
-                const navHeight = document.querySelector('.nav').offsetHeight;
-                const top = yrSection.getBoundingClientRect().top + window.scrollY - navHeight - 16;
-                window.scrollTo({ top, behavior: 'smooth' });
-            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // Simple hash for generating consistent placeholder data
