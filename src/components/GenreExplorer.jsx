@@ -282,7 +282,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
       if (key && catalog[key].albums?.length) {
         const catArtist = catalog[key];
         const albums = catArtist.albums.map((a, i) => ({ ...a, _idx: i }))
-          .sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || a._idx - b._idx);
+          .sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || b._idx - a._idx);
         // Jump to artist's first album year if subgenre isn't visible at current year
         if (foundSub && onYearChange) {
           const sub = mergedData[foundGenre]?.subgenres[foundSub];
@@ -451,7 +451,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
       );
       if (key && catalog[key].albums?.length) {
         const albums = catalog[key].albums.map((a, i) => ({ ...a, _idx: i }))
-          .sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || a._idx - b._idx);
+          .sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || b._idx - a._idx);
         setDiscoAlbums(albums.map(a => ({
           ...a,
           artistName: artist.name,
