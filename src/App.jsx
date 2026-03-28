@@ -324,10 +324,19 @@ export default function App() {
     try { const y = parseInt(localStorage.getItem('guapa_playing_year')); if (y >= 1960 && y <= 2026) return y; } catch {}
     return null;
   });
-  const yearFromStorage = useRef(year !== null); // true if we loaded a persisted year
-  const setYear = useCallback((y) => {
-    _setYear(y);
-    if (y != null) try { localStorage.setItem('guapa_playing_year', String(y)); } catch {}
+  const yearPinned = useRef(year !== null); // true once user manually moves year (or loaded from storage)
+  const setYear = useCallback((y, pin) => {
+    if (pin) yearPinned.current = true;
+    if (typeof y === 'function') {
+      _setYear(prev => {
+        const next = y(prev);
+        if (next != null) try { localStorage.setItem('guapa_playing_year', String(next)); } catch {}
+        return next;
+      });
+    } else {
+      _setYear(y);
+      if (y != null) try { localStorage.setItem('guapa_playing_year', String(y)); } catch {}
+    }
   }, []);
   const [devDay, setDevDay] = useState(DEV_DAYS.length - 1);
   const [catalog, setCatalog] = useState(null);
@@ -477,29 +486,19 @@ export default function App() {
       if (year === null) setYear(randYear());
       return;
     }
+    if (yearPinned.current) return; // user moved the timeline — stop auto-syncing
     if (nowPlaying.year && (nowPlaying.isAux || !nowPlaying.auxCord)) {
       // Playing a track (daily or aux) — sync year to album's release year
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
-        // Skip first sync if we loaded year from localStorage — let it stick
-        if (yearFromStorage.current) {
-          yearFromStorage.current = false;
-          prevAlbumRef.current = key;
-        } else {
-          setYear(nowPlaying.year);
-          prevAlbumRef.current = key;
-        }
+        setYear(nowPlaying.year);
+        prevAlbumRef.current = key;
       }
     } else if (nowPlaying.auxCord) {
       // Aux cord open (not playing) — random year
       if (prevAlbumRef.current !== '__aux__') {
-        if (yearFromStorage.current) {
-          yearFromStorage.current = false;
-          prevAlbumRef.current = '__aux__';
-        } else {
-          setYear(randYear());
-          prevAlbumRef.current = '__aux__';
-        }
+        setYear(randYear());
+        prevAlbumRef.current = '__aux__';
       }
     }
   }, [nowPlaying]);
@@ -572,7 +571,7 @@ export default function App() {
     if (isGuapa) {
       navDev(dir);
     } else {
-      setYear(y => Math.max(1960, Math.min(2026, y + dir)));
+      setYear(y => Math.max(1960, Math.min(2026, y + dir)), true);
     }
   }, [isGuapa, navDev]);
 
@@ -781,11 +780,11 @@ export default function App() {
                                 height: b.h,
                                 background: b.year === year ? lc : undefined,
                               }}
-                              onClick={() => setYear(b.year)}
+                              onClick={() => setYear(b.year, true)}
                             />
                           ))}
                         </div>
-                        <button className={`live-badge ${year === 2026 ? 'live-badge--active' : ''}${nowPlaying?.auxCord ? ' live-badge--aux' : ''}${nowPlaying?.isAux ? ' live-badge--aux-playing' : ''}`} onClick={() => setYear(2026)}>
+                        <button className={`live-badge ${year === 2026 ? 'live-badge--active' : ''}${nowPlaying?.auxCord ? ' live-badge--aux' : ''}${nowPlaying?.isAux ? ' live-badge--aux-playing' : ''}`} onClick={() => setYear(2026, true)}>
                           <span className="live-dot" />Live
                         </button>
                       </div>
@@ -793,7 +792,7 @@ export default function App() {
                       <div className="slider-row">
                         <div className="slider-wrapper">
                           <input type="range" className="year-slider" min="1960" max="2026"
-                            value={year || 1960} onChange={e => setYear(+e.target.value)}
+                            value={year || 1960} onChange={e => setYear(+e.target.value, true)}
                             style={{
                               background: `linear-gradient(to right, ${lc} 0%, ${lc} ${(((year || 1960) - 1960) / 66) * 100}%, var(--gray-800) ${(((year || 1960) - 1960) / 66) * 100}%, var(--gray-800) 100%)`,
                               accentColor: lc,
