@@ -963,11 +963,11 @@
         .yr-alpha-btn {
             background: transparent;
             border: 1px solid var(--gray-800);
-            border-radius: 3px;
+            border-radius: 4px;
             color: var(--gray-500);
-            font-size: 0.7rem;
+            font-size: 0.82rem;
             font-weight: 600;
-            padding: 3px 7px;
+            padding: 6px 10px;
             cursor: pointer;
             font-family: inherit;
             transition: all 0.2s;
@@ -2135,7 +2135,16 @@
 
         // Back to top button — show when scrolled down, hide when disco is open
         const backToTop = document.getElementById('backToTop');
-        backToTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+        backToTop.onclick = () => {
+            const alphaNav = document.getElementById('yrAlphaNav');
+            if (alphaNav) {
+                const navHeight = document.querySelector('.nav').offsetHeight;
+                const top = alphaNav.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+                window.scrollTo({ top, behavior: 'smooth' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
         window.addEventListener('scroll', () => {
             const discoOpen = discoSection.style.display === 'block';
             if (!discoOpen && window.scrollY > 400) {
