@@ -934,7 +934,7 @@ html {
     box-sizing: border-box;
   }
 
-  /* Mobile order: greeting → search → tiles → albums → timeline → legend */
+  /* Mobile order: greeting → search → tiles → timeline → legend → genre explorer */
   .counter-greeting       { order: 1; }
   .counter-search         { order: 2; }
   .counter-bean           { order: 2; }
@@ -942,6 +942,7 @@ html {
   .counter-albums         { order: 4; }
   .counter-timeline       { order: 5; }
   .counter-search-footer  { order: 6; }
+  .blurbs-section         { order: 7; }
 
   .counter-timeline {
     border-bottom: 1px solid var(--gray-800);
