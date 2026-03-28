@@ -97,7 +97,7 @@ function getDailyArtist(catalog, editorial) {
   const artist = scored[0].artist;
 
   // Build chronological playback schedule from full discography
-  const albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
+  const albums = artist.albums.map((a, i) => ({ ...a, _idx: i })).sort((a, b) => (a.release_year || 0) - (b.release_year || 0) || a._idx - b._idx);
   const schedule = [];
   let elapsed = 0;
   for (const album of albums) {
@@ -141,7 +141,7 @@ function buildAuxSchedule(catalog, artistName, albumTitle) {
     const match = artist.albums.find(a => a.title.toLowerCase() === albumTitle.toLowerCase());
     albums = match ? [match] : [];
   } else {
-    albums = [...artist.albums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
+    albums = artist.albums.map((a, i) => ({ ...a, _idx: i })).sort((a, b) => (a.release_year || 0) - (b.release_year || 0) || a._idx - b._idx);
   }
   if (!albums.length) return null;
 
