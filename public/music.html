@@ -6,6 +6,7 @@
     <title>Record Store | Guapa</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="guapa-base.css">
     <link rel="stylesheet" href="music.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2145,10 +2146,10 @@
         // Back to top button — show when scrolled down, hide when disco is open
         const backToTop = document.getElementById('backToTop');
         backToTop.onclick = () => {
-            const alphaNav = document.getElementById('yrAlphaNav');
-            if (alphaNav) {
+            const yrHeader = document.querySelector('.yr-header');
+            if (yrHeader) {
                 const navHeight = document.querySelector('.nav').offsetHeight;
-                const top = alphaNav.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+                const top = yrHeader.getBoundingClientRect().top + window.scrollY - navHeight - 16;
                 window.scrollTo({ top, behavior: 'smooth' });
             } else {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
