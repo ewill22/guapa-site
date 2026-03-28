@@ -272,16 +272,44 @@
   gap: 14px;
 }
 
+/* Selected artist preview — description + links, shown at top of panel */
+.ge-artist-preview {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--gray-800);
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.ge-artist-preview-desc {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  margin: 0;
+  line-height: 1.5;
+  font-family: var(--font-serif);
+  font-style: italic;
+  flex: 1;
+  min-width: 200px;
+}
+
+.ge-artist-preview-links {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
 .ge-artist-card {
   background: transparent;
   border: 1px solid var(--gray-800);
   border-radius: 6px;
-  padding: 16px;
+  padding: 10px 12px;
   transition: all 0.2s;
   cursor: pointer;
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
+  gap: 10px;
+  align-items: center;
 }
 
 .ge-artist-card:hover {
@@ -294,7 +322,7 @@
 }
 
 .ge-artist-icon {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   flex-shrink: 0;
   line-height: 1;
 }

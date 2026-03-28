@@ -158,6 +158,8 @@ function buildMergedData(catalog, editorialData, editorial) {
       _albumCount: albumCount,
       _beginYear: years.length ? Math.min(...years) : null,
       _endYear: years.length ? Math.max(...years) : null,
+      url_spotify: catArtist.url_spotify || null,
+      url_wikipedia: catArtist.url_wikipedia || null,
     };
   }
 
@@ -175,6 +177,8 @@ function buildMergedData(catalog, editorialData, editorial) {
           const years = (ca.albums || []).map(a => a.release_year).filter(Boolean);
           artist._beginYear = years.length ? Math.min(...years) : null;
           artist._endYear = years.length ? Math.max(...years) : null;
+          if (!artist.url_spotify) artist.url_spotify = ca.url_spotify || null;
+          if (!artist.url_wikipedia) artist.url_wikipedia = ca.url_wikipedia || null;
         } else {
           // Fall back to editorial album years
           const years = (artist.albums || []).map(a => a.year).filter(Boolean);
@@ -555,6 +559,17 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
               {mergedData[activeGenre]?.name} — SUBGENRE {(mergedData[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'FADING' : mergedData[activeGenre]?.subgenres[selectedSub]?.status[year]?.toUpperCase())} — {year}
             </span>
           </div>
+          {discoArtist && (
+            <div className="ge-artist-preview">
+              {discoArtist.description && <p className="ge-artist-preview-desc">{discoArtist.description}</p>}
+              {(discoArtist.url_spotify || discoArtist.url_wikipedia) && (
+                <div className="ge-artist-preview-links">
+                  {discoArtist.url_spotify && <a href={discoArtist.url_spotify} target="_blank" rel="noopener" className="ge-link ge-link--spotify" onClick={e => e.stopPropagation()}>Spotify</a>}
+                  {discoArtist.url_wikipedia && <a href={discoArtist.url_wikipedia} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>}
+                </div>
+              )}
+            </div>
+          )}
           <div className="ge-artists-grid">
             {artists.map(artist => (
               <div
@@ -565,7 +580,6 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                 {artist.icon && <span className="ge-artist-icon">{artist.icon}</span>}
                 <div>
                   <h4 className="ge-artist-name">{artist.name}</h4>
-                  {artist.description && <p className="ge-artist-desc">{artist.description}</p>}
                   <span className="ge-artist-count">{(artist._albumCount || artist.albums.length)} album{(artist._albumCount || artist.albums.length) !== 1 ? 's' : ''}</span>
                 </div>
               </div>
