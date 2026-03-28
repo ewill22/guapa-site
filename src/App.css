@@ -5,6 +5,7 @@
 /* Prevent iOS double-tap zoom */
 html {
   touch-action: manipulation;
+  overflow-x: hidden;
 }
 
 /* Dashboard Hero */
@@ -14,7 +15,6 @@ html {
   width: 1400px;
   margin: 0 auto;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 /* ========================================
@@ -25,7 +25,6 @@ html {
   gap: var(--space-md);
   align-items: flex-start;
   max-width: 100%;
-  overflow-x: hidden;
 }
 
 .kpi-sidebar {
@@ -58,7 +57,6 @@ html {
   display: grid;
   grid-template-columns: 240px 1fr;
   min-height: 0;
-  overflow: hidden;
   border-radius: var(--radius-lg);
 }
 
@@ -790,7 +788,6 @@ html {
 .blurbs-section {
   margin-top: var(--space-sm);
   min-width: 0;
-  overflow-x: hidden;
 }
 
 .blurbs-header {
