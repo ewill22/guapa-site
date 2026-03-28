@@ -253,9 +253,32 @@
     text-align: left;
 }
 
-.disco-nav-btn:hover {
+@media (hover: hover) {
+    .disco-nav-btn:hover {
+        border-color: var(--pink);
+        color: var(--pink);
+    }
+    .disco-nav-btn--close:hover {
+        background: var(--pink);
+        color: var(--black);
+        border-color: var(--pink);
+    }
+}
+
+.disco-nav-btn:active {
     border-color: var(--pink);
     color: var(--pink);
+}
+
+.disco-nav-btn--close {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.disco-nav-btn--close:active {
+    background: var(--pink);
+    color: var(--black);
+    border-color: var(--pink);
 }
 
 /* Album count label (kept for loading state) */
@@ -682,7 +705,16 @@
     #discoFirst.disco-nav-btn::after {
         content: "\2193";
     }
-    
+
+    .disco-nav-btn--close {
+        font-size: 0;
+    }
+
+    .disco-nav-btn--close::after {
+        content: "\00D7";
+        font-size: 1.1rem;
+    }
+
     .music-embeds-grid {
         grid-template-columns: 1fr;
     }

@@ -1135,6 +1135,7 @@
                         <div class="disco-nav-rail" id="discoNavRail">
                             <button class="disco-nav-btn" id="discoLatest">Latest Album</button>
                             <button class="disco-nav-btn" id="discoFirst">First Album</button>
+                            <button class="disco-nav-btn disco-nav-btn--close" id="discoClose">&times;</button>
                         </div>
                     </div>
                 </section>
@@ -2259,6 +2260,7 @@
             document.getElementById('discoNavRail').style.top = (navHeight + headerHeight + 16) + 'px';
             document.getElementById('discoLatest').onclick = () => scrollToAlbum(albumCards[0]);
             document.getElementById('discoFirst').onclick = () => scrollToAlbum(albumCards[albumCards.length - 1]);
+            document.getElementById('discoClose').onclick = () => hideDiscography();
         }
 
         function hideDiscography() {
