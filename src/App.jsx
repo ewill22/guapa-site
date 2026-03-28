@@ -391,17 +391,7 @@ export default function App() {
   const scrollToExplorer = useCallback((artistName, albumTitle) => {
     setLens('music');
     setDeepLink({ artist: artistName, album: albumTitle || null });
-    // Only scroll to explorer top if no album target — album scroll is handled by GenreExplorer
-    if (!albumTitle) {
-      setTimeout(() => {
-        const el = genreExplorerRef.current;
-        if (el) {
-          const navOffset = 80; // clear sticky nav
-          const top = window.scrollY + el.getBoundingClientRect().top - navOffset;
-          window.scrollTo({ top, behavior: 'smooth' });
-        }
-      }, 300);
-    }
+    // Scroll is handled by GenreExplorer after discography renders
   }, []);
 
   // Aux Cord: pick an artist or album to play (persisted to localStorage)

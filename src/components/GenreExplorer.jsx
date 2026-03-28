@@ -267,6 +267,8 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
           artistSpotify: catArtist.url_spotify,
         })));
         setLoading(false);
+        // Scroll to discography after DOM renders
+        setTimeout(() => safeScrollTo(discoRef.current), 150);
         onDeepLinkHandled?.();
         return;
       }
