@@ -178,10 +178,12 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - **Aux Cord**: when discography finishes, random year
 
 ### On-Load Behavior
-- Year starts as `null` (no flash of random year)
-- Once `nowPlaying` resolves: year syncs to playing album's `release_year`
+- Year starts as `null` (or from `sessionStorage` if user previously moved the timeline)
+- If no saved year: `nowPlaying` resolves and syncs year to playing album's `release_year`
+- If saved year: auto-sync is skipped (`yearPinned` ref), user's chosen year sticks
+- Any manual year change (slider, arrows, bar click, Live button) pins the year and stops auto-sync for the session
+- Year persists via `sessionStorage` — sticks across page navigation (main ↔ record store) but resets on new tab
 - No auto-scroll or auto-deep-link to playing artist — user clicks KPI tile to navigate
-- Year-change effect skips when `discoArtist` is showing (prevents race condition)
 
 ### Genre Explorer (`src/components/GenreExplorer.jsx`)
 
@@ -286,6 +288,18 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 
 - Instagram: @guapa_skate (collective), @erycwill (Eric), @0bee.media (photography)
 - GitHub: ewill22
+
+## Data Patterns to Remember
+
+### Album sort: ALWAYS use catalog index as tiebreaker
+Albums with the same `release_year` (e.g. The Doors and Strange Days, both 1967) must preserve their catalog order. The catalog's array index is the source of truth for release order within a year.
+
+**Rules:**
+- Ascending (playback order): `.map((a, i) => ({ ...a, _idx: i })).sort((a, b) => (a.release_year || 0) - (b.release_year || 0) || a._idx - b._idx)`
+- Descending (disco list): `.map((a, i) => ({ ...a, _idx: i })).sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || b._idx - a._idx)`
+- When reusing an already-sorted list, don't re-sort — use `.reverse()` or index from the end to avoid losing the tiebreaker
+
+**Broken by this in the past:** disco list, aux schedule, and aux Spotify link all showed wrong "first album" for same-year discographies.
 
 ## CSS Patterns to Remember
 
