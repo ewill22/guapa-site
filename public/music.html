@@ -2487,13 +2487,12 @@
                 }
 
                 html += `<div class="nr-artist-group"${id}>
-                    <h3 class="nr-artist-name">${rel.artist}<span class="nr-subgenre">${rel.subgenre || rel.genre}</span></h3>
                     <div class="disco-album disco-album--latest">
                         <div class="disco-album-header">
                             <div class="disco-album-art" style="background-image: url('${coverUrl}'); background-size: cover; background-position: center;"></div>
                             <div class="disco-album-info">
                                 <span class="disco-album-year">New Release · ${meta}</span>
-                                <span class="disco-album-artist">${rel.subgenre || rel.genre}</span>
+                                <span class="disco-album-artist">${rel.artist} · ${rel.subgenre || rel.genre}</span>
                                 <h3 class="disco-album-title">${rel.album}</h3>
                                 <div class="disco-album-actions">${actions}</div>
                             </div>
