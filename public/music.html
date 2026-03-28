@@ -976,6 +976,8 @@
         }
         .yr-alpha-btn:hover { color: var(--white); border-color: var(--gray-600); }
         .yr-alpha-btn.active { color: var(--yellow); border-color: var(--yellow); }
+        .yr-alpha-btn--disabled { opacity: 0.25; cursor: default; }
+        .yr-alpha-btn--disabled:hover { color: var(--gray-500); border-color: var(--gray-800); }
         .yr-list {
             display: flex;
             flex-direction: column;
@@ -1846,15 +1848,20 @@
             yrCount.textContent = `${totalAlbums} album${totalAlbums !== 1 ? 's' : ''} from ${artists.length} artist${artists.length !== 1 ? 's' : ''}`;
 
             if (artists.length === 0) {
-                yrAlphaNav.innerHTML = '';
+                yrAlphaNav.innerHTML = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l =>
+                    `<button class="yr-alpha-btn yr-alpha-btn--disabled" disabled>${l}</button>`
+                ).join('');
                 yrList.innerHTML = `<div class="yr-empty">No releases found in ${currentYear}. Try a different year.</div>`;
                 return;
             }
 
-            // Alpha nav
-            const letters = [...new Set(artists.map(a => a.name[0].toUpperCase()))].sort();
-            yrAlphaNav.innerHTML = letters.map(l =>
-                `<button class="yr-alpha-btn" onclick="document.getElementById('yr-${l}').scrollIntoView({behavior:'smooth',block:'start'})">${l}</button>`
+            // Alpha nav — show full alphabet, disable letters with no artists
+            const activeLetters = new Set(artists.map(a => a.name[0].toUpperCase()));
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            yrAlphaNav.innerHTML = alphabet.map(l =>
+                activeLetters.has(l)
+                    ? `<button class="yr-alpha-btn" onclick="document.getElementById('yr-${l}').scrollIntoView({behavior:'smooth',block:'start'})">${l}</button>`
+                    : `<button class="yr-alpha-btn yr-alpha-btn--disabled" disabled>${l}</button>`
             ).join('');
 
             // Render artist groups
