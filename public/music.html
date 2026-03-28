@@ -951,9 +951,9 @@
             color: var(--gray-600);
         }
         .yr-alpha-nav {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
             gap: 4px;
-            flex-wrap: wrap;
             margin-bottom: var(--space-md);
             position: sticky;
             top: 60px;
@@ -972,7 +972,6 @@
             cursor: pointer;
             font-family: inherit;
             transition: all 0.2s;
-            flex: 1;
             text-align: center;
         }
         .yr-alpha-btn:hover { color: var(--white); border-color: var(--gray-600); }
