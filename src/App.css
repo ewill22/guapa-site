@@ -59,11 +59,18 @@ html {
   border-radius: var(--radius-lg);
 }
 
-/* Left column: welcome + search + albums */
+/* Left column: welcome */
 .counter-left {
   display: flex;
   flex-direction: column;
   border-right: 1px solid var(--gray-800);
+}
+
+/* Right column: timeline + bottom row */
+.counter-right {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 /* KPI Tiles — sidebar */
@@ -307,12 +314,13 @@ html {
   color: var(--gray-600) !important;
 }
 
-/* Bottom row: search | legend | albums */
+/* Bottom row: search | legend | albums — inside counter-right */
 .counter-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   border-top: 1px solid var(--gray-800);
   align-items: center;
+  flex-shrink: 0;
 }
 
 .counter-search-footer {
@@ -916,7 +924,7 @@ html {
     display: flex;
     flex-direction: column;
   }
-  .counter-top, .counter-left, .counter-bottom {
+  .counter-top, .counter-left, .counter-right, .counter-bottom {
     display: contents;
   }
 

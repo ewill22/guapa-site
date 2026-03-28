@@ -707,7 +707,8 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Timeline — right column */}
+              {/* Right column: Timeline + bottom row */}
+              <div className="counter-right">
               <div className="counter-timeline">
                 <div className="world-timeline" style={lens ? { borderColor: `${lc}30` } : {}}>
 
@@ -828,8 +829,6 @@ export default function App() {
                 )}
               </div>
 
-            </div>
-
             {/* Bottom row: Search | Legend | Albums */}
             <div className="counter-bottom">
               {lens === 'music' ? (
@@ -908,6 +907,9 @@ export default function App() {
                 </div>
               ) : null}
             </div>
+            </div>{/* close counter-right */}
+
+            </div>{/* close counter-top */}
 
           </div>
 
