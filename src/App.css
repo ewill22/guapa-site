@@ -314,10 +314,10 @@ html {
   color: var(--gray-600) !important;
 }
 
-/* Bottom row: search | legend | albums — inside counter-right */
+/* Bottom row: search | legend — inside counter-right */
 .counter-bottom {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   border-top: 1px solid var(--gray-800);
   align-items: center;
   flex-shrink: 0;

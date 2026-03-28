@@ -925,6 +925,92 @@
         }
         .nr-alpha-btn:hover { color: var(--white); border-color: var(--gray-600); }
         .nr-alpha-btn.active { color: var(--yellow); border-color: var(--yellow); }
+
+        /* ========================================
+           YEAR RELEASES (Record Store Aisle)
+        ======================================== */
+        .year-releases {
+            margin-top: var(--space-md);
+        }
+        .yr-header {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: var(--space-md);
+        }
+        .yr-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0;
+            letter-spacing: -0.02em;
+        }
+        .yr-count {
+            font-size: 0.75rem;
+            color: var(--gray-600);
+        }
+        .yr-alpha-nav {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-bottom: var(--space-md);
+            position: sticky;
+            top: 60px;
+            background: var(--black);
+            padding: 8px 0;
+            z-index: 20;
+        }
+        .yr-alpha-btn {
+            background: transparent;
+            border: 1px solid var(--gray-800);
+            border-radius: 3px;
+            color: var(--gray-500);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 3px 7px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .yr-alpha-btn:hover { color: var(--white); border-color: var(--gray-600); }
+        .yr-alpha-btn.active { color: var(--yellow); border-color: var(--yellow); }
+        .yr-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-lg);
+        }
+        .yr-artist-group {
+            scroll-margin-top: 120px;
+        }
+        .yr-artist-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--white);
+            margin: 0 0 var(--space-sm) 0;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+        .yr-artist-meta {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .yr-artist-albums {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+        .yr-empty {
+            padding: 60px 30px;
+            text-align: center;
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -1000,50 +1086,19 @@
                     <div class="slider-row">
                         <div class="slider-spacer"></div>
                         <div class="slider-wrapper">
-                            <input type="range" class="year-slider" id="yearSlider" min="1960" max="2025" value="1960">
+                            <input type="range" class="year-slider" id="yearSlider" min="1960" max="2026" value="1960">
                             <div class="timeline-markers" id="timelineMarkers">
                                 <span>1960</span>
                                 <span>1980</span>
                                 <span>2000</span>
-                                <span>2025</span>
+                                <span>2026</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="genre-tabs" id="genreTabs"></div>
-                    <div class="genre-groups" id="genreGroups"></div>
-
-                    <div class="artist-panel" id="artistPanel">
-                        <button class="close-panel" onclick="closeArtistPanel()">✕</button>
-                        <div class="artist-panel-header">
-                            <span class="icon" id="artistIcon">🎸</span>
-                            <div>
-                                <h3 id="artistName">SUBGENRE NAME</h3>
-                                <p class="subgenre-tag" id="artistSubgenre">GENRE</p>
-                            </div>
-                        </div>
-                        <div class="album-grid" id="albumGrid"></div>
-                    </div>
-
-                    <!-- Rankings Section -->
-                    <div class="rankings-section" id="rankingsSection">
-                        <div class="rankings-header">
-                            <div class="rankings-title">
-                                <h3 id="rankingsGenre">ALL GENRES</h3>
-                                <span class="year-tag" id="rankingsYearTag"></span>
-                            </div>
-                            <button class="clear-year-btn" id="clearYearBtn">
-                                Clear <span id="clearYearLabel">1960</span> ✕
-                            </button>
-                            <span class="rankings-count" id="rankingsCount">0 artists</span>
-                        </div>
-                        <div class="rankings-list" id="rankingsList">
-                            <div class="no-rankings">Loading rankings...</div>
-                        </div>
-                    </div>
                 </section>
 
-                <!-- New Releases Section (Fri-Sun, below timeline) -->
+                <!-- New Releases (Fri-Sun, shown above year releases) -->
                 <section class="new-releases" id="newReleasesSection" style="display: none;">
                     <div class="nr-header">
                         <h2 class="nr-title">New This Week</h2>
@@ -1051,6 +1106,16 @@
                         <span class="nr-count" id="nrCount"></span>
                     </div>
                     <div class="nr-list" id="nrList"></div>
+                </section>
+
+                <!-- Year Releases Section -->
+                <section class="year-releases" id="yearReleasesSection">
+                    <div class="yr-header">
+                        <h2 class="yr-title" id="yrTitle">Releases</h2>
+                        <span class="yr-count" id="yrCount"></span>
+                    </div>
+                    <div class="yr-alpha-nav" id="yrAlphaNav"></div>
+                    <div class="yr-list" id="yrList"></div>
                 </section>
 
                 <!-- Discography Section (shown when artist selected) -->
@@ -1077,24 +1142,6 @@
         </div>
     </main>
 
-    <!-- Artist Popup Overlay -->
-    <div class="artist-popup-overlay" id="artistPopupOverlay">
-        <div class="artist-popup">
-            <button class="artist-popup-close" id="popupClose">✕</button>
-            <div class="artist-popup-header">
-                <h2 class="artist-popup-name" id="popupArtistName">Artist Name</h2>
-                <div class="artist-popup-meta">
-                    <span class="rank" id="popupArtistRank">#1 in Rock</span>
-                    <span id="popupArtistScore">Score: 98</span>
-                    <span id="popupArtistYears">1960–1970</span>
-                </div>
-            </div>
-            <div class="artist-popup-albums">
-                <h4>Albums</h4>
-                <div class="popup-album-grid" id="popupAlbumGrid"></div>
-            </div>
-        </div>
-    </div>
 
     <!-- Footer -->
     <footer class="footer">
@@ -1251,7 +1298,7 @@
         }
 
         const MIN_YEAR = 1960;
-        const MAX_YEAR = 2025;
+        const MAX_YEAR = 2026;
 
         // Helper: generate status object from ranges
         function S(ranges) {
@@ -1721,107 +1768,156 @@
         let currentYear = 1960;
         let selectedSubgenre = null;
         let selectedGenre = null;
-        let activeFilter = null;  // null = welcome view, no genre selected
+        let activeFilter = null;  // kept for search/deep link compatibility
 
-        // Rankings state
-        let rankingsYearFilter = null;
-
-        // Build rankings dynamically from musicData
-        // Each artist's "active years" = years they released albums
-        // Score placeholder = total album count (will be replaced by Guapa Score algorithm)
-        function buildRankings() {
-            const artists = {};
-            for (const [genreId, genre] of Object.entries(musicData)) {
-                for (const [subId, sub] of Object.entries(genre.subgenres)) {
-                    for (const [key, artist] of Object.entries(sub.artists)) {
-                        if (!artists[artist.name]) {
-                            const albumYears = artist.albums.map(a => a.year).filter(Boolean).sort((a, b) => a - b);
-                            artists[artist.name] = {
-                                id: key,
-                                name: artist.name,
-                                genres: [genreId],
-                                subgenres: [subId],
-                                albumYears,
-                                active: albumYears.length ? [albumYears[0], albumYears[albumYears.length - 1]] : [1960, 2025],
-                                albums: artist.albums,
-                                score: Math.min(99, 50 + artist.albums.length * 8),
-                            };
-                        } else {
-                            // Same artist in multiple genres/subgenres
-                            const a = artists[artist.name];
-                            if (!a.genres.includes(genreId)) a.genres.push(genreId);
-                            if (!a.subgenres.includes(subId)) a.subgenres.push(subId);
-                        }
-                    }
-                }
-            }
-            return Object.values(artists);
-        }
-        const allRankings = buildRankings();
-
-        // Genre origin stories for contextual messaging
-        const genreOrigins = {
-            pop: { emergeYear: 1960, story: "Pop music has been around since the start of our timeline, evolving from Tin Pan Alley and early rock and roll." },
-            rock: { emergeYear: 1960, story: "Rock emerged in the late 1950s from blues, country, and R&B. By 1960, it was already transforming popular music." },
-            soul: { emergeYear: 1960, story: "Soul music grew from gospel and R&B in the late 1950s, reaching full form with artists like Ray Charles and Sam Cooke." },
-            jazz: { emergeYear: 1960, story: "Jazz had been thriving since the early 1900s. By 1960, bebop was established and new forms like free jazz were emerging." },
-            hiphop: { emergeYear: 1973, story: "Hip hop wouldn't exist until 1973, when DJ Kool Herc threw a back-to-school party in the Bronx and isolated the 'break' — the instrumental section where dancers went off. From that moment, hip hop was born." },
-            electronic: { emergeYear: 1970, story: "Electronic music as a distinct genre emerged around 1970 with Kraftwerk and other experimenters using synthesizers. Before this, electronic sounds were mostly confined to academic studios and film scores." },
-            country: { emergeYear: 1960, story: "Country music has deep roots in American folk traditions, well established by the 1960s through the Grand Ole Opry and artists like Hank Williams." },
-            folk: { emergeYear: 1960, story: "Folk music traditions stretch back centuries. The 1960s folk revival was already underway with artists like Pete Seeger paving the way." }
-        };
 
         const yearSlider = document.getElementById('yearSlider');
         const currentYearDisplay = document.getElementById('currentYear');
-        const genreGroups = document.getElementById('genreGroups');
         const albumBars = document.getElementById('albumBars');
-        const artistPanel = document.getElementById('artistPanel');
+        // Year releases elements
+        const yrTitle = document.getElementById('yrTitle');
+        const yrCount = document.getElementById('yrCount');
+        const yrAlphaNav = document.getElementById('yrAlphaNav');
+        const yrList = document.getElementById('yrList');
 
-        // Rankings elements
-        const rankingsList = document.getElementById('rankingsList');
-        const rankingsGenreEl = document.getElementById('rankingsGenre');
-        const rankingsYearTag = document.getElementById('rankingsYearTag');
-        const rankingsCount = document.getElementById('rankingsCount');
-        const clearYearBtn = document.getElementById('clearYearBtn');
-        const clearYearLabel = document.getElementById('clearYearLabel');
-        const artistPopupOverlay = document.getElementById('artistPopupOverlay');
-
-        // Genre tabs
-        function renderGenreTabs() {
-            const tabsEl = document.getElementById('genreTabs');
-            tabsEl.innerHTML = '';
-
-            // One tab per genre (no "All" tab — default is welcome view)
-            Object.entries(musicData).forEach(([genreId, genre]) => {
-                const visibleCount = Object.values(genre.subgenres).filter(s => s.status[currentYear] !== 'hidden').length;
-                const tab = document.createElement('button');
-                tab.className = `genre-tab${activeFilter === genreId ? ' active' : ''}`;
-                tab.innerHTML = `<span class="tab-icon">${genre.icon}</span>${genre.name}<span class="tab-count">${visibleCount}</span>`;
-                if (visibleCount === 0) tab.style.opacity = '0.3';
-                tab.onclick = () => {
-                    if (activeFilter === genreId) {
-                        // Clicking active genre deselects it — back to welcome view
-                        activeFilter = null;
-                        selectedGenre = null;
-                        selectedSubgenre = null;
-                        closeArtistPanel();
-                        hideDiscography();
-                    } else {
-                        activeFilter = genreId;
-                        selectedGenre = genreId;
-                        selectedSubgenre = null;
-                        closeArtistPanel();
-                        hideDiscography();
-                        if (visibleCount > 0) showGenrePanel(genreId);
-                    }
-                    renderGenreTabs();
-                    renderGenreGroups();
-                    renderRankings();
-                };
-                tabsEl.appendChild(tab);
-            });
+        // -----------------------------------------------------------------------
+        // YEAR RELEASES — record store aisle view
+        // -----------------------------------------------------------------------
+        let _editorialData = null;
+        async function loadEditorialCSV() {
+            try {
+                const r = await fetch('data/artist-editorial.csv');
+                if (!r.ok) return new Map();
+                const text = await r.text();
+                const map = new Map();
+                const lines = text.split('\n');
+                if (lines.length < 2) return map;
+                let header = lines[0];
+                if (header.charCodeAt(0) === 0xFEFF) header = header.slice(1);
+                const cols = header.split(',').map(c => c.trim().toLowerCase());
+                const nameIdx = cols.indexOf('name');
+                const confIdx = cols.indexOf('confirmed');
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (!line) continue;
+                    // Simple CSV parse (name and confirmed don't contain commas)
+                    const fields = line.split(',');
+                    const name = (fields[nameIdx] || '').trim();
+                    const confirmed = (fields[confIdx] || '').trim().toLowerCase() === 'yes';
+                    if (name) map.set(name.toLowerCase(), { confirmed });
+                }
+                return map;
+            } catch { return new Map(); }
         }
-        renderGenreTabs();
+
+        async function renderYearReleases() {
+            const catalog = await loadStaticCatalog();
+            if (!catalog) {
+                yrList.innerHTML = '<div class="yr-empty">Loading catalog...</div>';
+                return;
+            }
+            if (!_editorialData) _editorialData = await loadEditorialCSV();
+
+            yrTitle.textContent = `${currentYear} Releases`;
+
+            // Collect all albums for the selected year, grouped by artist
+            const artistMap = {};
+            for (const [key, artist] of Object.entries(catalog)) {
+                // Only show confirmed editorial artists
+                const ed = _editorialData.get(artist.name.toLowerCase());
+                if (!ed || !ed.confirmed) continue;
+                const yearAlbums = (artist.albums || []).filter(a => a.release_year === currentYear);
+                if (yearAlbums.length === 0) continue;
+                artistMap[artist.name] = {
+                    name: artist.name,
+                    albums: yearAlbums,
+                    url_spotify: artist.url_spotify,
+                    url_wikipedia: artist.url_wikipedia,
+                };
+            }
+
+            // Sort alphabetically
+            const artists = Object.values(artistMap).sort((a, b) => a.name.localeCompare(b.name));
+            const totalAlbums = artists.reduce((sum, a) => sum + a.albums.length, 0);
+            yrCount.textContent = `${totalAlbums} album${totalAlbums !== 1 ? 's' : ''} from ${artists.length} artist${artists.length !== 1 ? 's' : ''}`;
+
+            if (artists.length === 0) {
+                yrAlphaNav.innerHTML = '';
+                yrList.innerHTML = `<div class="yr-empty">No releases found in ${currentYear}. Try a different year.</div>`;
+                return;
+            }
+
+            // Alpha nav
+            const letters = [...new Set(artists.map(a => a.name[0].toUpperCase()))].sort();
+            yrAlphaNav.innerHTML = letters.map(l =>
+                `<button class="yr-alpha-btn" onclick="document.getElementById('yr-${l}').scrollIntoView({behavior:'smooth',block:'start'})">${l}</button>`
+            ).join('');
+
+            // Render artist groups
+            let html = '';
+            let lastLetter = '';
+            for (const artist of artists) {
+                const letter = artist.name[0].toUpperCase();
+                const id = letter !== lastLetter ? ` id="yr-${letter}"` : '';
+                lastLetter = letter;
+
+                const albumsHtml = artist.albums
+                    .sort((a, b) => (a.release_year || 0) - (b.release_year || 0))
+                    .map(album => {
+                        const art = album.cover_art_large || album.cover_art_small;
+                        const artStyle = art ? `background-image: url(${art}); background-size: cover; background-position: center;` : '';
+                        const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (artist.url_spotify || '#'));
+                        const wikiUrl = album.url_wikipedia || artist.url_wikipedia || '#';
+                        const amazonQuery = encodeURIComponent(`${artist.name} ${album.title} vinyl`);
+                        const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
+                        const tracks = album.tracks || [];
+                        const trackCount = tracks.length;
+                        const runtime = tracks.reduce((s, t) => s + (t.duration_ms || 0), 0);
+                        const runtimeStr = runtime ? `${Math.round(runtime / 60000)} min` : '';
+                        const meta = [trackCount ? `${trackCount} tracks` : '', runtimeStr].filter(Boolean).join(' · ');
+
+                        let tracklistHtml = '';
+                        if (tracks.length > 0) {
+                            tracklistHtml = `<div class="disco-tracklist">
+                                <div class="disco-tracklist-header">
+                                    <span class="th-num">#</span>
+                                    <span class="th-title">Title</span>
+                                    <span class="th-duration">Time</span>
+                                </div>
+                                ${tracks.map(t => `<div class="disco-track">
+                                    <span class="disco-track-num">${t.track_number || ''}</span>
+                                    <span class="disco-track-title">${t.title}${t.spotify_id ? ` <a href="https://open.spotify.com/track/${t.spotify_id}" target="_blank" rel="noopener" style="color:#1DB954;text-decoration:none;font-size:0.65rem;" onclick="event.stopPropagation()" title="Play on Spotify">▶</a>` : ''}</span>
+                                    <span class="disco-track-duration">${formatDur(t.duration_ms)}</span>
+                                </div>`).join('')}
+                            </div>`;
+                        }
+
+                        return `<div class="disco-album">
+                            <div class="disco-album-header">
+                                <div class="disco-album-art" style="${artStyle}"></div>
+                                <div class="disco-album-info">
+                                    <span class="disco-album-year">${currentYear}${meta ? ' · ' + meta : ''}</span>
+                                    <span class="disco-album-artist">${artist.name}</span>
+                                    <h3 class="disco-album-title">${album.title}</h3>
+                                    <div class="disco-album-actions">
+                                        <a href="${spotifyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--spotify" onclick="event.stopPropagation()">Spotify</a>
+                                        <a href="${buyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--buy" onclick="event.stopPropagation()">Buy Vinyl</a>
+                                        <a href="${wikiUrl}" target="_blank" rel="noopener" class="disco-link disco-link--wiki" onclick="event.stopPropagation()">Wiki</a>
+                                    </div>
+                                </div>
+                            </div>
+                            ${tracklistHtml}
+                        </div>`;
+                    }).join('');
+
+                html += `<div class="yr-artist-group"${id}>
+                    <h3 class="yr-artist-name">${artist.name}<span class="yr-artist-meta">${artist.albums.length} album${artist.albums.length !== 1 ? 's' : ''}</span></h3>
+                    <div class="yr-artist-albums">${albumsHtml}</div>
+                </div>`;
+            }
+
+            yrList.innerHTML = html;
+        }
 
         // Decade button clicks
         document.querySelectorAll('.decade-btn').forEach(btn => {
@@ -1877,159 +1973,9 @@
             currentYearDisplay.textContent = currentYear;
             updateDecadeButtons();
             renderAlbumBars();
-            renderGenreTabs();
-            renderGenreGroups();
-            if (selectedGenre && selectedSubgenre) {
-                const subgenre = musicData[selectedGenre]?.subgenres[selectedSubgenre];
-                if (subgenre && subgenre.status[currentYear] !== 'hidden') { showArtistsPanel(selectedGenre, selectedSubgenre); }
-                else { selectedGenre = null; selectedSubgenre = null; closeArtistPanel(); hideDiscography(); renderGenreGroups(); }
-            } else if (selectedGenre && !selectedSubgenre) { showGenrePanel(selectedGenre); }
-            // Update rankings year filter
-            rankingsYearFilter = currentYear;
-            renderRankings();
+            renderYearReleases();
         }
 
-        function renderGenreGroups() {
-            genreGroups.innerHTML = '';
-
-            // Welcome view when no genre selected — stats + rankings merged
-            if (!activeFilter) {
-                genreGroups.innerHTML = `
-                    <div class="welcome-container">
-                        <div class="welcome-text">
-                            <p class="welcome-subtitle">Browse ${Object.keys(musicData).length} genres spanning ${MAX_YEAR - MIN_YEAR + 1} years of music history. Pick a genre above to explore its subgenres, artists, and full discographies.</p>
-                        </div>
-                        <div class="welcome-stats">
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-num">${Object.values(musicData).reduce((sum, g) => sum + Object.keys(g.subgenres).length, 0)}</span>
-                                <span class="welcome-stat-label">Subgenres</span>
-                            </div>
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-num">${allRankings.length}</span>
-                                <span class="welcome-stat-label">Artists</span>
-                            </div>
-                            <div class="welcome-stat">
-                                <span class="welcome-stat-num">${allRankings.reduce((sum, a) => sum + a.albums.length, 0)}</span>
-                                <span class="welcome-stat-label">Albums</span>
-                            </div>
-                        </div>
-                        <div class="welcome-rankings" id="welcomeRankings"></div>
-                    </div>
-                `;
-                // Render rankings inline inside the welcome container
-                renderWelcomeRankings();
-                return;
-            }
-
-            Object.entries(musicData).forEach(([genreId, genre]) => {
-                if (genreId !== activeFilter) return;
-                const visibleSubgenres = Object.entries(genre.subgenres).filter(([id, sub]) => sub.status[currentYear] !== 'hidden');
-                if (visibleSubgenres.length === 0) return;
-                const group = document.createElement('div');
-                group.className = 'genre-group';
-
-                const subgenresGrid = document.createElement('div');
-                subgenresGrid.className = 'subgenres-grid';
-                visibleSubgenres.forEach(([subId, subgenre]) => {
-                    const status = subgenre.status[currentYear];
-                    const isSelected = selectedGenre === genreId && selectedSubgenre === subId;
-                    const artistNames = Object.values(subgenre.artists).map(a => a.name);
-                    const item = document.createElement('div');
-                    item.className = `subgenre-item ${status}${isSelected ? ' active' : ''}`;
-                    item.onclick = () => selectSubgenre(genreId, subId);
-                    item.innerHTML = `<div class="subgenre-header"><span class="icon">${subgenre.icon}</span><span class="name">${subgenre.name}</span></div><div class="artist-list">${artistNames.map(name => `<span>${name}</span>`).join('')}</div>`;
-                    subgenresGrid.appendChild(item);
-                });
-                group.appendChild(subgenresGrid);
-                genreGroups.appendChild(group);
-            });
-        }
-
-        function selectSubgenre(genreId, subgenreId) {
-            hideDiscography();
-            if (selectedGenre === genreId && selectedSubgenre === subgenreId) { selectedGenre = null; selectedSubgenre = null; closeArtistPanel(); }
-            else { selectedGenre = genreId; selectedSubgenre = subgenreId; showArtistsPanel(genreId, subgenreId); }
-            renderGenreGroups();
-        }
-
-        function makeAlbumHtml(artist) {
-            return artist.albums.map((a, index) => {
-                const isCY = a.year === currentYear;
-                const isLast = index === artist.albums.length - 1;
-                return `<div style="padding: 8px 0; ${isCY ? 'background: rgba(240, 192, 20, 0.08); margin: 0 -10px; padding-left: 10px; padding-right: 10px;' : ''} ${!isLast ? 'border-bottom: 1px solid var(--gray-800);' : ''}"><div style="display: flex; align-items: baseline; gap: 6px; margin-bottom: 5px;"><span style="font-size: 0.85rem; color: ${isCY ? 'var(--yellow)' : 'var(--gray-400)'};">${a.title}</span><span style="font-size: 0.7rem; color: var(--gray-600);">${a.year}</span>${isCY ? '<span style="font-size: 0.6rem; color: var(--yellow); font-weight: 600;">★</span>' : ''}</div><div class="album-links"><a href="#" class="album-link spotify">SPOTIFY</a><a href="#" class="album-link wiki">WIKI</a><a href="#" class="album-link buy">FIND CD</a></div></div>`;
-            }).join('');
-        }
-
-        function makeArtistCard(artist, genreId, subId) {
-            const card = document.createElement('div');
-            card.className = 'album-card';
-            card.style.cursor = 'pointer';
-            card.innerHTML = `<div style="display: flex; align-items: flex-start; gap: 10px;"><span style="font-size: 1.5rem;">${artist.icon}</span><div><h4 style="margin: 0; font-size: 0.9rem; color: var(--yellow);">${artist.name}</h4><p style="margin: 4px 0 0 0; font-size: 0.75rem; color: var(--gray-400); line-height: 1.4;">${artist.description}</p><div style="display: flex; gap: 6px; margin-top: 6px; align-items: center;"><span style="font-size: 0.65rem; color: var(--gray-600);">${artist.albums.length} album${artist.albums.length !== 1 ? 's' : ''}</span><a href="#" class="album-link spotify" onclick="event.stopPropagation()">SPOTIFY</a><a href="#" class="album-link wiki" onclick="event.stopPropagation()">WIKI</a></div></div></div>`;
-            card.addEventListener('click', () => showDiscography(artist, genreId, subId));
-            return card;
-        }
-
-        function showArtistsPanel(genreId, subgenreId) {
-            const genre = musicData[genreId];
-            const subgenre = genre.subgenres[subgenreId];
-            const status = subgenre.status[currentYear];
-            document.getElementById('artistIcon').textContent = subgenre.icon;
-            document.getElementById('artistName').textContent = subgenre.name;
-            document.getElementById('artistSubgenre').textContent = `${genre.name} · ${currentYear} · ${status.toUpperCase()}`;
-            const albumGrid = document.getElementById('albumGrid');
-            albumGrid.innerHTML = '';
-            Object.values(subgenre.artists).forEach(artist => albumGrid.appendChild(makeArtistCard(artist, genreId, subgenreId)));
-            artistPanel.classList.add('visible');
-            document.getElementById('rankingsSection').style.display = 'none';
-        }
-
-        function showGenrePanel(genreId) {
-            const genre = musicData[genreId];
-            if (!genre) return;
-            document.getElementById('artistIcon').textContent = genre.icon;
-            document.getElementById('artistName').textContent = genre.name;
-            document.getElementById('artistSubgenre').textContent = '';
-            const albumGrid = document.getElementById('albumGrid');
-            albumGrid.innerHTML = '';
-            
-            // Check if any subgenres are visible in this year
-            const visibleSubgenres = Object.entries(genre.subgenres).filter(([subId, subgenre]) => 
-                subgenre.status[currentYear] !== 'hidden'
-            );
-            
-            if (visibleSubgenres.length === 0) {
-                // No subgenres visible - show origin story
-                const origin = genreOrigins[genreId];
-                const originDiv = document.createElement('div');
-                originDiv.style.cssText = 'padding: 40px 30px; color: var(--gray-400); font-size: 0.9rem; line-height: 1.6; font-style: italic; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 200px;';
-                if (origin && currentYear < origin.emergeYear) {
-                    originDiv.innerHTML = `<p style="margin-bottom: 12px; color: var(--yellow); font-size: 1.1rem;">${genre.name} doesn't exist yet in ${currentYear}.</p><p style="max-width: 500px;">${origin.story}</p><p style="margin-top: 16px; color: var(--gray-500);">Move the timeline to <strong style="color: var(--pink);">${origin.emergeYear}</strong> or later to explore this genre.</p>`;
-                } else {
-                    originDiv.innerHTML = `<p>No ${genre.name.toLowerCase()} subgenres active in ${currentYear}. Try a different year.</p>`;
-                }
-                albumGrid.appendChild(originDiv);
-            } else {
-                // Show visible subgenres
-                visibleSubgenres.forEach(([subId, subgenre]) => {
-                    const status = subgenre.status[currentYear];
-                    const subgenreHeader = document.createElement('div');
-                    subgenreHeader.style.cssText = 'grid-column: 1 / -1; padding: 12px 0 8px 0; border-bottom: 1px solid var(--gray-800); margin-bottom: 8px;';
-                    subgenreHeader.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;"><span style="font-size: 1.2rem;">${subgenre.icon}</span><span style="font-size: 0.85rem; font-weight: 600; color: var(--pink);">${subgenre.name}</span><span style="font-size: 0.65rem; color: var(--gray-600); text-transform: uppercase;">${status} · ${currentYear}</span></div>`;
-                    albumGrid.appendChild(subgenreHeader);
-                    Object.values(subgenre.artists).forEach(artist => albumGrid.appendChild(makeArtistCard(artist, genreId, subId)));
-                });
-            }
-
-            artistPanel.classList.add('visible');
-            document.getElementById('rankingsSection').style.display = 'none';
-        }
-
-        function closeArtistPanel() {
-            artistPanel.classList.remove('visible');
-            selectedSubgenre = null;
-            hideDiscography();
-            renderGenreGroups();
-        }
 
         yearSlider.addEventListener('input', (e) => updateYear(e.target.value));
 
@@ -2129,7 +2075,6 @@
             searchResults.querySelectorAll('.search-result-item').forEach((el, i) => {
                 el.addEventListener('click', () => {
                     const match = matches[i];
-                    // For songs, look up the artist by artistName; for artists, use match.name
                     const lookupName = match.type === 'song' ? match.artistName : match.name;
                     const genre = musicData[match.genreId];
                     const subgenre = genre?.subgenres[match.subId];
@@ -2146,12 +2091,6 @@
                         updateYear(targetYear);
                     }
 
-                    activeFilter = match.genreId;
-                    selectedGenre = match.genreId;
-                    selectedSubgenre = match.subId;
-                    showArtistsPanel(match.genreId, match.subId);
-                    renderGenreTabs();
-                    renderGenreGroups();
                     searchInput.value = '';
                     searchResults.classList.remove('open');
 
@@ -2159,24 +2098,17 @@
                     if (artistObj) {
                         setTimeout(() => {
                             showDiscography(artistObj, match.genreId, match.subId);
-                            // For song results, scroll to the album containing the track
                             if (match.type === 'song' && match.albumTitle) {
                                 setTimeout(() => {
-                                    const albumCards = document.querySelectorAll('.album-card');
-                                    for (const card of albumCards) {
-                                        const titleEl = card.querySelector('.album-title');
-                                        if (titleEl && titleEl.textContent.trim().toLowerCase() === match.albumTitle.toLowerCase()) {
-                                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                            card.style.outline = '1px solid var(--pink)';
-                                            setTimeout(() => card.style.outline = '', 2000);
-                                            break;
-                                        }
+                                    const albumEl = discoList.querySelector(`[data-album-title="${CSS.escape(match.albumTitle.toLowerCase())}"]`);
+                                    if (albumEl) {
+                                        scrollToAlbum(albumEl);
+                                        albumEl.style.outline = '1px solid var(--pink)';
+                                        setTimeout(() => albumEl.style.outline = '', 2000);
                                     }
                                 }, 200);
                             }
                         }, 100);
-                    } else {
-                        artistPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
                 });
             });
@@ -2186,201 +2118,13 @@
             if (!e.target.closest('.search-container')) searchResults.classList.remove('open');
         });
 
-        // Rankings functions
-        function getFilteredRankings() {
-            let filtered = [...allRankings];
-
-            // Filter by genre (null = show all)
-            if (activeFilter) {
-                filtered = filtered.filter(a => a.genres.includes(activeFilter));
-            }
-
-            // Filter by year — artist must have released an album within 2 years
-            if (rankingsYearFilter) {
-                filtered = filtered.filter(a =>
-                    a.albumYears.some(y => Math.abs(y - rankingsYearFilter) <= 2)
-                );
-            }
-
-            filtered.sort((a, b) => b.score - a.score);
-            return filtered;
-        }
-
-        function renderWelcomeRankings() {
-            const container = document.getElementById('welcomeRankings');
-            if (!container) return;
-            const filtered = getFilteredRankings();
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="no-rankings">No artists found</div>';
-                return;
-            }
-            container.innerHTML = `
-                <div class="rankings-list">${filtered.map((artist, idx) => `
-                    <div class="ranking-row" data-artist-id="${artist.id}">
-                        <span class="ranking-rank ${idx < 3 ? 'top-3' : ''}">#${idx + 1}</span>
-                        <span class="ranking-name">${artist.name}</span>
-                        <div class="ranking-bar-container">
-                            <div class="ranking-bar" style="width: ${artist.score}%"></div>
-                        </div>
-                        <span class="ranking-score">${artist.score}</span>
-                    </div>
-                `).join('')}</div>
-            `;
-            container.querySelectorAll('.ranking-row').forEach(row => {
-                row.addEventListener('click', () => {
-                    const rankArtist = allRankings.find(a => a.id === row.dataset.artistId);
-                    if (!rankArtist) return;
-                    const genreId = rankArtist.genres[0];
-                    const subId = rankArtist.subgenres[0];
-                    const genre = musicData[genreId];
-                    if (!genre) return;
-                    const sub = genre.subgenres[subId];
-                    if (!sub) return;
-                    const artistObj = Object.values(sub.artists).find(a => a.name === rankArtist.name);
-                    if (artistObj) {
-                        activeFilter = genreId;
-                        selectedGenre = genreId;
-                        selectedSubgenre = subId;
-                        renderGenreTabs();
-                        renderGenreGroups();
-                        showDiscography(artistObj, genreId, subId);
-                    }
-                });
-            });
-        }
-
-        function renderRankings() {
-            // Rankings only show in welcome view (inline) — hide standalone section always
-            if (!activeFilter) {
-                document.getElementById('rankingsSection').style.display = 'none';
-                renderWelcomeRankings();
-                return;
-            }
-            // Genre selected — hide rankings entirely
-            document.getElementById('rankingsSection').style.display = 'none';
-
-            const filtered = getFilteredRankings();
-
-            // Update header
-            let genreLabel = activeFilter.toUpperCase();
-            rankingsGenreEl.textContent = genreLabel;
-            
-            // Update year tag
-            if (rankingsYearFilter) {
-                rankingsYearTag.textContent = `• ${rankingsYearFilter}`;
-                clearYearLabel.textContent = rankingsYearFilter;
-                clearYearBtn.classList.add('visible');
-            } else {
-                rankingsYearTag.textContent = '';
-                clearYearBtn.classList.remove('visible');
-            }
-            
-            // Update count
-            rankingsCount.textContent = `${filtered.length} artist${filtered.length !== 1 ? 's' : ''}`;
-            
-            // Render list
-            if (filtered.length === 0) {
-                rankingsList.innerHTML = '<div class="no-rankings">No artists found for this filter</div>';
-                return;
-            }
-            
-            rankingsList.innerHTML = filtered.map((artist, idx) => `
-                <div class="ranking-row" data-artist-id="${artist.id}">
-                    <span class="ranking-rank ${idx < 3 ? 'top-3' : ''}">#${idx + 1}</span>
-                    <span class="ranking-name">${artist.name}</span>
-                    <div class="ranking-bar-container">
-                        <div class="ranking-bar" style="width: ${artist.score}%"></div>
-                    </div>
-                    <span class="ranking-score">${artist.score}</span>
-                </div>
-            `).join('');
-            
-            // Add click handlers
-            rankingsList.querySelectorAll('.ranking-row').forEach(row => {
-                row.addEventListener('click', () => {
-                    const rankArtist = allRankings.find(a => a.id === row.dataset.artistId);
-                    if (!rankArtist) return;
-                    const genreId = rankArtist.genres[0];
-                    const subId = rankArtist.subgenres[0];
-                    const genre = musicData[genreId];
-                    if (!genre) return;
-                    const sub = genre.subgenres[subId];
-                    if (!sub) return;
-                    const artistObj = Object.values(sub.artists).find(a => a.name === rankArtist.name);
-                    if (artistObj) {
-                        activeFilter = genreId;
-                        selectedGenre = genreId;
-                        selectedSubgenre = subId;
-                        renderGenreTabs();
-                        renderGenreGroups();
-                        showDiscography(artistObj, genreId, subId);
-                    }
-                });
-            });
-        }
-
-        async function openArtistPopup(artist, rank) {
-            document.getElementById('popupArtistName').textContent = artist.name;
-            const genreLabel = artist.genres[0].charAt(0).toUpperCase() + artist.genres[0].slice(1);
-            document.getElementById('popupArtistRank').textContent = `#${rank} in ${genreLabel}`;
-            document.getElementById('popupArtistScore').textContent = `Score: ${artist.score}`;
-            document.getElementById('popupArtistYears').textContent = `${artist.active[0]}–${artist.active[1]}`;
-
-            // Look up real album data from the static catalog
-            const catalogArtist = await fetchArtistByName(artist.name);
-            const catalogAlbums = catalogArtist && catalogArtist.albums ? catalogArtist.albums : [];
-
-            const albumGrid = document.getElementById('popupAlbumGrid');
-            albumGrid.innerHTML = artist.albums.map(album => {
-                // Match to catalog album for cover art
-                const match = catalogAlbums.find(ca =>
-                    ca.title.toLowerCase() === album.title.toLowerCase() ||
-                    ca.release_year === album.year
-                );
-                const art = match ? (match.cover_art_small || match.cover_art_large) : null;
-                const artHtml = art
-                    ? `<div class="popup-album-art" style="background-image: url(${art}); background-size: cover; background-position: center;"></div>`
-                    : `<div class="popup-album-art">💿</div>`;
-
-                // Affiliate link — Amazon search for "artist album vinyl"
-                const amazonQuery = encodeURIComponent(`${artist.name} ${album.title} vinyl`);
-                const buyUrl = `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
-
-                return `
-                    <a href="${buyUrl}" target="_blank" rel="noopener" class="popup-album" style="text-decoration: none; color: inherit;">
-                        ${artHtml}
-                        <div class="popup-album-title">${album.title}</div>
-                        <div class="popup-album-year">${album.year}</div>
-                        <div class="popup-album-buy">Buy</div>
-                    </a>
-                `;
-            }).join('');
-
-            artistPopupOverlay.classList.add('open');
-        }
-
-        function closeArtistPopup() {
-            artistPopupOverlay.classList.remove('open');
-        }
-
-        // Popup event listeners
-        document.getElementById('popupClose').addEventListener('click', closeArtistPopup);
-        artistPopupOverlay.addEventListener('click', (e) => {
-            if (e.target === artistPopupOverlay) closeArtistPopup();
-        });
+        // Keyboard navigation
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') { closeArtistPopup(); closeArtistPanel(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+            if (e.key === 'Escape') { hideDiscography(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-            // Disable arrow keys when viewing a subgenre/artist or discography
-            if (selectedSubgenre || discoSection.style.display === 'block') return;
+            if (discoSection.style.display === 'block') return;
             if (e.key === 'ArrowLeft' && currentYear > MIN_YEAR) { yearSlider.value = currentYear - 1; updateYear(currentYear - 1); }
             if (e.key === 'ArrowRight' && currentYear < MAX_YEAR) { yearSlider.value = currentYear + 1; updateYear(currentYear + 1); }
-        });
-
-        // Clear year filter
-        clearYearBtn.addEventListener('click', () => {
-            rankingsYearFilter = null;
-            renderRankings();
         });
 
         // Discography section
@@ -2546,7 +2290,6 @@
         }
 
         function activateArtist(match, params = null) {
-            // Find the specific artist object and their latest album year
             let targetYear = match.year;
             let artistObj = null;
             const genre = musicData[match.genreId];
@@ -2561,26 +2304,15 @@
                 }
             }
 
-            // Navigate to that year
             if (targetYear && targetYear >= MIN_YEAR && targetYear <= MAX_YEAR) {
                 yearSlider.value = targetYear;
                 updateYear(targetYear);
             }
 
-            // Open the subgenre panel
-            activeFilter = match.genreId;
-            selectedGenre = match.genreId;
-            selectedSubgenre = match.subId;
-            showArtistsPanel(match.genreId, match.subId);
-            renderGenreTabs();
-            renderGenreGroups();
-
-            // Also open the discography for this specific artist
             const albumQuery = params ? params.get('album') : null;
             if (artistObj) {
                 setTimeout(async () => {
                     await showDiscography(artistObj, match.genreId, match.subId);
-                    // If album param provided, scroll to that specific album
                     if (albumQuery) {
                         const q = albumQuery.toLowerCase();
                         setTimeout(() => {
@@ -2593,10 +2325,6 @@
                         }, 300);
                     }
                 }, 150);
-            } else {
-                setTimeout(() => {
-                    artistPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 100);
             }
 
             return true;
@@ -2627,10 +2355,8 @@
         }
 
         function isNewReleasesDay() {
-            // TODO: remove override after testing
-            return true;
-            // const day = new Date().getDay(); // 0=Sun, 5=Fri, 6=Sat
-            // return day === 0 || day === 5 || day === 6;
+            const day = new Date().getDay(); // 0=Sun, 5=Fri, 6=Sat
+            return day === 0 || day === 5 || day === 6;
         }
 
         async function loadNewReleases() {
@@ -2658,12 +2384,8 @@
             // Sort A-Z by artist name
             releases.sort((a, b) => a.artist.localeCompare(b.artist));
 
-            // Show new releases below timeline, hide genre explorer content
+            // Show new releases section above year releases
             document.getElementById('newReleasesSection').style.display = '';
-            document.getElementById('genreTabs').style.display = 'none';
-            document.getElementById('genreGroups').style.display = 'none';
-            document.getElementById('artistPanel').style.display = 'none';
-            document.getElementById('rankingsSection').style.display = 'none';
 
             // Header
             const dateStr = data.date;
@@ -2746,9 +2468,7 @@
         // Initial render
         updateDecadeButtons();
         renderAlbumBars();
-        renderGenreTabs();
-        renderGenreGroups();
-        renderRankings();
+        renderYearReleases();
 
         // Check for new releases (Fri-Sun)
         loadNewReleases().then(data => {
