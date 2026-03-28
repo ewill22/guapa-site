@@ -589,53 +589,6 @@ export default function App() {
       <Nav />
       <Banner />
 
-      {/* Debug bar — shows widths of suspect elements on mobile */}
-      {(() => {
-        if (typeof window !== 'undefined' && window.innerWidth <= 900) {
-          const update = () => {
-            const bar = document.getElementById('__dbg');
-            if (!bar) return;
-            const vw = window.innerWidth;
-            const els = [
-              ['body', document.body],
-              ['html', document.documentElement],
-              ['main', document.querySelector('main')],
-              ['.dashboard-hero', document.querySelector('.dashboard-hero')],
-              ['.page-layout', document.querySelector('.page-layout')],
-              ['.counter', document.querySelector('.counter')],
-              ['.kpi-sidebar', document.querySelector('.kpi-sidebar')],
-              ['.blurbs-section', document.querySelector('.blurbs-section')],
-              ['.ge', document.querySelector('.ge')],
-              ['.ge-subgenres', document.querySelector('.ge-subgenres')],
-              ['.ge-tabs', document.querySelector('.ge-tabs')],
-              ['.ge-disco-body', document.querySelector('.ge-disco-body')],
-              ['.counter-timeline', document.querySelector('.counter-timeline')],
-              ['.world-timeline', document.querySelector('.world-timeline')],
-              ['.counter-search-footer', document.querySelector('.counter-search-footer')],
-              ['.ge-sub-legend', document.querySelector('.ge-sub-legend')],
-            ];
-            bar.innerHTML = `<b>vw:${vw}</b> ` + els.map(([name, el]) => {
-              if (!el) return null;
-              const w = el.getBoundingClientRect().width;
-              const over = w > vw;
-              return `<span style="color:${over ? '#ff4444' : '#7ec89b'}">${name}:${Math.round(w)}</span>`;
-            }).filter(Boolean).join(' | ');
-          };
-          setTimeout(update, 1000);
-          setTimeout(update, 3000);
-          setTimeout(update, 6000);
-        }
-        return (
-          <div id="__dbg" style={{
-            position: 'fixed', bottom: 0, left: 0, right: 0,
-            background: 'rgba(0,0,0,0.9)', color: '#fff',
-            fontSize: '10px', padding: '4px 8px', zIndex: 9999,
-            fontFamily: 'monospace', overflowX: 'auto', whiteSpace: 'nowrap',
-            display: window?.innerWidth <= 900 ? 'block' : 'none',
-          }} />
-        );
-      })()}
-
       <main>
         <section className="dashboard-hero">
 
