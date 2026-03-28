@@ -1141,6 +1141,7 @@
                 </section>
             </div>
         </div>
+        <button class="back-to-top" id="backToTop" aria-label="Back to top">&uarr;</button>
     </main>
 
 
@@ -2131,6 +2132,18 @@
 
         // Discography section
         const discoSection = document.getElementById('discographySection');
+
+        // Back to top button — show when scrolled down, hide when disco is open
+        const backToTop = document.getElementById('backToTop');
+        backToTop.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.addEventListener('scroll', () => {
+            const discoOpen = discoSection.style.display === 'block';
+            if (!discoOpen && window.scrollY > 400) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        }, { passive: true });
         const discoList = document.getElementById('discoList');
         let activeDiscoArtist = null;
 

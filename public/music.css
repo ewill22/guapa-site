@@ -711,4 +711,49 @@
     .music-embeds-grid {
         grid-template-columns: 1fr;
     }
+
+    .back-to-top {
+        width: 36px;
+        height: 36px;
+        background: var(--gray-900);
+        border-color: var(--gray-700);
+    }
+}
+
+/* Back to top button */
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--gray-800);
+    background: transparent;
+    color: var(--gray-400);
+    font-size: 1rem;
+    cursor: pointer;
+    z-index: 59;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-family: inherit;
+    padding: 0;
+}
+
+.back-to-top.visible {
+    display: flex;
+}
+
+@media (hover: hover) {
+    .back-to-top:hover {
+        border-color: var(--pink);
+        color: var(--pink);
+    }
+}
+
+.back-to-top:active {
+    border-color: var(--pink);
+    color: var(--pink);
 }
