@@ -26,10 +26,10 @@
   background: transparent;
   border: 1px solid var(--gray-800);
   border-radius: 4px;
-  padding: 9px 0;
+  padding: 9px 14px;
   font-family: var(--font-main);
-  font-size: 0.78rem;
-  flex: 1;
+  font-size: 0.82rem;
+  flex: 0 0 auto;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
