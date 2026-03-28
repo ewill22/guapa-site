@@ -146,6 +146,7 @@ function buildMergedData(catalog, editorialData, editorial) {
     // Add artist — use CSV icon/description if authored
     const ak = subKey(catArtist.name);
     const albumCount = (catArtist.albums || []).length;
+    const years = (catArtist.albums || []).map(a => a.release_year).filter(Boolean);
     merged[gk].subgenres[sk].artists[ak] = {
       name: catArtist.name,
       icon: csvEntry.icon || '',
@@ -155,7 +156,33 @@ function buildMergedData(catalog, editorialData, editorial) {
         year: a.release_year,
       })),
       _albumCount: albumCount,
+      _beginYear: years.length ? Math.min(...years) : null,
+      _endYear: years.length ? Math.max(...years) : null,
     };
+  }
+
+  // Enrich editorial artists with catalog year ranges
+  const catalogByName = {};
+  for (const ca of Object.values(catalog)) {
+    catalogByName[ca.name.toLowerCase()] = ca;
+  }
+  for (const genre of Object.values(merged)) {
+    for (const sub of Object.values(genre.subgenres)) {
+      for (const artist of Object.values(sub.artists)) {
+        if (artist._beginYear != null) continue; // already set (catalog-only artist)
+        const ca = catalogByName[artist.name.toLowerCase()];
+        if (ca) {
+          const years = (ca.albums || []).map(a => a.release_year).filter(Boolean);
+          artist._beginYear = years.length ? Math.min(...years) : null;
+          artist._endYear = years.length ? Math.max(...years) : null;
+        } else {
+          // Fall back to editorial album years
+          const years = (artist.albums || []).map(a => a.year).filter(Boolean);
+          artist._beginYear = years.length ? Math.min(...years) : null;
+          artist._endYear = years.length ? Math.max(...years) : null;
+        }
+      }
+    }
   }
 
   return merged;
@@ -319,7 +346,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
   // Genre tabs with visible subgenre counts
   const genreTabs = useMemo(() => {
     return Object.entries(mergedData).map(([id, genre]) => {
-      const visibleCount = Object.values(genre.subgenres).filter(s => isSubVisible(s, year)).length;
+      const visibleCount = Object.values(genre.subgenres).filter(s => isSubVisible(s, year) && Object.values(s.artists).some(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear))).length;
       return { id, name: genre.name, icon: genre.icon, visibleCount };
     });
   }, [year, isSubVisible, mergedData]);
@@ -331,19 +358,25 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     if (!genre) return [];
     return Object.entries(genre.subgenres)
       .filter(([, sub]) => isSubVisible(sub, year))
+      .filter(([, sub]) => Object.values(sub.artists).some(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)))
       .map(([id, sub]) => ({
         id, ...sub,
         status: sub.status[year] === 'hidden' ? 'fading' : sub.status[year]
       }));
   }, [activeGenre, year, isSubVisible, mergedData]);
 
-  // Artists for selected subgenre
+  // Artists for selected subgenre — filtered to those active in the selected year
   const artists = useMemo(() => {
     if (!activeGenre || !selectedSub) return [];
     const sub = mergedData[activeGenre]?.subgenres[selectedSub];
     if (!sub) return [];
-    return Object.entries(sub.artists).map(([id, a]) => ({ id, ...a }));
-  }, [activeGenre, selectedSub, mergedData]);
+    return Object.entries(sub.artists)
+      .map(([id, a]) => ({ id, ...a }))
+      .filter(a => {
+        if (a._beginYear == null) return true; // no year data, show anyway
+        return year >= a._beginYear && year <= a._endYear;
+      });
+  }, [activeGenre, selectedSub, mergedData, year]);
 
   const closeAll = useCallback(() => {
     setActiveGenre(null);
@@ -480,14 +513,14 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
               <div className="ge-sub-header">
                 {sub.icon && <span className="ge-sub-icon">{sub.icon}</span>}
                 <span className="ge-sub-name">{sub.name}</span>
-                <span className="ge-sub-count">{Object.keys(sub.artists).length}</span>
+                <span className="ge-sub-count">{Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).length}</span>
               </div>
               <div className="ge-sub-artists">
-                {Object.values(sub.artists).slice(0, 6).map(a => (
+                {Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).slice(0, 6).map(a => (
                   <span key={a.name}>{a.name}</span>
                 ))}
-                {Object.keys(sub.artists).length > 6 && (
-                  <span className="ge-sub-more">+{Object.keys(sub.artists).length - 6} more</span>
+                {Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).length > 6 && (
+                  <span className="ge-sub-more">+{Object.values(sub.artists).filter(a => a._beginYear == null || (year >= a._beginYear && year <= a._endYear)).length - 6} more</span>
                 )}
               </div>
             </div>
