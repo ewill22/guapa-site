@@ -923,11 +923,7 @@ html {
   .page-main {
     display: contents;
   }
-  .counter {
-    display: flex;
-    flex-direction: column;
-  }
-  .counter-top, .counter-left, .counter-right, .counter-bottom {
+  .counter, .counter-top, .counter-left, .counter-right, .counter-bottom {
     display: contents;
   }
   /* Clamp all direct children that emerge from display:contents */
