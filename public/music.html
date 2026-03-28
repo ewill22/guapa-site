@@ -1971,7 +1971,7 @@
         function updateYear(year) {
             currentYear = parseInt(year);
             currentYearDisplay.textContent = currentYear;
-            try { localStorage.setItem('guapa_playing_year', String(currentYear)); } catch {}
+            try { sessionStorage.setItem('guapa_playing_year', String(currentYear)); } catch {}
             updateDecadeButtons();
             renderAlbumBars();
             renderYearReleases();
@@ -2334,7 +2334,7 @@
         // Set initial year: use playing year from main page if available, otherwise random
         if (!new URLSearchParams(window.location.search).get('artist')) {
             let initYear;
-            try { initYear = parseInt(localStorage.getItem('guapa_playing_year')); } catch {}
+            try { initYear = parseInt(sessionStorage.getItem('guapa_playing_year')); } catch {}
             if (!initYear || initYear < MIN_YEAR || initYear > MAX_YEAR) {
                 initYear = MIN_YEAR + Math.floor(Math.random() * (MAX_YEAR - MIN_YEAR + 1));
             }

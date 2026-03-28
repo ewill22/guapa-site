@@ -321,7 +321,7 @@ const GUAPA_COLOR = '#f0c014';
 export default function App() {
   const [lens, setLens] = useState('music');
   const [year, _setYear] = useState(() => {
-    try { const y = parseInt(localStorage.getItem('guapa_playing_year')); if (y >= 1960 && y <= 2026) return y; } catch {}
+    try { const y = parseInt(sessionStorage.getItem('guapa_playing_year')); if (y >= 1960 && y <= 2026) return y; } catch {}
     return null;
   });
   const yearPinned = useRef(year !== null); // true once user manually moves year (or loaded from storage)
@@ -330,12 +330,12 @@ export default function App() {
     if (typeof y === 'function') {
       _setYear(prev => {
         const next = y(prev);
-        if (next != null) try { localStorage.setItem('guapa_playing_year', String(next)); } catch {}
+        if (next != null) try { sessionStorage.setItem('guapa_playing_year', String(next)); } catch {}
         return next;
       });
     } else {
       _setYear(y);
-      if (y != null) try { localStorage.setItem('guapa_playing_year', String(y)); } catch {}
+      if (y != null) try { sessionStorage.setItem('guapa_playing_year', String(y)); } catch {}
     }
   }, []);
   const [devDay, setDevDay] = useState(DEV_DAYS.length - 1);
