@@ -2456,8 +2456,11 @@
                 const meta = [trackCount ? `${trackCount} tracks` : '', runtime].filter(Boolean).join(' · ');
 
                 // Action links
+                const spotifyQuery = encodeURIComponent(`${rel.artist} ${rel.album}`);
+                const spotifyUrl = `https://open.spotify.com/search/${spotifyQuery}`;
                 const amazonQuery = encodeURIComponent(`${rel.artist} ${rel.album} vinyl`);
-                let actions = `<a href="https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20" target="_blank" rel="noopener" class="disco-link disco-link--buy">Buy Vinyl</a>`;
+                let actions = `<a href="${spotifyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--spotify">Spotify</a>`;
+                actions += `<a href="https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20" target="_blank" rel="noopener" class="disco-link disco-link--buy">Buy Vinyl</a>`;
 
                 // Tracklist
                 let tracklistHtml = '';
