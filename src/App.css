@@ -17,7 +17,29 @@ html {
 }
 
 /* ========================================
-   COFFEE SHOP COUNTER (L-shape layout)
+   PAGE LAYOUT — sidebar + main
+======================================== */
+.page-layout {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.kpi-sidebar {
+  position: sticky;
+  top: 60px;
+  width: 200px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.page-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ========================================
+   COFFEE SHOP COUNTER
 ======================================== */
 .counter {
   border: 1px solid var(--gray-800);
@@ -26,22 +48,31 @@ html {
   box-sizing: border-box;
   max-width: 100%;
 }
-/* Top row: tiles + timeline side by side */
+
 .counter-top {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 240px 1fr;
   min-height: 0;
   overflow: hidden;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  border-radius: var(--radius-lg);
 }
 
-/* KPI Tiles — left column */
+/* Left column: welcome + search + albums */
+.counter-left {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--gray-800);
+}
+
+/* KPI Tiles — sidebar */
 .counter-tiles {
   display: flex;
   flex-direction: column;
   gap: 1px;
   background: var(--gray-800);
-  border-right: 1px solid var(--gray-800);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
 .kpi-tile {
@@ -240,16 +271,9 @@ html {
   display: none;
 }
 
-/* Bottom row: greeting + coffee bean, 50/50 */
-.counter-bottom {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  border-top: 1px solid var(--gray-800);
-}
-
 .counter-greeting {
   padding: var(--space-md) var(--space-lg);
-  border-right: 1px solid var(--gray-800);
+  border-bottom: 1px solid var(--gray-800);
 }
 .counter-greeting h2 {
   font-family: var(--font-serif);
@@ -405,10 +429,10 @@ html {
   max-width: 150px;
 }
 
-/* Counter Album Tiles — 4x2 grid in counter-bottom */
+/* Counter Album Tiles — in counter-left column */
 .counter-albums {
   padding: var(--space-md) var(--space-lg);
-  border-left: 1px solid var(--gray-800);
+  border-top: 1px solid var(--gray-800);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -859,20 +883,32 @@ html {
    RESPONSIVE
 ======================================== */
 @media (max-width: 900px) {
-  /* Flatten counter into single column for mobile reorder */
+  /* Flatten everything into single column for mobile */
+  .page-layout {
+    flex-direction: column;
+    gap: 0;
+  }
+  .kpi-sidebar {
+    position: static;
+    width: 100%;
+    order: 3;
+  }
+  .page-main {
+    display: contents;
+  }
   .counter {
     display: flex;
     flex-direction: column;
   }
-  .counter-top, .counter-bottom {
+  .counter-top, .counter-left {
     display: contents;
   }
 
   /* Mobile order: greeting → search → tiles → albums → timeline → legend */
   .counter-greeting       { order: 1; }
   .counter-search         { order: 2; }
-  .counter-bean           { order: 2; } /* same slot as search (only one shows) */
-  .counter-tiles          { order: 3; }
+  .counter-bean           { order: 2; }
+  .kpi-sidebar            { order: 3; }
   .counter-albums         { order: 4; }
   .counter-timeline       { order: 5; }
   .counter-search-footer  { order: 6; }
@@ -888,7 +924,8 @@ html {
   }
   .counter-tiles {
     flex-direction: row;
-    border-right: none;
+    border: none;
+    border-radius: 0;
     border-bottom: 1px solid var(--gray-800);
   }
   .kpi-tile {

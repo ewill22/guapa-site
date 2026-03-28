@@ -593,14 +593,11 @@ export default function App() {
       <main>
         <section className="dashboard-hero">
 
-          {/* === Coffee Shop Counter (L-shape) === */}
-          <div className="counter">
+          <div className="page-layout">
 
-            {/* Top row: KPI tiles (left) + Timeline (right) */}
-            <div className="counter-top">
-
-              {/* KPI Tiles — stacked vertically: Artist, Album, Song */}
-              <div className="counter-tiles">
+          {/* KPI Sidebar — sticky, scrolls with you */}
+          <aside className="kpi-sidebar">
+            <div className="counter-tiles">
                 <div className={`kpi-tile kpi-tile--artist${nowPlaying?.isAux ? ' kpi-tile--aux-playing' : ''}`} style={{ cursor: dailyArtist ? 'pointer' : 'default' }} onClick={() => {
                   const artist = nowPlaying?.isAux ? nowPlaying.artist : dailyArtist?.artist;
                   if (artist) scrollToExplorer(artist);
@@ -688,9 +685,104 @@ export default function App() {
                     </div>
                   </>
                 )}
+            </div>
+          </aside>
+
+          {/* Main content — counter + genre explorer */}
+          <div className="page-main">
+          <div className="counter">
+            <div className="counter-top">
+
+              {/* Left column: Welcome + Search + Albums */}
+              <div className="counter-left">
+                <div className="counter-greeting">
+                  <h2>Welcome to Guapa</h2>
+                  <p>
+                    This is the coffee shop. Sit down, look around.
+                    Browse the <a href={`${base}music.html`}>record collection</a>,
+                    explore <a href={`${base}coffee.html`}>where the beans come from</a>,
+                    or check out what we're <a href={`${base}data-solutions.html`}>building with data</a>.
+                  </p>
+                  <p className="counter-greeting-sub">Use the timeline to travel through the years. Switch lenses to see music, coffee, or economics through time.</p>
+                </div>
+                {lens === 'music' ? (
+                  <div className="counter-search" ref={searchRef}>
+                    <span className="kpi-label">Search</span>
+                    <input
+                      type="text"
+                      className="counter-search-input"
+                      placeholder="Artists, albums, songs..."
+                      value={searchQuery}
+                      onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+                      onFocus={() => setSearchOpen(true)}
+                    />
+                    {searchOpen && searchResults.length > 0 && (
+                      <div className="counter-search-results">
+                        {searchResults.map((r, i) => (
+                          <div key={i} className={`counter-search-item${nowPlaying?.auxCord ? ' counter-search-item--aux' : ''}`} onClick={() => {
+                            setSearchQuery('');
+                            setSearchOpen(false);
+                            const albumTarget = r.type === 'album' ? r.name : (r.album || null);
+                            scrollToExplorer(r.artist || r.name, albumTarget);
+                          }}>
+                            <span className="counter-search-icon">{r.type === 'artist' ? '🎤' : r.type === 'album' ? '💿' : '♫'}</span>
+                            <span className="counter-search-type">{r.type}</span>
+                            <span className="counter-search-name">{r.name}</span>
+                            {r.meta && <span className="counter-search-meta">{r.meta}</span>}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="counter-bean">
+                    <span className="kpi-label">Bean of the Moment</span>
+                    <span className="bean-name">{dailyBean.name}</span>
+                    <span className="bean-origin">{dailyBean.origin}</span>
+                    <span className="bean-notes">{dailyBean.notes}</span>
+                    <span className="bean-process">{dailyBean.process} process</span>
+                  </div>
+                )}
+                {lens === 'music' && nowPlaying?.isAux && nowPlaying.cover ? (
+                  <div className="counter-albums counter-aux-feature" onClick={() => scrollToExplorer(nowPlaying.artist, nowPlaying.album)}>
+                    <div className="aux-feature-art" style={{ backgroundImage: `url(${nowPlaying.cover})` }} />
+                    <div className="aux-feature-info">
+                      <span className="kpi-label">Now on Aux Cord</span>
+                      <span className="aux-feature-album">{nowPlaying.album}</span>
+                      <span className="aux-feature-year">{nowPlaying.year}</span>
+                      <p className="aux-feature-desc">
+                        {editorial?.get(normalizeName(nowPlaying.artist))?.description || `Spinning ${nowPlaying.artist}'s ${nowPlaying.year} catalog on the aux cord.`}
+                      </p>
+                    </div>
+                  </div>
+                ) : lens === 'music' && yearAlbums.length > 0 ? (
+                  <div className="counter-albums">
+                    <span className="kpi-label">Releases from {year}</span>
+                    <div className="counter-albums-grid">
+                      {yearAlbums.slice(0, 8).map((a, i) => (
+                        <div key={i} className="counter-album-tile" onClick={() => scrollToExplorer(a.artist, a.title)}>
+                          <div className="counter-album-art" style={a.cover ? { backgroundImage: `url(${a.cover})` } : {}}>
+                            {!a.cover && <span className="counter-album-no-art">{a.title.charAt(0)}</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+                {lens === 'music' && (
+                  <div className="counter-search-footer">
+                    <div className="ge-sub-legend">
+                      <span className="ge-sub-legend-item ge-sub-legend--emerging">Emerging</span>
+                      <span className="ge-sub-legend-item ge-sub-legend--rising">Rising</span>
+                      <span className="ge-sub-legend-item ge-sub-legend--peak">Peak</span>
+                      <span className="ge-sub-legend-item ge-sub-legend--fading">Fading</span>
+                    </div>
+                    <p className="ge-pick-genre">Explore any genre below</p>
+                  </div>
+                )}
               </div>
 
-              {/* Timeline — shifted right */}
+              {/* Timeline — right column */}
               <div className="counter-timeline">
                 <div className="world-timeline" style={lens ? { borderColor: `${lc}30` } : {}}>
 
@@ -813,95 +905,6 @@ export default function App() {
 
             </div>
 
-            {/* Bottom row: Greeting + Coffee Bean + Album Tiles */}
-            <div className="counter-bottom">
-              <div className="counter-greeting">
-                <h2>Welcome to Guapa</h2>
-                <p>
-                  This is the coffee shop. Sit down, look around.
-                  Browse the <a href={`${base}music.html`}>record collection</a>,
-                  explore <a href={`${base}coffee.html`}>where the beans come from</a>,
-                  or check out what we're <a href={`${base}data-solutions.html`}>building with data</a>.
-                </p>
-                <p className="counter-greeting-sub">Use the timeline above to travel through the years. Switch lenses to see music, coffee, or economics through time.</p>
-              </div>
-              {lens === 'music' ? (
-                <div className="counter-search" ref={searchRef}>
-                  <span className="kpi-label">Search</span>
-                  <input
-                    type="text"
-                    className="counter-search-input"
-                    placeholder="Artists, albums, songs..."
-                    value={searchQuery}
-                    onChange={e => { setSearchQuery(e.target.value); setSearchOpen(true); }}
-                    onFocus={() => setSearchOpen(true)}
-                  />
-                  {searchOpen && searchResults.length > 0 && (
-                    <div className="counter-search-results">
-                      {searchResults.map((r, i) => (
-                        <div key={i} className={`counter-search-item${nowPlaying?.auxCord ? ' counter-search-item--aux' : ''}`} onClick={() => {
-                          setSearchQuery('');
-                          setSearchOpen(false);
-                          const albumTarget = r.type === 'album' ? r.name : (r.album || null);
-                          scrollToExplorer(r.artist || r.name, albumTarget);
-                        }}>
-                          <span className="counter-search-icon">{r.type === 'artist' ? '🎤' : r.type === 'album' ? '💿' : '♫'}</span>
-                          <span className="counter-search-type">{r.type}</span>
-                          <span className="counter-search-name">{r.name}</span>
-                          {r.meta && <span className="counter-search-meta">{r.meta}</span>}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="counter-bean">
-                  <span className="kpi-label">Bean of the Moment</span>
-                  <span className="bean-name">{dailyBean.name}</span>
-                  <span className="bean-origin">{dailyBean.origin}</span>
-                  <span className="bean-notes">{dailyBean.notes}</span>
-                  <span className="bean-process">{dailyBean.process} process</span>
-                </div>
-              )}
-              {lens === 'music' && (
-                <div className="counter-search-footer">
-                  <div className="ge-sub-legend">
-                    <span className="ge-sub-legend-item ge-sub-legend--emerging">Emerging</span>
-                    <span className="ge-sub-legend-item ge-sub-legend--rising">Rising</span>
-                    <span className="ge-sub-legend-item ge-sub-legend--peak">Peak</span>
-                    <span className="ge-sub-legend-item ge-sub-legend--fading">Fading</span>
-                  </div>
-                  <p className="ge-pick-genre">Explore any genre below</p>
-                </div>
-              )}
-              {lens === 'music' && nowPlaying?.isAux && nowPlaying.cover ? (
-                <div className="counter-albums counter-aux-feature" onClick={() => scrollToExplorer(nowPlaying.artist, nowPlaying.album)}>
-                  <div className="aux-feature-art" style={{ backgroundImage: `url(${nowPlaying.cover})` }} />
-                  <div className="aux-feature-info">
-                    <span className="kpi-label">Now on Aux Cord</span>
-                    <span className="aux-feature-album">{nowPlaying.album}</span>
-                    <span className="aux-feature-year">{nowPlaying.year}</span>
-                    <p className="aux-feature-desc">
-                      {editorial?.get(normalizeName(nowPlaying.artist))?.description || `Spinning ${nowPlaying.artist}'s ${nowPlaying.year} catalog on the aux cord.`}
-                    </p>
-                  </div>
-                </div>
-              ) : lens === 'music' && yearAlbums.length > 0 ? (
-                <div className="counter-albums">
-                  <span className="kpi-label">Releases from {year}</span>
-                  <div className="counter-albums-grid">
-                    {yearAlbums.slice(0, 8).map((a, i) => (
-                      <div key={i} className="counter-album-tile" onClick={() => scrollToExplorer(a.artist, a.title)}>
-                        <div className="counter-album-art" style={a.cover ? { backgroundImage: `url(${a.cover})` } : {}}>
-                          {!a.cover && <span className="counter-album-no-art">{a.title.charAt(0)}</span>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-            </div>
-
           </div>
 
           {/* Blurbs — below the counter */}
@@ -993,6 +996,9 @@ export default function App() {
               )}
             </div>
           )}
+
+          </div>{/* close page-main */}
+          </div>{/* close page-layout */}
 
         </section>
 
