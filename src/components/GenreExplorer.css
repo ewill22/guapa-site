@@ -508,7 +508,7 @@
   color: var(--gray-400);
   line-height: 1.5;
   margin: 0;
-  text-align: right;
+  text-align: left;
 }
 
 /* Action Links */
