@@ -559,17 +559,6 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
               {mergedData[activeGenre]?.name} — SUBGENRE {(mergedData[activeGenre]?.subgenres[selectedSub]?.status[year] === 'hidden' ? 'FADING' : mergedData[activeGenre]?.subgenres[selectedSub]?.status[year]?.toUpperCase())} — {year}
             </span>
           </div>
-          {discoArtist && (
-            <div className="ge-artist-preview">
-              {discoArtist.description && <p className="ge-artist-preview-desc">{discoArtist.description}</p>}
-              {(discoArtist.url_spotify || discoArtist.url_wikipedia) && (
-                <div className="ge-artist-preview-links">
-                  {discoArtist.url_spotify && <a href={discoArtist.url_spotify} target="_blank" rel="noopener" className="ge-link ge-link--spotify" onClick={e => e.stopPropagation()}>Spotify</a>}
-                  {discoArtist.url_wikipedia && <a href={discoArtist.url_wikipedia} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>}
-                </div>
-              )}
-            </div>
-          )}
           <div className="ge-artists-grid">
             {artists.map(artist => (
               <div
@@ -598,6 +587,13 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                 {discoArtist.name}
                 {discoAlbums && <span className="ge-disco-album-count">{discoAlbums.length} album{discoAlbums.length !== 1 ? 's' : ''}</span>}
               </h2>
+              {discoArtist.description && <p className="ge-disco-bio">{discoArtist.description}</p>}
+              {(discoArtist.url_spotify || discoArtist.url_wikipedia) && (
+                <div className="ge-disco-links">
+                  {discoArtist.url_spotify && <a href={discoArtist.url_spotify} target="_blank" rel="noopener" className="ge-link ge-link--spotify">Spotify</a>}
+                  {discoArtist.url_wikipedia && <a href={discoArtist.url_wikipedia} target="_blank" rel="noopener" className="ge-link ge-link--wiki">Wiki</a>}
+                </div>
+              )}
               {auxCordOpen && onAuxPick && (
                 <button className="ge-aux-btn" onClick={() => { onAuxPick(discoArtist.name); window.scrollTo({ top: 0, behavior: 'smooth' }); const catKey = catalog && Object.keys(catalog).find(k => catalog[k].name.toLowerCase() === discoArtist.name.toLowerCase()); const sorted = catKey ? [...(catalog[catKey].albums || [])].map((a, i) => ({ ...a, _i: i })).sort((x, y) => (x.release_year || 0) - (y.release_year || 0) || x._i - y._i) : []; const a = sorted[0]; const sp = a?.url_spotify || (a?.spotify_id ? `https://open.spotify.com/album/${a.spotify_id}` : null); if (sp) window.open(sp, '_blank'); }}>
                   ▶ Play on Aux Cord

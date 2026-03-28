@@ -272,34 +272,6 @@
   gap: 14px;
 }
 
-/* Selected artist preview — description + links, shown at top of panel */
-.ge-artist-preview {
-  margin-bottom: 14px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--gray-800);
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.ge-artist-preview-desc {
-  font-size: 0.8rem;
-  color: var(--gray-400);
-  margin: 0;
-  line-height: 1.5;
-  font-family: var(--font-serif);
-  font-style: italic;
-  flex: 1;
-  min-width: 200px;
-}
-
-.ge-artist-preview-links {
-  display: flex;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
 .ge-artist-card {
   background: transparent;
   border: 1px solid var(--gray-800);
@@ -389,6 +361,12 @@
   margin: 0;
   font-family: var(--font-serif);
   font-style: italic;
+}
+
+.ge-disco-links {
+  display: flex;
+  gap: 5px;
+  margin-top: 2px;
 }
 
 .ge-disco-album-count {
