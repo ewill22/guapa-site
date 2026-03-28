@@ -596,10 +596,11 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
               )}
               {auxCordOpen && onAuxPick && (
                 <button className="ge-aux-btn" onClick={() => {
-                  // Open Spotify for earliest album before triggering aux (popup blockers need sync window.open)
+                  // Open Spotify for first album with tracks (matches what aux will actually play)
                   if (discoAlbums?.length) {
-                    const earliest = discoAlbums[discoAlbums.length - 1];
-                    const sp = earliest.url_spotify || (earliest.spotify_id ? `https://open.spotify.com/album/${earliest.spotify_id}` : null);
+                    const sorted = [...discoAlbums].sort((a, b) => (a.release_year || 0) - (b.release_year || 0));
+                    const first = sorted.find(a => a.tracks?.length > 0) || sorted[0];
+                    const sp = first.url_spotify || (first.spotify_id ? `https://open.spotify.com/album/${first.spotify_id}` : null);
                     if (sp) window.open(sp, '_blank');
                   }
                   onAuxPick(discoArtist.name);
