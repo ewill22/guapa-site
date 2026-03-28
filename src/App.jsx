@@ -320,7 +320,14 @@ const GUAPA_COLOR = '#f0c014';
 
 export default function App() {
   const [lens, setLens] = useState('music');
-  const [year, setYear] = useState(null);
+  const [year, _setYear] = useState(() => {
+    try { const y = parseInt(localStorage.getItem('guapa_playing_year')); if (y >= 1960 && y <= 2026) return y; } catch {}
+    return null;
+  });
+  const setYear = useCallback((y) => {
+    _setYear(y);
+    if (y != null) try { localStorage.setItem('guapa_playing_year', String(y)); } catch {}
+  }, []);
   const [devDay, setDevDay] = useState(DEV_DAYS.length - 1);
   const [catalog, setCatalog] = useState(null);
   const [editorial, setEditorial] = useState(null);
@@ -475,15 +482,12 @@ export default function App() {
       if (prevAlbumRef.current !== key) {
         setYear(nowPlaying.year);
         prevAlbumRef.current = key;
-        // Persist year for record store
-        try { localStorage.setItem('guapa_playing_year', String(nowPlaying.year)); } catch {}
       }
     } else if (nowPlaying.auxCord) {
       // Aux cord open (not playing) — random year
       if (prevAlbumRef.current !== '__aux__') {
         setYear(randYear());
         prevAlbumRef.current = '__aux__';
-        try { localStorage.removeItem('guapa_playing_year'); } catch {}
       }
     }
   }, [nowPlaying]);

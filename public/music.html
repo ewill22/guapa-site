@@ -1971,6 +1971,7 @@
         function updateYear(year) {
             currentYear = parseInt(year);
             currentYearDisplay.textContent = currentYear;
+            try { localStorage.setItem('guapa_playing_year', String(currentYear)); } catch {}
             updateDecadeButtons();
             renderAlbumBars();
             renderYearReleases();
