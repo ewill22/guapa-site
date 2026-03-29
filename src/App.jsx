@@ -874,7 +874,7 @@ export default function App() {
                   </div>
                 </div>
               ) : (
-                <div className="counter-bean">
+                <div className="counter-bean counter-roaster">
                   <span className="kpi-label">Issue of the Moment</span>
                   <span className="bean-name" style={{ color: 'var(--green, #7ec89b)' }}>Oil</span>
                   <span className="bean-origin">Global commodity, priced in USD/barrel</span>

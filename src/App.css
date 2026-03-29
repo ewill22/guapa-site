@@ -548,13 +548,7 @@ html {
 /* Counter Roaster — replaces bean in coffee lens */
 .counter-roaster {
   grid-column: 1 / -1;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 16px;
-}
-.counter-roaster .bean-notes {
-  flex: 1 1 100%;
+  align-items: flex-start;
 }
 .counter-roaster-links {
   display: flex;
