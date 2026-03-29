@@ -545,6 +545,30 @@ html {
   margin-top: var(--space-sm);
 }
 
+/* Counter Roaster — replaces bean in coffee lens */
+.counter-roaster-links {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  margin-top: 4px;
+}
+.counter-roaster-link {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #c89b6a;
+  border: 1px solid #c89b6a;
+  padding: 2px 10px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+@media (hover: hover) {
+  .counter-roaster-link:hover { background: #c89b6a; color: var(--black); }
+}
+.counter-roaster-link:active { background: #c89b6a; color: var(--black); }
+
 /* Counter Search — replaces bean in music lens */
 .counter-search {
   padding: var(--space-md) var(--space-lg);
