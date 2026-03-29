@@ -277,22 +277,6 @@ function getAuxNowPlaying(auxSchedule) {
   return { auxCord: false, isAux: true, ...auxSchedule.schedule[0], progress: 0, trackElapsedMs: 0, albumProgress: 0 };
 }
 
-// Coffee beans — rotates daily (shown for non-coffee, non-music lenses)
-const COFFEE_BEANS = [
-  { name: 'Yirgacheffe', origin: 'Ethiopia', notes: 'Floral, bright citrus, tea-like body', process: 'Washed' },
-  { name: 'Huehuetenango', origin: 'Guatemala', notes: 'Chocolate, stone fruit, full body', process: 'Washed' },
-  { name: 'Geisha', origin: 'Panama', notes: 'Jasmine, bergamot, silky mouthfeel', process: 'Natural' },
-  { name: 'Sidamo', origin: 'Ethiopia', notes: 'Blueberry, wine-like, complex', process: 'Natural' },
-  { name: 'Tarrazú', origin: 'Costa Rica', notes: 'Honey, citrus, clean finish', process: 'Honey' },
-  { name: 'Cerrado', origin: 'Brazil', notes: 'Nutty, caramel, low acidity', process: 'Natural' },
-  { name: 'Kintamani', origin: 'Bali', notes: 'Citrus, brown sugar, smooth', process: 'Wet-hulled' },
-];
-
-function getDailyBean() {
-  const today = getTodayEST();
-  const seed = hashStr(today + 'bean');
-  return COFFEE_BEANS[seed % COFFEE_BEANS.length];
-}
 
 // Pull albums from catalog for a given year, shuffled by date seed
 function getAlbumsForYear(catalog, year, editorial) {
@@ -363,7 +347,7 @@ export default function App() {
   const dailyArtist = useMemo(() => (catalog && editorial) ? getDailyArtist(catalog, editorial) : null, [catalog, editorial]);
   const [nowPlaying, setNowPlaying] = useState(null);
   const [auxSchedule, setAuxSchedule] = useState(null);
-  const dailyBean = useMemo(() => getDailyBean(), []);
+
   const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year, editorial), [catalog, year, editorial]);
   const [deepLink, setDeepLink] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -891,11 +875,11 @@ export default function App() {
                 </div>
               ) : (
                 <div className="counter-bean">
-                  <span className="kpi-label">Bean of the Moment</span>
-                  <span className="bean-name">{dailyBean.name}</span>
-                  <span className="bean-origin">{dailyBean.origin}</span>
-                  <span className="bean-notes">{dailyBean.notes}</span>
-                  <span className="bean-process">{dailyBean.process} process</span>
+                  <span className="kpi-label">Issue of the Moment</span>
+                  <span className="bean-name" style={{ color: 'var(--green, #7ec89b)' }}>Oil</span>
+                  <span className="bean-origin">Global commodity, priced in USD/barrel</span>
+                  <span className="bean-notes">The price that moves everything — transport, food, plastics, geopolitics. When oil moves, the world reprices.</span>
+                  <span className="bean-process">Brent Crude benchmark</span>
                 </div>
               )}
               {lens === 'music' && (
