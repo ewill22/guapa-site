@@ -357,7 +357,7 @@ export default function App() {
     if (autoOpenedRef.current) return;
     if (!dailyArtist || !catalog) return;
     autoOpenedRef.current = true;
-    setDeepLink({ artist: dailyArtist.artist, album: null });
+    setDeepLink({ artist: dailyArtist.artist, album: null, noScroll: true });
   }, [dailyArtist, catalog]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);

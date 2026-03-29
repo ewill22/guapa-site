@@ -200,6 +200,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
   const [loading, setLoading] = useState(false);
   const [highlightAlbum, setHighlightAlbum] = useState(null);
   const pendingAlbumRef = useRef(null);
+  const noScrollRef = useRef(false);
   const discoListRef = useRef(null);
   const geRef = useRef(null);
   const artistPanelRef = useRef(null);
@@ -244,6 +245,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     if (!deepLink?.artist) return;
     const target = deepLink.artist.toLowerCase();
     pendingAlbumRef.current = deepLink.album || null;
+    noScrollRef.current = !!deepLink.noScroll;
 
     // Find editorial info if available (for icon/description) + genre/sub
     let editorialArtist = null;
@@ -332,6 +334,9 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     if (!discoAlbums) return;
     const targetAlbum = pendingAlbumRef.current;
     pendingAlbumRef.current = null;
+    const skipScroll = noScrollRef.current;
+    noScrollRef.current = false;
+    if (skipScroll) return;
     setTimeout(() => {
       if (targetAlbum) {
         const el = discoListRef.current?.querySelector(`[data-album-title="${CSS.escape(targetAlbum)}"]`);
