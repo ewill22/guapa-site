@@ -55,7 +55,7 @@ html {
 
 .counter-top {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 240px 1fr;
   min-height: 0;
   border-radius: var(--radius-lg);
 }
@@ -282,7 +282,7 @@ html {
 }
 
 .counter-greeting {
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-md);
   border-bottom: 1px solid var(--gray-800);
 }
 .counter-greeting h2 {
