@@ -14,8 +14,7 @@ export default function Nav() {
 
       <div className={`nav-links ${mobileOpen ? 'nav-links--open' : ''}`}>
         <a href={`${base}music.html`} onClick={() => setMobileOpen(false)}>Record Store</a>
-        <a href={base} onClick={() => setMobileOpen(false)}>Coffee</a>
-        <a href={`${base}data-solutions.html`} className="nav-link-mobile" onClick={() => setMobileOpen(false)}>Data Solutions</a>
+        <a href={`${base}data-solutions.html`} onClick={() => setMobileOpen(false)}>Data Solutions</a>
         <a href={`${base}shop.html`} className="nav-link-mobile" onClick={() => setMobileOpen(false)}>Merch</a>
       </div>
 
@@ -27,7 +26,6 @@ export default function Nav() {
             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
           </svg>
         </a>
-        <a href={`${base}data-solutions.html`} className="nav-pill">Data Solutions</a>
         <a href={`${base}shop.html`} className="nav-cart">Merch →</a>
       </div>
 
