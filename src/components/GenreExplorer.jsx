@@ -505,7 +505,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
           >
             <span className="ge-tab-icon">{g.icon}</span>
             <span className="ge-tab-name">{g.name}</span>
-            {year != null && <span className="ge-tab-count">{g.visibleCount} subgenre{g.visibleCount !== 1 ? 's' : ''}</span>}
+            {year != null && catalog && <span className="ge-tab-count">{g.visibleCount} subgenre{g.visibleCount !== 1 ? 's' : ''}</span>}
           </button>
         ))}
       </div>
