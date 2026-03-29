@@ -282,13 +282,13 @@ html {
 }
 
 .counter-greeting {
-  padding: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--gray-800);
 }
 .counter-greeting h2 {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   font-weight: 400;
   color: var(--white);
   margin-bottom: var(--space-xs);
