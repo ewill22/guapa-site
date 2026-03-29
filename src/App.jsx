@@ -709,7 +709,7 @@ export default function App() {
                   <p>
                     This is the coffee shop. Sit down, look around.
                     Browse the <a href={`${base}music.html`}>record collection</a>,
-                    explore <a href={`${base}coffee.html`}>where the beans come from</a>,
+                    explore where the beans come from,
                     or check out what we're <a href={`${base}data-solutions.html`}>building with data</a>.
                   </p>
                   <p className="counter-greeting-sub">Use the timeline to travel through the years. Switch lenses to see music, coffee, or economics through time.</p>
