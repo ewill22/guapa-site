@@ -10,6 +10,10 @@ import {
 import { BLURBS } from './data/blurbs';
 import { loadEditorial, loadAlbumEditorial, normalizeName } from './data/load-editorial';
 import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
+import {
+  COFFEE_FIRST_DATE, FEATURED_ROASTER, PANTHER_OFFERINGS, PANTHER_REGIONS,
+  COFFEE_ROASTS, COFFEE_BLURBS,
+} from './data/coffee-timeline';
 import './App.css';
 
 // Only these three lenses (dev is the default "guapa" view)
@@ -35,6 +39,20 @@ function buildDevDays() {
   return days;
 }
 const DEV_DAYS = buildDevDays();
+
+// Build coffee day list — every day from first date to today
+function buildCoffeeDays() {
+  const start = new Date(COFFEE_FIRST_DATE + 'T00:00:00');
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const days = [];
+  for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+    const key = d.toISOString().slice(0, 10);
+    days.push({ date: key, roasts: COFFEE_ROASTS[key] || 0 });
+  }
+  return days;
+}
+const COFFEE_DAYS = buildCoffeeDays();
 
 // Parse {Artist Name} in blurb text into clickable links
 function renderBlurbText(text, base) {
@@ -274,16 +292,10 @@ function getAuxNowPlaying(auxSchedule) {
   return { auxCord: false, isAux: true, ...auxSchedule.schedule[0], progress: 0, trackElapsedMs: 0, albumProgress: 0 };
 }
 
-// Coffee beans of the moment — rotates daily
-const COFFEE_BEANS = [
-  { name: 'Yirgacheffe', origin: 'Ethiopia', notes: 'Floral, bright citrus, tea-like body', process: 'Washed' },
-  { name: 'Huehuetenango', origin: 'Guatemala', notes: 'Chocolate, stone fruit, full body', process: 'Washed' },
-  { name: 'Geisha', origin: 'Panama', notes: 'Jasmine, bergamot, silky mouthfeel', process: 'Natural' },
-  { name: 'Sidamo', origin: 'Ethiopia', notes: 'Blueberry, wine-like, complex', process: 'Natural' },
-  { name: 'Tarrazú', origin: 'Costa Rica', notes: 'Honey, citrus, clean finish', process: 'Honey' },
-  { name: 'Cerrado', origin: 'Brazil', notes: 'Nutty, caramel, low acidity', process: 'Natural' },
-  { name: 'Kintamani', origin: 'Bali', notes: 'Citrus, brown sugar, smooth', process: 'Wet-hulled' },
-];
+// Coffee beans of the moment — rotates daily from Panther Coffee offerings
+const COFFEE_BEANS = PANTHER_OFFERINGS.filter(o => o.type === 'single-origin').map(o => ({
+  name: o.name, origin: o.origin, notes: o.notes, process: o.process,
+}));
 
 function getDailyBean() {
   const today = getTodayEST();
@@ -339,6 +351,7 @@ export default function App() {
     }
   }, []);
   const [devDay, setDevDay] = useState(DEV_DAYS.length - 1);
+  const [coffeeDay, setCoffeeDay] = useState(COFFEE_DAYS.length - 1);
   const [catalog, setCatalog] = useState(null);
   const [editorial, setEditorial] = useState(null);
   const [albumEditorial, setAlbumEditorial] = useState(null);
@@ -514,6 +527,53 @@ export default function App() {
     }));
   }, []);
 
+  // Coffee timeline bars — roast counts per day
+  const coffeeBars = useMemo(() => {
+    const maxRoasts = Math.max(...COFFEE_DAYS.map(d => d.roasts), 1);
+    return COFFEE_DAYS.map((d, i) => ({
+      index: i,
+      date: d.date,
+      roasts: d.roasts,
+      h: d.roasts > 0 ? 8 + (d.roasts / maxRoasts) * 48 : 3,
+    }));
+  }, []);
+
+  // Collect coffee blurbs for the week containing the selected day
+  const coffeeWeekBlurbs = useMemo(() => {
+    if (lens !== 'coffee') return null;
+    const selectedDate = COFFEE_DAYS[coffeeDay]?.date;
+    if (!selectedDate) return null;
+    const d = new Date(selectedDate + 'T00:00:00');
+    const dayOfWeek = d.getDay();
+    // Week starts Monday for coffee
+    const monOffset = dayOfWeek === 1 ? 0 : -(((dayOfWeek - 1) + 7) % 7);
+    const weekStart = new Date(d);
+    weekStart.setDate(weekStart.getDate() + monOffset);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
+    const startStr = weekStart.toISOString().slice(0, 10);
+    const endStr = weekEnd.toISOString().slice(0, 10);
+
+    const entries = [];
+    Object.keys(COFFEE_BLURBS).sort().reverse().forEach(date => {
+      if (date >= startStr && date <= endStr) {
+        entries.push({ date, blurbs: COFFEE_BLURBS[date] });
+      }
+    });
+
+    const weekRoasts = COFFEE_DAYS
+      .filter(dd => dd.date >= startStr && dd.date <= endStr)
+      .reduce((sum, dd) => sum + dd.roasts, 0);
+
+    return { startStr, endStr, entries, weekRoasts };
+  }, [lens, coffeeDay]);
+
+  // Navigation for coffee timeline
+  const navCoffee = useCallback((dir) => {
+    setCoffeeDay(d => Math.max(0, Math.min(COFFEE_DAYS.length - 1, d + dir)));
+  }, []);
+
   // Standard lens bars
   const bars = useMemo(() => {
     const src = lens || 'music';
@@ -570,10 +630,12 @@ export default function App() {
   const navYear = useCallback((dir) => {
     if (isGuapa) {
       navDev(dir);
+    } else if (lens === 'coffee') {
+      navCoffee(dir);
     } else {
       setYear(y => Math.max(1960, Math.min(2026, y + dir)), true);
     }
-  }, [isGuapa, navDev]);
+  }, [isGuapa, lens, navDev, navCoffee]);
 
   // Arrow key navigation
   useEffect(() => {
@@ -761,6 +823,54 @@ export default function App() {
                         </div>
                       </div>
                     </>
+                  ) : lens === 'coffee' ? (
+                    <>
+                      <h2 className="timeline-section-header" style={{ color: lc }}>Coffee</h2>
+                      <div className="timeline-header">
+                        <div className="timeline-nav-row">
+                          <button className="year-arrow" onClick={() => navCoffee(-1)} aria-label="Previous day">&larr;</button>
+                          <div className="year-display">
+                            <h2 style={{ color: lc }}>Day {coffeeDay + 1}</h2>
+                            <span className="dev-date">{COFFEE_DAYS[coffeeDay]?.date}</span>
+                          </div>
+                          <button className="year-arrow" onClick={() => navCoffee(1)} aria-label="Next day">&rarr;</button>
+                        </div>
+                        <div className="event-bars">
+                          {coffeeBars.map(b => (
+                            <div key={b.index}
+                              className={`event-bar ${b.index === coffeeDay ? 'active' : ''}`}
+                              style={{
+                                height: b.h,
+                                background: b.index === coffeeDay ? lc : undefined,
+                                opacity: b.roasts > 0 ? undefined : 0.2,
+                              }}
+                              onClick={() => setCoffeeDay(b.index)}
+                              title={`${b.date}: ${b.roasts} roasts`}
+                            />
+                          ))}
+                        </div>
+                        <button className={`live-badge ${coffeeDay === COFFEE_DAYS.length - 1 ? 'live-badge--active' : ''}`} onClick={() => setCoffeeDay(COFFEE_DAYS.length - 1)}>
+                          <span className="live-dot" />Live
+                        </button>
+                      </div>
+
+                      <div className="slider-row">
+                        <div className="slider-wrapper">
+                          <input type="range" className="year-slider" min="0" max={COFFEE_DAYS.length - 1}
+                            value={coffeeDay} onChange={e => setCoffeeDay(+e.target.value)}
+                            style={{
+                              background: `linear-gradient(to right, ${lc} 0%, ${lc} ${(coffeeDay / (COFFEE_DAYS.length - 1)) * 100}%, var(--gray-800) ${(coffeeDay / (COFFEE_DAYS.length - 1)) * 100}%, var(--gray-800) 100%)`,
+                              accentColor: lc,
+                            }}
+                          />
+                          <div className="timeline-markers">
+                            <span>{COFFEE_DAYS[0]?.date.slice(5)}</span>
+                            <span>{COFFEE_DAYS[coffeeDay]?.roasts || 0} roasts</span>
+                            <span>{COFFEE_DAYS[COFFEE_DAYS.length - 1]?.date.slice(5)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </>
                   ) : (
                     <>
                       <h2 className="timeline-section-header" style={{ color: lc }}>{LENS_LABELS[lens]}</h2>
@@ -943,8 +1053,109 @@ export default function App() {
                 </div>
               )}
 
-              {/* Text blurbs for non-music lenses */}
-              {lens !== 'music' && blurbData ? (
+              {/* Coffee lens — featured roaster + offerings + weekly blurbs */}
+              {lens === 'coffee' && (
+                <div className="coffee-section">
+                  {/* Featured Roaster */}
+                  <div className="coffee-roaster">
+                    <div className="coffee-roaster-header">
+                      <h2 className="coffee-roaster-name">{FEATURED_ROASTER.name}</h2>
+                      <span className="coffee-roaster-location">{FEATURED_ROASTER.location} — est. {FEATURED_ROASTER.founded}</span>
+                    </div>
+                    <p className="coffee-roaster-bio">{FEATURED_ROASTER.philosophy}</p>
+                    <div className="coffee-roaster-links">
+                      <a href={FEATURED_ROASTER.url} target="_blank" rel="noopener noreferrer" className="coffee-link">Shop</a>
+                      <span className="coffee-roaster-ig">{FEATURED_ROASTER.instagram}</span>
+                    </div>
+                  </div>
+
+                  {/* Region Breakdown */}
+                  <div className="coffee-regions">
+                    <h3 className="coffee-section-label">Regions</h3>
+                    <div className="coffee-region-cards">
+                      {PANTHER_REGIONS.map(r => (
+                        <div key={r.name} className="coffee-region-card" style={{ borderColor: r.color }}>
+                          <span className="coffee-region-name" style={{ color: r.color }}>{r.name}</span>
+                          <span className="coffee-region-count">{r.count} offering{r.count !== 1 ? 's' : ''}</span>
+                          {r.countries.length > 0 && <span className="coffee-region-countries">{r.countries.join(', ')}</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Current Offerings */}
+                  <div className="coffee-offerings">
+                    <h3 className="coffee-section-label">Current Offerings</h3>
+                    <div className="coffee-offering-list">
+                      {PANTHER_OFFERINGS.map(o => (
+                        <a key={o.name} href={o.url} target="_blank" rel="noopener noreferrer" className="coffee-offering-card">
+                          <div className="coffee-offering-top">
+                            <span className="coffee-offering-name">{o.name}</span>
+                            <span className="coffee-offering-price">${o.price}</span>
+                          </div>
+                          <span className="coffee-offering-origin">{o.origin}</span>
+                          {o.variety && <span className="coffee-offering-detail">{o.variety} — {o.elevation}</span>}
+                          <span className="coffee-offering-notes">{o.notes}</span>
+                          <div className="coffee-offering-tags">
+                            <span className="coffee-tag coffee-tag--process">{o.process}</span>
+                            <span className="coffee-tag coffee-tag--type">{o.type === 'single-origin' ? 'Single Origin' : 'Blend'}</span>
+                          </div>
+                          {o.producerNote && <span className="coffee-offering-producer">{o.producerNote}</span>}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Weekly Roast Activity */}
+                  {coffeeWeekBlurbs && coffeeWeekBlurbs.entries.length > 0 ? (
+                    <div className="coffee-activity">
+                      <div className="blurbs-header">
+                        <span className="blurbs-nearest">Week of {coffeeWeekBlurbs.startStr.slice(5)} — {coffeeWeekBlurbs.weekRoasts} roasts</span>
+                      </div>
+                      {coffeeWeekBlurbs.entries.map(entry => (
+                        <div key={entry.date} className="blurbs-day-group">
+                          <div className="blurbs-day-label">{entry.date}</div>
+                          <div className="blurbs-list">
+                            {entry.blurbs.map((blurb, i) => (
+                              <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
+                                {blurb.type === 'metric' ? (
+                                  <div className="blurb-metric">
+                                    <span className="blurb-metric-label">{blurb.label}</span>
+                                    <span className="blurb-metric-value" style={{ color: lc }}>{blurb.value}</span>
+                                    <span className="blurb-metric-change">{blurb.change}</span>
+                                  </div>
+                                ) : (
+                                  <div className="blurb-content">
+                                    <span className={`blurb-type blurb-type--${blurb.type}`}>{blurb.type}</span>
+                                    <p>{blurb.text}</p>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="coffee-activity">
+                      <div className="blurbs-header">
+                        <span className="blurbs-nearest">Week of {COFFEE_DAYS[coffeeDay]?.date?.slice(5)}</span>
+                      </div>
+                      <div className="blurbs-list">
+                        <div className="blurb-card blurb-card--update">
+                          <div className="blurb-content">
+                            <span className="blurb-type blurb-type--update">quiet</span>
+                            <p>No roast activity this week.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Text blurbs for non-music, non-coffee lenses */}
+              {lens !== 'music' && lens !== 'coffee' && blurbData ? (
                 <>
                   <div className="blurbs-header">
                     {blurbData.year !== year && (
@@ -970,7 +1181,7 @@ export default function App() {
                     ))}
                   </div>
                 </>
-              ) : lens !== 'music' && !yearAlbums.length && (
+              ) : lens !== 'music' && lens !== 'coffee' && !yearAlbums.length && (
                 <div className="blurbs-placeholder">
                   <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="blurbs-placeholder-logo" style={{ filter: `hue-rotate(${hashStr(year + lens) % 360}deg)` }} />
                 </div>

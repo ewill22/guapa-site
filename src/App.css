@@ -366,6 +366,185 @@ html {
   margin-top: 4px;
 }
 
+/* Coffee Section — featured roaster, offerings, regions */
+.coffee-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.coffee-roaster {
+  padding: var(--space-lg);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-lg);
+  background: var(--gray-900);
+}
+.coffee-roaster-header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
+  flex-wrap: wrap;
+}
+.coffee-roaster-name {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #c89b6a;
+}
+.coffee-roaster-location {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+}
+.coffee-roaster-bio {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  line-height: 1.7;
+  margin-bottom: var(--space-sm);
+}
+.coffee-roaster-links {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
+}
+.coffee-link {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #c89b6a;
+  border: 1px solid #c89b6a;
+  padding: 4px 14px;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+@media (hover: hover) {
+  .coffee-link:hover { background: #c89b6a; color: var(--black); }
+}
+.coffee-link:active { background: #c89b6a; color: var(--black); }
+.coffee-roaster-ig {
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}
+
+/* Region cards */
+.coffee-regions { }
+.coffee-section-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-600);
+  margin-bottom: var(--space-sm);
+}
+.coffee-region-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+}
+.coffee-region-card {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  background: var(--gray-900);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.coffee-region-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.coffee-region-count {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+}
+.coffee-region-countries {
+  font-size: 0.65rem;
+  color: var(--gray-600);
+}
+
+/* Offering cards */
+.coffee-offering-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+.coffee-offering-card {
+  padding: var(--space-md);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  background: var(--gray-900);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  transition: border-color 0.2s;
+}
+@media (hover: hover) {
+  .coffee-offering-card:hover { border-color: #c89b6a; }
+}
+.coffee-offering-card:active { border-color: #c89b6a; }
+.coffee-offering-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.coffee-offering-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--white);
+}
+.coffee-offering-price {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c89b6a;
+}
+.coffee-offering-origin {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+}
+.coffee-offering-detail {
+  font-size: 0.72rem;
+  color: var(--gray-600);
+}
+.coffee-offering-notes {
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  font-style: italic;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+.coffee-offering-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+.coffee-tag {
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-800);
+  color: var(--gray-600);
+}
+.coffee-tag--process { color: #c89b6a; border-color: rgba(200, 155, 106, 0.3); }
+.coffee-tag--type { color: var(--gray-400); }
+.coffee-offering-producer {
+  font-size: 0.65rem;
+  color: var(--gray-600);
+  margin-top: 2px;
+}
+
+/* Coffee activity — weekly blurbs */
+.coffee-activity {
+  margin-top: var(--space-sm);
+}
+
 /* Counter Search — replaces bean in music lens */
 .counter-search {
   padding: var(--space-md) var(--space-lg);
@@ -856,6 +1035,8 @@ html {
 .blurb-type--trending { color: var(--pink); background: rgba(232, 160, 176, 0.1); }
 .blurb-type--release { color: var(--yellow); background: rgba(240, 192, 20, 0.1); }
 .blurb-type--update { color: var(--blue, #6ab0e8); background: rgba(106, 176, 232, 0.1); }
+.blurb-type--roast { color: #c89b6a; background: rgba(200, 155, 106, 0.1); }
+.blurb-type--origin { color: var(--green, #7ec89b); background: rgba(126, 200, 155, 0.1); }
 
 .blurb-content p {
   font-size: 0.88rem; color: var(--gray-400);
@@ -997,6 +1178,8 @@ html {
 
 @media (max-width: 768px) {
   .blurbs-list { grid-template-columns: 1fr; }
+  .coffee-region-cards { grid-template-columns: repeat(2, 1fr); }
+  .coffee-offering-list { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {
