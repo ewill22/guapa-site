@@ -789,6 +789,7 @@ html {
 .blurbs-section {
   margin-top: var(--space-sm);
   min-width: 0;
+  min-height: 60vh;
 }
 
 .blurbs-header {
