@@ -38,11 +38,6 @@ const GENRE_ICONS = {
   latin: '🌴',
 };
 
-const GENRE_COLORS = {
-  pop: '#e8a0b0', rock: '#c4785a', soul: '#d4a868', hiphop: '#a89ed4',
-  electronic: '#88a8d4', country: '#c89b6a', folk: '#7ec89b', jazz: '#d4c478',
-  blues: '#6a9ec8', metal: '#a05050', latin: '#e8c06a',
-};
 
 function subKey(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/_+$/, '');
@@ -501,25 +496,18 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     <div className="ge" ref={geRef}>
       {/* Genre Tabs */}
       <div className="ge-tabs">
-        {genreTabs.map(g => {
-          const color = GENRE_COLORS[g.id] || 'var(--gray-600)';
-          return (
-            <button
-              key={g.id}
-              className={`ge-tab ${activeGenre === g.id ? 'active' : ''}`}
-              style={{
-                borderColor: activeGenre === g.id ? color : undefined,
-                ...(g.visibleCount === 0 ? { opacity: 0.3 } : {}),
-                '--genre-color': color,
-              }}
-              onClick={() => handleGenreClick(g.id)}
-            >
-              <span className="ge-tab-icon">{g.icon}</span>
-              <span className="ge-tab-name">{g.name}</span>
-              <span className="ge-tab-count">{g.visibleCount} subgenre{g.visibleCount !== 1 ? 's' : ''}</span>
-            </button>
-          );
-        })}
+        {genreTabs.map(g => (
+          <button
+            key={g.id}
+            className={`ge-tab ${activeGenre === g.id ? 'active' : ''}`}
+            style={g.visibleCount === 0 ? { opacity: 0.3 } : {}}
+            onClick={() => handleGenreClick(g.id)}
+          >
+            <span className="ge-tab-icon">{g.icon}</span>
+            <span className="ge-tab-name">{g.name}</span>
+            <span className="ge-tab-count">{g.visibleCount} subgenre{g.visibleCount !== 1 ? 's' : ''}</span>
+          </button>
+        ))}
       </div>
 
       {/* Subgenre Grid — hide others when discography is open */}

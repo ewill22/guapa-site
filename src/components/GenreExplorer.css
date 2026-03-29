@@ -42,15 +42,15 @@
 
 @media (hover: hover) {
   .ge-tab:hover {
-    border-color: var(--genre-color, var(--gray-600));
+    border-color: var(--gray-600);
   }
 }
 .ge-tab:active {
-  border-color: var(--genre-color, var(--gray-600));
+  border-color: var(--gray-600);
 }
 
 .ge-tab.active {
-  border-color: var(--genre-color, var(--yellow));
+  border-color: var(--gray-400);
 }
 
 .ge-tab-icon {
@@ -65,7 +65,7 @@
 }
 
 .ge-tab.active .ge-tab-name {
-  color: var(--genre-color, var(--yellow));
+  color: var(--white);
 }
 
 .ge-tab-count {
