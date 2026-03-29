@@ -49,7 +49,9 @@ The creative work sells the serious work. A potential client explores the record
   guapa-data runs dq_enrich.py
     → cleans/dedupes albums (~15,000 albums, 824 artists)
     → pulls Spotify metadata + covers + links
+    → enriches release_date from MusicBrainz CC0 (YYYY-MM-DD, 50/day backfill)
     → classifies genres at album level (classify_genres.py)
+    → sorts albums chronologically per artist (by release_date)
     → exports slim music-catalog.json
     → git push to guapa-site/public/data/music-catalog.json
 
@@ -59,9 +61,11 @@ guapa-site receives push
 ```
 
 - Backend commits show as `[auto]` in git log — these are safe, just catalog updates
-- Backend owns: data quality, enrichment, genre classification, album-level tagging
+- Backend owns: data quality, enrichment, genre classification, album-level tagging, release_date enrichment
 - Frontend owns: how that data is displayed, UX, editorial content, styling
-- Catalog: 824 artists, ~15K albums, 10 genres, 56 subgenres (as of 2026-03-22)
+- Catalog: 824 artists, ~16K albums, 10 genres, 56 subgenres
+- `release_date` backfill: ~500 albums done, 50/day until all ~16K complete (source: MusicBrainz CC0)
+- Spotify enrichment needed for 680 newer catalog artists (artist-level Spotify URL exists as fallback)
 
 ## Editorial / Content Pipeline
 
@@ -148,12 +152,14 @@ Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No fill
 2. **Yellow italic banner** (randomly alternates between two quotes on page load, locked via useState initializer)
 3. **Coffee Shop Counter** (two-column desktop layout):
    - **Left sidebar (desktop)**: KPI tiles (sticky, scrolls with you)
-   - **Right main**: Welcome greeting, timeline, search bar + legend (music lens) or Bean of the Moment
+   - **Right main**: Welcome greeting, timeline, lens-specific counter-bottom section
+   - **Counter-bottom by lens**: Search bar + legend (music), Highlighted Roaster info (coffee), Issue of the Moment (economics)
    - **Mobile (≤900px)**: Everything flattens via `display: contents`, reordered: greeting(1) → search(2) → KPI tiles(3) → timeline(5) → legend(6) → genre explorer(7)
 4. **Below counter** — lens-specific content:
-   - **Music lens** (default): Genre Explorer
+   - **Music lens** (default): Genre Explorer (auto-opens artist of the day on load, no scroll)
    - **Guapa lens**: Weekly dev blurbs (Fri–Thu grouping)
-   - **Other lenses**: Text blurbs for coffee/economics
+   - **Coffee lens**: Region tiles, Panther Coffee offerings grid, year-based coffee blurbs
+   - **Economics lens**: Year-based economics blurbs
 5. **Newsletter** (pink background, email signup)
 6. **Footer** (`src/components/Footer.jsx`) — logo lockup + links + FTC affiliate disclosure
 
@@ -183,7 +189,8 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - If saved year: auto-sync is skipped (`yearPinned` ref), user's chosen year sticks
 - Any manual year change (slider, arrows, bar click, Live button) pins the year and stops auto-sync for the session
 - Year persists via `sessionStorage` — sticks across page navigation (main ↔ record store) but resets on new tab
-- No auto-scroll or auto-deep-link to playing artist — user clicks KPI tile to navigate
+- Artist of the day auto-opens in Genre Explorer on load (via `deepLink` with `noScroll: true`) — no scroll, just opens the discography
+- KPI tile clicks still scroll to the artist as before
 
 ### Genre Explorer (`src/components/GenreExplorer.jsx`)
 
@@ -228,6 +235,18 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Input font: 0.78rem desktop, 16px mobile (prevents iOS auto-zoom)
 - Legend below: Emerging (green dashed) / Rising (blue) / Peak (pink) / Fading (red dashed)
 
+### Coffee Lens (`src/data/coffee-timeline.js`)
+- **Timeline**: Year-based (1960–2026), bars driven by real world coffee production data (millions of 60kg bags, USDA/ICO)
+- **Counter-bottom**: "Highlighted Roaster" — Panther Coffee (Miami, est. 2010), with shop link and Instagram. Spans full width of counter-bottom.
+- **Below counter**: Region tiles (South America, Central America, Africa, Blend) → Offering cards (8 coffees linking to Panther Shopify) → Year-based coffee blurbs
+- **Data file**: `src/data/coffee-timeline.js` — `FEATURED_ROASTER`, `PANTHER_OFFERINGS`, `PANTHER_REGIONS`
+- **Future**: Backend will build coffee batch/roast tracking pipeline (similar to NJ dispensary strain tracking), frontend will consume when ready
+
+### Economics Lens
+- **Timeline**: Year-based (1960–2026), same bar style as music
+- **Counter-bottom**: "Issue of the Moment" — Oil (green accent, Brent Crude benchmark)
+- **Below counter**: Year-based economics blurbs from `blurbs.js`
+
 ### Sub-Pages (Static HTML in `public/`)
 - `music.html` — Record Store: year-based releases browser with search, discography, and timeline. Uses catalog + editorial CSV to show confirmed artists' albums grouped alphabetically by artist for the selected year.
 - `coffee.html` — roaster timeline
@@ -263,9 +282,8 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - FastAPI + uvicorn for API
 - Real estate analytics: Atlantic County NJ, 388k+ parcel records, MLS via SJSRMLS
 - Parcel map: standalone HTML at localhost:8000 (not integrated into React yet)
-- `dq_enrich.py`: daily enrichment pipeline (clean, dedup, spotify, wiki, covers, genre classify)
+- `dq_enrich.py`: daily enrichment pipeline (clean, dedup, spotify, wiki, covers, genre classify, release_date)
 - `classify_genres.py`: album-level genre/subgenre classification (10 genres, 56 subgenres)
-- Spotify album enrichment needed for 680 newer catalog artists (artist-level Spotify URL exists as fallback)
 
 ## Product Design Principles (Data Solutions)
 
@@ -291,15 +309,26 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 
 ## Data Patterns to Remember
 
-### Album sort: ALWAYS use catalog index as tiebreaker
-Albums with the same `release_year` (e.g. The Doors and Strange Days, both 1967) must preserve their catalog order. The catalog's array index is the source of truth for release order within a year.
+### Album sort: use shared utilities in `src/data/album-sort.js`
+All album sorts MUST use the shared sort functions — never write inline `.sort()` by release_year.
 
-**Rules:**
-- Ascending (playback order): `.map((a, i) => ({ ...a, _idx: i })).sort((a, b) => (a.release_year || 0) - (b.release_year || 0) || a._idx - b._idx)`
-- Descending (disco list): `.map((a, i) => ({ ...a, _idx: i })).sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || b._idx - a._idx)`
-- When reusing an already-sorted list, don't re-sort — use `.reverse()` or index from the end to avoid losing the tiebreaker
+**Sort priority:** `release_year` → `release_date` (YYYY-MM-DD string comparison) → catalog array index (`_idx`)
 
-**Broken by this in the past:** disco list, aux schedule, and aux Spotify link all showed wrong "first album" for same-year discographies.
+**Functions:**
+- `sortAlbumsAsc(albums)` — oldest first (playback order, aux schedule, daily artist)
+- `sortAlbumsDesc(albums)` — newest first (disco list, genre explorer)
+- Both handle `.map((a, i) => ({ ...a, _idx: i }))` internally
+- When reusing an already-sorted list, use `.reverse()` instead of re-sorting
+
+**`release_date` field** (backfilling as of 2026-03-29):
+- Backend adding `release_date` (YYYY-MM-DD) from MusicBrainz CC0 to all ~16K albums
+- ~500 albums have it now, pipeline adds 50/day until complete
+- Albums are pre-sorted chronologically in catalog array, so index fallback is correct
+- Frontend sort already uses `release_date` when present — no changes needed as data fills in
+
+**For static HTML pages** (music.html) that can't import modules: replicate the full sort inline with all three tiers.
+
+**Broken by this in the past:** Rolling Stones (12 x 5 before England's Newest Hit Makers), The Doors (Strange Days order), aux Spotify link, daily playback schedule.
 
 ## CSS Patterns to Remember
 
