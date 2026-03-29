@@ -626,8 +626,10 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                   const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (album.artistSpotify || '#'));
                   const wikiTitle = (album.title || '').replace(/ /g, '_');
                   const wikiUrl = album.url_wikipedia || `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiTitle)}`;
-                  const amazonQ = encodeURIComponent(`${album.artistName || ''} ${album.title} vinyl`);
-                  const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQ}&tag=guapainc-20`;
+                  const amazonVinylQ = encodeURIComponent(`${album.artistName || ''} ${album.title} vinyl`);
+                  const buyVinylUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonVinylQ}&tag=guapainc-20`;
+                  const amazonCdQ = encodeURIComponent(`${album.artistName || ''} ${album.title} cd`);
+                  const buyCdUrl = `https://www.amazon.com/s?k=${amazonCdQ}&tag=guapainc-20`;
                   const tracks = album.tracks || [];
                   const isLatest = idx === 0;
 
@@ -644,7 +646,8 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                               <button className="ge-link ge-link--aux" onClick={e => { e.stopPropagation(); onAuxPick(album.artistName || discoArtist.name, album.title); window.scrollTo({ top: 0, behavior: 'smooth' }); if (spotifyUrl && spotifyUrl !== '#') window.open(spotifyUrl, '_blank'); }}>▶ Aux</button>
                             )}
                             <a href={spotifyUrl} target="_blank" rel="noopener" className="ge-link ge-link--spotify" onClick={e => e.stopPropagation()}>Spotify</a>
-                            <a href={buyUrl} target="_blank" rel="noopener" className="ge-link ge-link--buy" onClick={e => e.stopPropagation()}>Buy Vinyl</a>
+                            <a href={buyVinylUrl} target="_blank" rel="noopener" className="ge-link ge-link--buy" onClick={e => e.stopPropagation()}>Buy Vinyl</a>
+                            <a href={buyCdUrl} target="_blank" rel="noopener" className="ge-link ge-link--buy" onClick={e => e.stopPropagation()}>Buy CD</a>
                             <a href={wikiUrl} target="_blank" rel="noopener" className="ge-link ge-link--wiki" onClick={e => e.stopPropagation()}>Wiki</a>
                           </div>
                         </div>
