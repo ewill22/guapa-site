@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { MUSIC_DATA, GENRE_ORIGINS } from '../data/music-data';
 import { normalizeName } from '../data/load-editorial';
+import { sortAlbumsDesc } from '../data/album-sort';
 import './GenreExplorer.css';
 
 function formatDuration(ms) {
@@ -283,8 +284,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
       );
       if (key && catalog[key].albums?.length) {
         const catArtist = catalog[key];
-        const albums = catArtist.albums.map((a, i) => ({ ...a, _idx: i }))
-          .sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || b._idx - a._idx);
+        const albums = sortAlbumsDesc(catArtist.albums);
         // Jump to artist's first album year if subgenre isn't visible at current year
         if (foundSub && onYearChange) {
           const sub = mergedData[foundGenre]?.subgenres[foundSub];
@@ -455,8 +455,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
         catalog[k].name.toLowerCase() === artist.name.toLowerCase()
       );
       if (key && catalog[key].albums?.length) {
-        const albums = catalog[key].albums.map((a, i) => ({ ...a, _idx: i }))
-          .sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || b._idx - a._idx);
+        const albums = sortAlbumsDesc(catalog[key].albums);
         setDiscoAlbums(albums.map(a => ({
           ...a,
           artistName: artist.name,

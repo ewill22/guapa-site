@@ -1874,7 +1874,8 @@
                 lastLetter = letter;
 
                 const albumsHtml = artist.albums
-                    .sort((a, b) => (a.release_year || 0) - (b.release_year || 0))
+                    .map((a, i) => ({...a, _idx: i}))
+                    .sort((a, b) => (a.release_year || 0) - (b.release_year || 0) || (a.release_date && b.release_date ? (a.release_date < b.release_date ? -1 : a.release_date > b.release_date ? 1 : 0) : a.release_date ? -1 : b.release_date ? 1 : 0) || a._idx - b._idx)
                     .map(album => {
                         const art = album.cover_art_large || album.cover_art_small;
                         const artStyle = art ? `background-image: url(${art}); background-size: cover; background-position: center;` : '';
@@ -2244,7 +2245,7 @@
                     albumData = disco && disco.albums;
                 }
                 if (albumData && albumData.length > 0) {
-                    const albums = [...albumData].map((a, i) => ({...a, _idx: i})).sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || b._idx - a._idx);
+                    const albums = [...albumData].map((a, i) => ({...a, _idx: i})).sort((a, b) => (b.release_year || 0) - (a.release_year || 0) || (b.release_date && a.release_date ? (b.release_date < a.release_date ? -1 : b.release_date > a.release_date ? 1 : 0) : b.release_date ? -1 : a.release_date ? 1 : 0) || b._idx - a._idx);
                     const yearSpan = albums.length > 1
                         ? `${albums[albums.length - 1].release_year || '?'} \u2013 ${albums[0].release_year || '?'}`
                         : `${albums[0].release_year || '?'}`;

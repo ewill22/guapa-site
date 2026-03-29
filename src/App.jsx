@@ -13,6 +13,7 @@ import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
 import {
   FEATURED_ROASTER, PANTHER_OFFERINGS, PANTHER_REGIONS,
 } from './data/coffee-timeline';
+import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
 
 // Only these three lenses (dev is the default "guapa" view)
@@ -100,7 +101,7 @@ function getDailyArtist(catalog, editorial) {
   const artist = scored[0].artist;
 
   // Build chronological playback schedule from full discography
-  const albums = artist.albums.map((a, i) => ({ ...a, _idx: i })).sort((a, b) => (a.release_year || 0) - (b.release_year || 0) || a._idx - b._idx);
+  const albums = sortAlbumsAsc(artist.albums);
   const schedule = [];
   let elapsed = 0;
   for (const album of albums) {
@@ -144,7 +145,7 @@ function buildAuxSchedule(catalog, artistName, albumTitle) {
     const match = artist.albums.find(a => a.title.toLowerCase() === albumTitle.toLowerCase());
     albums = match ? [match] : [];
   } else {
-    albums = artist.albums.map((a, i) => ({ ...a, _idx: i })).sort((a, b) => (a.release_year || 0) - (b.release_year || 0) || a._idx - b._idx);
+    albums = sortAlbumsAsc(artist.albums);
   }
   if (!albums.length) return null;
 
