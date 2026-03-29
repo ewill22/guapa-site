@@ -483,16 +483,24 @@ export default function App() {
       if (year === null) setYear(randYear());
       return;
     }
-    if (yearPinned.current) return; // user moved the timeline — stop auto-syncing
-    if (nowPlaying.year && (nowPlaying.isAux || !nowPlaying.auxCord)) {
-      // Playing a track (daily or aux) — sync year to album's release year
+    if (nowPlaying.year && !nowPlaying.auxCord) {
+      // Daily artist playing — always sync year to album's release year
+      const key = `${nowPlaying.album}_${nowPlaying.year}`;
+      if (prevAlbumRef.current !== key) {
+        setYear(nowPlaying.year);
+        prevAlbumRef.current = key;
+      }
+    } else if (nowPlaying.isAux && nowPlaying.year) {
+      // Aux playing — sync year unless user pinned
+      if (yearPinned.current) return;
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
         setYear(nowPlaying.year);
         prevAlbumRef.current = key;
       }
     } else if (nowPlaying.auxCord) {
-      // Aux cord open (not playing) — random year
+      // Aux cord open (not playing) — random year unless pinned
+      if (yearPinned.current) return;
       if (prevAlbumRef.current !== '__aux__') {
         setYear(randYear());
         prevAlbumRef.current = '__aux__';
