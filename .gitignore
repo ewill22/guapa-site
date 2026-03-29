@@ -3,6 +3,6 @@ dist
 .DS_Store
 *.local
 .claude/
-data/
+/data/
 privacy-policy.md
 terms-of-service.md
