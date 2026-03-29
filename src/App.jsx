@@ -350,6 +350,15 @@ export default function App() {
 
   const yearAlbums = useMemo(() => getAlbumsForYear(catalog, year, editorial), [catalog, year, editorial]);
   const [deepLink, setDeepLink] = useState(null);
+  const autoOpenedRef = useRef(false);
+
+  // Auto-open artist of the day on initial load
+  useEffect(() => {
+    if (autoOpenedRef.current) return;
+    if (!dailyArtist || !catalog) return;
+    autoOpenedRef.current = true;
+    setDeepLink({ artist: dailyArtist.artist, album: null });
+  }, [dailyArtist, catalog]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef(null);
