@@ -10,7 +10,7 @@ html {
 
 /* Dashboard Hero */
 .dashboard-hero {
-  padding: var(--space-sm) var(--space-md);
+  padding: 12px var(--space-md);
   max-width: 100%;
   width: 1400px;
   margin: 0 auto;
