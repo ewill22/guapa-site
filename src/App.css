@@ -284,7 +284,6 @@ html {
 
 .counter-greeting {
   padding: var(--space-md) var(--space-lg);
-  border-bottom: 1px solid var(--gray-800);
 }
 .counter-greeting h2 {
   font-family: var(--font-serif);
