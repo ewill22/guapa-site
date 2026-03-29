@@ -651,16 +651,6 @@ export default function App() {
                         <div className="kpi-progress-bar" style={{ width: `${(nowPlaying.progress * 100).toFixed(1)}%` }} />
                       </div>
                     </div>
-                    {(dailyArtist || auxSchedule) && (
-                      <div className="up-next up-next--mobile">
-                        up next: {(() => {
-                          const sched = auxSchedule || dailyArtist;
-                          const idx = sched.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
-                          const next = sched.schedule[idx + 1];
-                          return next ? `${next.song} — ${next.album}` : 'Aux Cord';
-                        })()}
-                      </div>
-                    )}
                   </>
                 ) : nowPlaying?.auxCord ? (
                   <>
@@ -829,16 +819,6 @@ export default function App() {
                     ))}
                   </div>
                 </div>
-                {nowPlaying && !nowPlaying.auxCord && (dailyArtist || auxSchedule) && (
-                  <div className="up-next">
-                    up next: {(() => {
-                      const sched = auxSchedule || dailyArtist;
-                      const idx = sched.schedule.findIndex(t => t.song === nowPlaying.song && t.album === nowPlaying.album);
-                      const next = sched.schedule[idx + 1];
-                      return next ? `${next.song} — ${next.album}` : 'Aux Cord';
-                    })()}
-                  </div>
-                )}
               </div>
 
             {/* Bottom row: Search | Legend | Albums */}
