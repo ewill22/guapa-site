@@ -396,7 +396,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     // Delay scroll so state clears first, then scroll below banner
     setTimeout(() => {
       const banner = document.querySelector('.top-banner');
-      const y = banner ? banner.getBoundingClientRect().bottom + window.scrollY : 0;
+      const y = banner ? banner.offsetTop + banner.offsetHeight : 0;
       window.scrollTo({ top: y });
     }, 50);
   }, []);
