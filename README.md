@@ -4,7 +4,7 @@ Website for Guapa Data — a data solutions company based in New Jersey.
 
 Built with **React** (a JavaScript framework that builds interactive, app-like pages in the browser — no full page reloads) and **Vite** (a build tool that bundles the code and serves it fast during development). The site auto-deploys to **GitHub Pages** (free static hosting from GitHub) every time code is pushed — no manual uploads or server management needed.
 
-**Live:** https://ewill22.github.io/guapa-site *(custom domain coming)*
+**Live:** https://guapa.space
 
 ## What It Is
 
@@ -33,9 +33,8 @@ npm run dev
 
 | Route | Type | Description |
 |-------|------|-------------|
-| `/` | React | Main page — daily artist rotation, genre explorer, coffee counter |
-| `/music.html` | Static | Standalone genre explorer |
-| `/coffee.html` | Static | Roaster timeline |
+| `/` | React | Main page — daily artist rotation, genre explorer, coffee/economics lenses |
+| `/music.html` | Static | Record Store — year-based releases browser |
 | `/shop.html` | Static | Merch (coming soon) |
 | `/data-solutions.html` | Static | Product cards + lead form |
 
@@ -69,7 +68,7 @@ New catalog artists are auto-added to the editorial CSV by `scripts/sync-editori
 
 ## Deployment
 
-Automatic via GitHub Actions on every push to `main`. `vite.config.js` has `base: '/guapa-site/'` for GitHub Pages — remove when custom domain is added.
+Automatic via GitHub Actions on every push to `main`. Custom domain `guapa.space` is active (`public/CNAME`). Base path is `/`.
 
 ## Design
 

@@ -64,7 +64,7 @@ guapa-site receives push
 - Backend owns: data quality, enrichment, genre classification, album-level tagging, release_date enrichment
 - Frontend owns: how that data is displayed, UX, editorial content, styling
 - Catalog: 824 artists, ~16K albums, 10 genres, 56 subgenres
-- `release_date` backfill: ~500 albums done, 50/day until all ~16K complete (source: MusicBrainz CC0)
+- `release_date` backfill: 2,989 albums done (17%), all editorial artists covered, 50/day until complete (source: MusicBrainz CC0)
 - Spotify enrichment needed for 680 newer catalog artists (artist-level Spotify URL exists as fallback)
 
 ## Editorial / Content Pipeline
@@ -141,9 +141,9 @@ Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No fill
 ### Navigation (must match across ALL pages)
 - Logo image: `assets/guapa_logo_dark.png`, height 36px
 - Logo text: "GUAPA" at 1.8rem bold + "data" at 0.6rem weight 400
-- Desktop nav links (left): Music, Coffee
-- Desktop nav actions (right): Data Solutions (yellow outlined pill), Merch → (pink pill), Instagram icon
-- Mobile hamburger: Music, Coffee, Data Solutions, Merch
+- Desktop nav links (left): Record Store, Data Solutions
+- Desktop nav actions (right): Merch → (pink pill), Instagram icon
+- Mobile hamburger: Record Store, Data Solutions, Merch
 - Static HTML pages use inline styles to match React nav exactly
 
 ### Main Page (React — `src/App.jsx`)
@@ -154,7 +154,7 @@ Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No fill
    - **Left sidebar (desktop)**: KPI tiles (sticky, scrolls with you)
    - **Right main**: Welcome greeting, timeline, lens-specific counter-bottom section
    - **Counter-bottom by lens**: Search bar + legend (music), Highlighted Roaster info (coffee), Issue of the Moment (economics)
-   - **Mobile (≤900px)**: Everything flattens via `display: contents`, reordered: greeting(1) → search(2) → KPI tiles(3) → timeline(5) → legend(6) → genre explorer(7)
+   - **Mobile (≤900px)**: Everything flattens via `display: contents`, reordered: KPI tiles(1) → greeting(2) → search(3) → albums(4) → timeline(5) → legend(6) → genre explorer(7)
 4. **Below counter** — lens-specific content:
    - **Music lens** (default): Genre Explorer (auto-opens artist of the day on load, no scroll)
    - **Guapa lens**: Weekly dev blurbs (Fri–Thu grouping)
@@ -172,8 +172,8 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 | Current Album | yellow | yellow — album progress + track X/Y | Album art, title, year |
 | Now Playing | blue | blue — track progress | Song title |
 
-- **Up-next**: shown under timeline on desktop, under song tile on mobile (CSS show/hide at 900px)
 - Tiles are clickable — deep-link into Genre Explorer
+- Progress bars snap to start on song change (no rewind animation)
 
 ### Daily Artist Rotation (`getDailyArtist` in App.jsx)
 - **Hash-based scoring**: each artist scored by `hashStr(today + artistName)`, highest score wins
@@ -185,9 +185,8 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 
 ### On-Load Behavior
 - Year starts as `null` (or from `sessionStorage` if user previously moved the timeline)
-- If no saved year: `nowPlaying` resolves and syncs year to playing album's `release_year`
-- If saved year: auto-sync is skipped (`yearPinned` ref), user's chosen year sticks
-- Any manual year change (slider, arrows, bar click, Live button) pins the year and stops auto-sync for the session
+- **During daily artist playback**: year always follows the currently playing album — user can move the slider but it snaps back on album change. Timeline is locked to the music.
+- **During aux cord**: year follows unless user has pinned via manual interaction
 - Year persists via `sessionStorage` — sticks across page navigation (main ↔ record store) but resets on new tab
 - Artist of the day auto-opens in Genre Explorer on load (via `deepLink` with `noScroll: true`) — no scroll, just opens the discography
 - KPI tile clicks still scroll to the artist as before
@@ -221,8 +220,20 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Peak: `var(--pink)`
 - Fading: `#a05050`
 
+**Genre tiles** (card style, matches coffee region tiles):
+- 6-column grid on desktop (two rows: 11 genres + 1 Random tile)
+- Card background `--gray-900`, border `--gray-800`, rounded corners
+- Vertical layout: icon → name → subgenre count (count hidden until year + catalog loaded)
+- Active state: white text, `--gray-400` border (neutral — legend colors have priority)
+- Random tile: dashed border, centered text, picks random genre with visible subgenres
+- Album actions: Spotify, Buy Vinyl, Buy CD (Amazon affiliate), Wiki
+
+**Escape / Close behavior**:
+- Closes all selections and scrolls to just below yellow banner
+- Accounts for sticky nav height in scroll calculation
+
 **Mobile (≤768px)**:
-- Genre tabs wrap (no horizontal scroll)
+- Genre tiles: 3-column grid
 - `.ge-disco-body`: `align-items: stretch` (critical — `flex-start` caused 697px overflow on 342px screens)
 - `.ge`: `width: 100%; min-width: 0`
 - Nav rail: fixed bottom-right, circular icon buttons
@@ -249,7 +260,6 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 
 ### Sub-Pages (Static HTML in `public/`)
 - `music.html` — Record Store: year-based releases browser with search, discography, and timeline. Uses catalog + editorial CSV to show confirmed artists' albums grouped alphabetically by artist for the selected year.
-- `coffee.html` — roaster timeline
 - `shop.html` — product grid, coming soon
 - `data-solutions.html` — three product cards + lead form (details below)
 
@@ -301,6 +311,11 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Full-width yellow "Music. Coffee. Culture. New Jersey." banner
 - Nav plug-in button and user state
 - "Throwback" label from Artist of the Day tile
+- Up-next display (was under timeline on desktop, under song tile on mobile)
+- Standalone coffee page (`coffee.html`) — coffee lens on main page is the single source
+- Coffee link in nav and footer
+- Data Solutions yellow pill button in nav (moved to regular nav link)
+- Progress bar rewind animation (bars now snap to start on song change)
 
 ## Social Links
 
@@ -322,7 +337,7 @@ All album sorts MUST use the shared sort functions — never write inline `.sort
 
 **`release_date` field** (backfilling as of 2026-03-29):
 - Backend adding `release_date` (YYYY-MM-DD) from MusicBrainz CC0 to all ~16K albums
-- ~500 albums have it now, pipeline adds 50/day until complete
+- 2,989 albums have it now (17%), all editorial artists covered, pipeline adds 50/day until complete
 - Albums are pre-sorted chronologically in catalog array, so index fallback is correct
 - Frontend sort already uses `release_date` when present — no changes needed as data fills in
 
@@ -352,7 +367,7 @@ All album sorts MUST use the shared sort functions — never write inline `.sort
 - `max-width: 100vw` ignores parent padding — always use `max-width: 100%` instead
 
 ### `display: contents` mobile reordering
-On mobile (≤900px), `.page-main`, `.counter`, `.counter-top`, `.counter-left`, `.counter-right`, `.counter-bottom` all use `display: contents` to dissolve into `.page-layout`'s flex context. This lets `order` values interleave KPI tiles with counter children. **Every visible child needs an explicit `order`** — elements without one default to 0 and jump to the top. Current order: greeting(1), search(2), KPI tiles(3), timeline(5), legend(6), genre explorer(7).
+On mobile (≤900px), `.page-main`, `.counter`, `.counter-top`, `.counter-left`, `.counter-right`, `.counter-bottom` all use `display: contents` to dissolve into `.page-layout`'s flex context. This lets `order` values interleave KPI tiles with counter children. **Every visible child needs an explicit `order`** — elements without one default to 0 and jump to the top. Current order: KPI tiles(1), greeting(2), search(3), albums(4), timeline(5), legend(6), genre explorer(7). Mobile `.page-layout` uses `align-items: stretch` so children fill full width.
 
 ### Scroll timing — use React effects, not inline timeouts
 Never scroll to a newly-rendered element using `setTimeout` inside the same function that sets state. The DOM may not exist yet. Instead, use a `useEffect` that watches the state change (e.g., `[discoAlbums]`) — React guarantees the effect runs after the DOM commits. Use a short `setTimeout` inside the effect (300ms) only for paint settling, not for waiting on React.

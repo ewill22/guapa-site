@@ -108,4 +108,12 @@ export const DEV_BLURBS = {
     { type: 'update', text: 'Banner now randomly alternates between two quotes on page load. Locked to initial render so lens switching doesn\'t change it.' },
     { type: 'metric', label: 'Commits', value: '32', change: 'Rebrand + nav redesign + genre polish' },
   ],
+  '2026-03-29': [
+    { type: 'news', text: 'Genre tiles restyled as cards — dark background, vertical layout, matching coffee region tile design. Random genre tile fills the 12th grid spot with dashed border.' },
+    { type: 'update', text: 'Nav simplified — Coffee link and standalone coffee page removed (coffee lens is the single source). Data Solutions moved from yellow pill to regular nav link.' },
+    { type: 'update', text: 'Timeline year locked to currently playing album during daily artist playback. Progress bars snap to start on song change instead of rewinding. Up-next display removed.' },
+    { type: 'update', text: 'Mobile layout reordered — KPI tiles moved to top (flush against banner), search bar full-width centered, Escape/close scrolls to just below yellow banner.' },
+    { type: 'update', text: 'Buy CD button added alongside Buy Vinyl in album actions. Subgenre count hidden until catalog fully loads to prevent flicker.' },
+    { type: 'metric', label: 'Commits', value: '40+', change: 'Nav + genre tiles + mobile layout + timeline lock' },
+  ],
 };
