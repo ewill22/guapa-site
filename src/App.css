@@ -1171,16 +1171,11 @@ html {
     display: none;
   }
   .counter-search {
-    align-items: stretch;
-    position: sticky;
-    top: 53px;
-    z-index: 50;
-    background: var(--black);
-    padding-top: var(--space-sm);
-    padding-bottom: var(--space-sm);
+    align-items: center;
   }
   .counter-search-input {
     text-align: center;
+    width: 100%;
   }
   .counter-search-footer {
     border-left: none;
