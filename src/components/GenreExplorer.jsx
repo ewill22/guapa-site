@@ -510,6 +510,19 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
             {year != null && catalog && <span className="ge-tab-count">{g.visibleCount} subgenre{g.visibleCount !== 1 ? 's' : ''}</span>}
           </button>
         ))}
+        <button
+          className="ge-tab ge-tab--random"
+          onClick={() => {
+            const eligible = genreTabs.filter(g => g.visibleCount > 0);
+            if (eligible.length) {
+              const pick = eligible[Math.floor(Math.random() * eligible.length)];
+              handleGenreClick(pick.id);
+            }
+          }}
+        >
+          <span className="ge-tab-icon">?</span>
+          <span className="ge-tab-name">Random</span>
+        </button>
       </div>
 
       {/* Subgenre Grid — hide others when discography is open */}

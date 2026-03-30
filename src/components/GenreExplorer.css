@@ -68,6 +68,10 @@
   color: var(--white);
 }
 
+.ge-tab--random {
+  border-style: dashed;
+}
+
 .ge-tab-count {
   font-size: 0.65rem;
   color: var(--gray-600);
