@@ -520,7 +520,6 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
             }
           }}
         >
-          <span className="ge-tab-icon">?</span>
           <span className="ge-tab-name">Random</span>
         </button>
       </div>
