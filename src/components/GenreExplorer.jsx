@@ -393,9 +393,11 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     setSelectedSub(null);
     setDiscoArtist(null);
     setDiscoAlbums(null);
-    // Delay scroll so state clears first, then scroll
+    // Delay scroll so state clears first, then scroll below banner
     setTimeout(() => {
-      window.scrollTo(0, 0);
+      const banner = document.querySelector('.top-banner');
+      const y = banner ? banner.getBoundingClientRect().bottom + window.scrollY : 0;
+      window.scrollTo({ top: y });
     }, 50);
   }, []);
 
