@@ -1108,6 +1108,7 @@ html {
   /* Flatten everything into single column for mobile */
   .page-layout {
     flex-direction: column;
+    align-items: stretch;
     gap: 0;
     width: 100%;
   }
