@@ -70,6 +70,8 @@
 
 .ge-tab--random {
   border-style: dashed;
+  align-items: center;
+  justify-content: center;
 }
 
 .ge-tab-count {
