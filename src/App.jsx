@@ -871,13 +871,19 @@ export default function App() {
                     <span className="bean-process">{FEATURED_ROASTER.instagram}</span>
                   </div>
                 </div>
-              ) : (
+              ) : lens === 'economics' ? (
                 <div className="counter-bean counter-roaster">
                   <span className="kpi-label">Issue of the Moment</span>
                   <span className="bean-name" style={{ color: 'var(--green, #7ec89b)' }}>Oil</span>
                   <span className="bean-origin">Global commodity, priced in USD/barrel</span>
                   <span className="bean-notes">The price that moves everything — transport, food, plastics, geopolitics. When oil moves, the world reprices.</span>
                   <span className="bean-process">Brent Crude benchmark</span>
+                </div>
+              ) : (
+                <div className="counter-bean counter-roaster">
+                  <span className="kpi-label">Today's Build</span>
+                  <span className="bean-name">{weekBlurbs ? `${weekBlurbs.weekCommits} commits this week` : 'Loading...'}</span>
+                  <span className="bean-notes">{weekBlurbs?.entries?.[0]?.blurbs?.find(b => b.type === 'news')?.text || weekBlurbs?.entries?.[0]?.blurbs?.[0]?.text || 'Building in public.'}</span>
                 </div>
               )}
               {lens === 'music' && (
