@@ -23,6 +23,13 @@ export const DEV_COMMITS = {
   '2026-03-20': 17,
   '2026-03-21': 84,
   '2026-03-22': 32,
+  '2026-03-23': 18,
+  '2026-03-24': 6,
+  '2026-03-25': 3,
+  '2026-03-26': 10,
+  '2026-03-27': 30,
+  '2026-03-28': 55,
+  '2026-03-29': 41,
 };
 
 // Daily summaries — what got done each active day
@@ -107,6 +114,39 @@ export const DEV_BLURBS = {
     { type: 'update', text: 'Genre Explorer polish: bigger tabs stretching full width, nav rail switched to arrow icons, subgenre flicker fix, SUBGENRE status label, "Explore any genre below" prompt.' },
     { type: 'update', text: 'Banner now randomly alternates between two quotes on page load. Locked to initial render so lens switching doesn\'t change it.' },
     { type: 'metric', label: 'Commits', value: '32', change: 'Rebrand + nav redesign + genre polish' },
+  ],
+  '2026-03-23': [
+    { type: 'news', text: 'LATIN genre launched — Bad Bunny confirmed, 8 subgenres auto-created from catalog tags. Search filtered to editorial-confirmed artists only.' },
+    { type: 'update', text: 'Deep link now jumps timeline to artist\'s first album year when subgenre isn\'t visible. Discography auto-closes when year changes out of range.' },
+    { type: 'update', text: 'Aux Cord polish — green pulsing badge when available, opens first album Spotify URL. Fading subgenres drop dashed border for cleaner look.' },
+    { type: 'metric', label: 'Commits', value: '18', change: 'LATIN genre + search gating + aux polish' },
+  ],
+  '2026-03-24': [
+    { type: 'update', text: 'Terms of Service and Privacy Policy pages added. Footer standardized to 4-column grid across all pages. Tyler Childers catalog fixed.' },
+    { type: 'metric', label: 'Commits', value: '6', change: 'Legal pages + footer cleanup' },
+  ],
+  '2026-03-25': [
+    { type: 'news', text: 'Editorial infrastructure launched — artist-editorial.csv gets original/drafted columns, album-editorial.csv created. First batch of 5 artists confirmed.' },
+    { type: 'metric', label: 'Commits', value: '3', change: 'Editorial pipeline day' },
+  ],
+  '2026-03-26': [
+    { type: 'news', text: 'Custom domain guapa.space goes live. Base path switched from /guapa-site/ to /. CNAME added.' },
+    { type: 'update', text: 'New releases view added for Fri-Sun — shows weekly drops with cover art and track listings. Music renamed to Record Store in nav.' },
+    { type: 'metric', label: 'Commits', value: '10', change: 'Custom domain + new releases view' },
+  ],
+  '2026-03-27': [
+    { type: 'news', text: 'KPI tiles redesigned as sticky left sidebar. Search/legend/albums nested in counter-right. Album editorial descriptions show in discography view.' },
+    { type: 'update', text: 'Record Store rebuilt as year-based releases browser with A-Z alphabet nav, close button, and back-to-top. Catalog grows to 919 artists.' },
+    { type: 'update', text: 'Editorial batches 2-4 confirmed — 89 artists total with 196 album descriptions. Tweet-sourced voice column added.' },
+    { type: 'metric', label: 'Artists', value: '919', change: '+94 new catalog artists' },
+    { type: 'metric', label: 'Commits', value: '30', change: 'Sidebar redesign + record store rebuild' },
+  ],
+  '2026-03-28': [
+    { type: 'news', text: 'Coffee lens built out — Panther Coffee as featured roaster with offerings grid, region tiles, and year-based coffee blurbs.' },
+    { type: 'update', text: 'Genre Explorer artists filtered by selected year. Genre tabs resized to 6+5 layout. Artist bio and links moved into discography header.' },
+    { type: 'update', text: 'Year persistence switched from localStorage to sessionStorage. Manual timeline changes pin the year, stop auto-sync. Aux Spotify link fixed.' },
+    { type: 'update', text: 'Mobile layout fixed — overflow-x hidden removed from intermediate containers, display:contents ordering corrected, scroll timing moved to React effects.' },
+    { type: 'metric', label: 'Commits', value: '55', change: 'All-time record — coffee lens + mobile fixes + year persistence' },
   ],
   '2026-03-29': [
     { type: 'news', text: 'Genre tiles restyled as cards — dark background, vertical layout, matching coffee region tile design. Random genre tile fills the 12th grid spot with dashed border.' },
