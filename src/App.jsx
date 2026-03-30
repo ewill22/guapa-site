@@ -190,8 +190,12 @@ function getNowPlaying(dailyArtist) {
   const now = new Date();
   // Use EST date for todayStart so it aligns with EST-based daily artist
   const estDateStr = getTodayEST(); // e.g. "2026-03-20"
-  const todayStart = new Date(estDateStr + 'T13:00:00Z'); // 8am EST = 13:00 UTC
-  // If it's before 8am EST today, nothing playing yet
+  // 8am ET — detect UTC offset for America/New_York (handles EST/EDT automatically)
+  const probe = new Date(estDateStr + 'T12:00:00Z');
+  const etHour = +new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: 'numeric', hour12: false }).format(probe);
+  const etOffset = etHour - 12; // -5 for EST, -4 for EDT
+  const todayStart = new Date(estDateStr + `T${String(8 - etOffset).padStart(2, '0')}:00:00Z`);
+  // If it's before 8am ET today, nothing playing yet
   if (now.getTime() < todayStart.getTime()) {
     return { waiting: true, artist: dailyArtist.artist, artistUrl: dailyArtist.artistUrl };
   }
