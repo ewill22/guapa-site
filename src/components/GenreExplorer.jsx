@@ -399,7 +399,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
       const nav = document.querySelector('.nav');
       const bannerBottom = banner ? banner.offsetTop + banner.offsetHeight : 0;
       const navHeight = nav ? nav.offsetHeight : 0;
-      window.scrollTo({ top: bannerBottom - navHeight });
+      window.scrollTo({ top: bannerBottom - navHeight + 1 });
     }, 50);
   }, []);
 
