@@ -1130,11 +1130,11 @@ html {
     box-sizing: border-box;
   }
 
-  /* Mobile order: greeting → search → tiles → timeline → legend → genre explorer */
-  .counter-greeting       { order: 1; }
-  .counter-search         { order: 2; }
-  .counter-bean           { order: 2; }
-  .kpi-sidebar            { order: 3; }
+  /* Mobile order: tiles → greeting → search → timeline → legend → genre explorer */
+  .kpi-sidebar            { order: 1; }
+  .counter-greeting       { order: 2; }
+  .counter-search         { order: 3; }
+  .counter-bean           { order: 3; }
   .counter-albums         { order: 4; }
   .counter-timeline       { order: 5; }
   .counter-search-footer  { order: 6; }
@@ -1154,7 +1154,6 @@ html {
   }
   .counter-greeting {
     border-right: none;
-    border-bottom: 1px solid var(--gray-800);
   }
   .counter-albums {
     border-left: none;
@@ -1173,6 +1172,15 @@ html {
   }
   .counter-search {
     align-items: stretch;
+    position: sticky;
+    top: 53px;
+    z-index: 50;
+    background: var(--black);
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-sm);
+  }
+  .counter-search-input {
+    text-align: center;
   }
   .counter-search-footer {
     border-left: none;
