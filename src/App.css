@@ -1171,11 +1171,10 @@ html {
     display: none;
   }
   .counter-search {
-    align-items: center;
+    align-items: stretch;
   }
   .counter-search-input {
     text-align: center;
-    width: 100%;
   }
   .counter-search-footer {
     border-left: none;
