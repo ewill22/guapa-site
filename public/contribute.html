@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Descriptions — Guapa</title>
+  <link rel="stylesheet" href="./guapa-base.css">
+  <style>
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Instrument Sans', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    /* ── Nav ─────────────────────────────────────────── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      height: 56px;
+      border-bottom: 1px solid var(--gray-800);
+      position: sticky;
+      top: 0;
+      background: var(--black);
+      z-index: 100;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: baseline;
+      gap: 0.25rem;
+      text-decoration: none;
+    }
+    .nav-logo-word {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+    }
+    .nav-logo-sub {
+      font-size: 0.6rem;
+      font-weight: 400;
+      color: var(--gray-400);
+    }
+    .nav-back {
+      font-size: 0.8rem;
+      color: var(--gray-400);
+      text-decoration: none;
+    }
+    .nav-back:hover { color: var(--pink); }
+
+    /* ── Header ──────────────────────────────────────── */
+    .page-header {
+      padding: 2rem 1.5rem 1.5rem;
+      border-bottom: 1px solid var(--gray-800);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .page-header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin: 0 0 0.4rem;
+    }
+    .page-header p {
+      color: var(--gray-400);
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    /* ── Search ──────────────────────────────────────── */
+    .search-bar {
+      position: sticky;
+      top: 56px;
+      background: var(--black);
+      z-index: 90;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--gray-800);
+    }
+    .search-bar input {
+      width: 100%;
+      background: var(--gray-900);
+      border: 1px solid var(--gray-800);
+      border-radius: 6px;
+      padding: 0.6rem 1rem;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.9rem;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .search-bar input:focus { border-color: var(--gray-600); }
+    .search-bar input::placeholder { color: var(--gray-600); }
+
+    /* ── Artist list ─────────────────────────────────── */
+    .artist-list {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 4rem;
+    }
+
+    .artist-card {
+      border: 1px solid var(--gray-800);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      background: var(--gray-900);
+      overflow: hidden;
+    }
+
+    .artist-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    @media (hover: hover) {
+      .artist-header:hover { background: #222; }
+    }
+    .artist-header:active { background: #222; }
+
+    .artist-icon { font-size: 1.3rem; min-width: 1.5rem; }
+    .artist-name { font-size: 0.95rem; font-weight: 600; flex: 1; }
+    .artist-desc {
+      font-size: 0.78rem;
+      color: var(--gray-400);
+      flex: 2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .artist-chevron {
+      color: var(--gray-600);
+      font-size: 0.75rem;
+      transition: transform 0.15s;
+    }
+    .artist-card.open .artist-chevron { transform: rotate(90deg); }
+
+    /* ── Expanded body ───────────────────────────────── */
+    .artist-body {
+      display: none;
+      border-top: 1px solid var(--gray-800);
+      padding: 1rem;
+    }
+    .artist-card.open .artist-body { display: block; }
+
+    /* ── Edit section ────────────────────────────────── */
+    .edit-section {
+      margin-bottom: 1.25rem;
+    }
+    .edit-section-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+    }
+    .current-value {
+      font-size: 0.82rem;
+      color: var(--gray-400);
+      background: #111;
+      border: 1px solid var(--gray-800);
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.4;
+    }
+    .current-value.empty { color: var(--gray-600); font-style: italic; }
+
+    .suggest-btn {
+      font-size: 0.75rem;
+      color: var(--pink);
+      background: none;
+      border: 1px solid var(--pink);
+      border-radius: 4px;
+      padding: 0.3rem 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    @media (hover: hover) {
+      .suggest-btn:hover { background: rgba(232,160,176,0.1); }
+    }
+    .suggest-btn:active { background: rgba(232,160,176,0.1); }
+
+    /* ── Inline edit form ────────────────────────────── */
+    .inline-form {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .inline-form.open { display: block; }
+
+    .inline-form textarea {
+      width: 100%;
+      background: var(--gray-900);
+      border: 1px solid var(--gray-800);
+      border-radius: 4px;
+      padding: 0.6rem 0.75rem;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 80px;
+      box-sizing: border-box;
+      outline: none;
+    }
+    .inline-form textarea:focus { border-color: var(--gray-600); }
+
+    .form-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .btn-submit {
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--yellow);
+      color: var(--black);
+      border: none;
+      border-radius: 4px;
+      padding: 0.4rem 1rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    @media (hover: hover) {
+      .btn-submit:hover { opacity: 0.9; }
+    }
+    .btn-cancel {
+      font-size: 0.78rem;
+      color: var(--gray-600);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .submit-status {
+      font-size: 0.75rem;
+      margin-top: 0.4rem;
+    }
+    .submit-status.ok { color: var(--green); }
+    .submit-status.err { color: #e08080; }
+
+    /* ── Albums ──────────────────────────────────────── */
+    .albums-section {
+      margin-top: 1rem;
+      border-top: 1px solid var(--gray-800);
+      padding-top: 1rem;
+    }
+    .albums-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.75rem;
+    }
+    .album-row {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--gray-800);
+    }
+    .album-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .album-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .album-year {
+      font-size: 0.72rem;
+      color: var(--gray-600);
+      margin-bottom: 0.4rem;
+    }
+
+    /* ── Empty state ─────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      color: var(--gray-600);
+      font-size: 0.85rem;
+      padding: 3rem 0;
+    }
+
+    @media (max-width: 600px) {
+      .artist-desc { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="./index.html" class="nav-logo">
+    <span class="nav-logo-word">GUAPA</span>
+    <span class="nav-logo-sub">data</span>
+  </a>
+  <a href="./index.html" class="nav-back">← Back to site</a>
+</nav>
+
+<div class="page-header">
+  <h1>Suggest an edit</h1>
+  <p>See something missing or off? Expand any artist to suggest a description change.</p>
+</div>
+
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Search artists..." autocomplete="off">
+</div>
+
+<div class="artist-list" id="artist-list">
+  <div class="empty-state" id="loading">Loading...</div>
+</div>
+
+<script>
+const FORMSPREE_ID = 'YOUR_FORM_ID'; // replace with your Formspree form ID
+
+let artistData = [];   // [{ name, icon, description }]
+let albumData = {};    // { artist_name_lower: [{ album_title, year, description }] }
+let rendered = [];     // filtered subset
+
+// ── Load CSVs ────────────────────────────────────────────────────────
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim().replace(/^\uFEFF/, ''));
+  return lines.slice(1).map(line => {
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"' && !inQ) { inQ = true; continue; }
+      if (ch === '"' && inQ && line[i+1] === '"') { cur += '"'; i++; continue; }
+      if (ch === '"' && inQ) { inQ = false; continue; }
+      if (ch === ',' && !inQ) { cols.push(cur); cur = ''; continue; }
+      cur += ch;
+    }
+    cols.push(cur);
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (cols[i] || '').trim());
+    return obj;
+  });
+}
+
+async function loadData() {
+  const [artistRes, albumRes] = await Promise.all([
+    fetch('./data/artist-editorial.csv'),
+    fetch('./data/album-editorial.csv'),
+  ]);
+  const [artistText, albumText] = await Promise.all([artistRes.text(), albumRes.text()]);
+
+  const artists = parseCSV(artistText).filter(r => r.confirmed === 'yes');
+  artists.sort((a, b) => a.name.localeCompare(b.name));
+  artistData = artists;
+
+  const albums = parseCSV(albumText);
+  albums.forEach(row => {
+    const key = row.artist_name.toLowerCase();
+    if (!albumData[key]) albumData[key] = [];
+    albumData[key].push(row);
+  });
+
+  render(artistData);
+}
+
+// ── Render ────────────────────────────────────────────────────────────
+function render(artists) {
+  const list = document.getElementById('artist-list');
+  if (!artists.length) {
+    list.innerHTML = '<div class="empty-state">No artists found.</div>';
+    return;
+  }
+
+  list.innerHTML = artists.map(a => {
+    const albums = albumData[a.name.toLowerCase()] || [];
+    const albumRows = albums.map(alb => albumRowHTML(a.name, alb)).join('');
+    const albumsSection = `
+      <div class="albums-section">
+        <div class="albums-label">Albums (${albums.length})</div>
+        ${albums.length ? albumRows : '<div style="color:var(--gray-600);font-size:0.8rem;">No album descriptions yet.</div>'}
+      </div>`;
+
+    return `
+    <div class="artist-card" data-artist="${esc(a.name)}">
+      <div class="artist-header" onclick="toggleCard(this)">
+        <span class="artist-icon">${a.icon || '•'}</span>
+        <span class="artist-name">${esc(a.name)}</span>
+        <span class="artist-desc">${esc(a.description || '')}</span>
+        <span class="artist-chevron">▶</span>
+      </div>
+      <div class="artist-body">
+        <div class="edit-section">
+          <div class="edit-section-label">Artist description</div>
+          <div class="current-value${a.description ? '' : ' empty'}">${a.description || 'No description yet.'}</div>
+          <button class="suggest-btn" onclick="openForm(this)">Suggest edit</button>
+          <div class="inline-form" data-artist="${esc(a.name)}" data-field="description" data-old="${esc(a.description || '')}">
+            <textarea placeholder="Your suggested description…"></textarea>
+            <div class="form-actions">
+              <button class="btn-submit" onclick="submitForm(this)">Submit</button>
+              <button class="btn-cancel" onclick="closeForm(this)">Cancel</button>
+            </div>
+            <div class="submit-status"></div>
+          </div>
+        </div>
+        ${albumsSection}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function albumRowHTML(artistName, alb) {
+  return `
+  <div class="album-row">
+    <div class="album-title">${esc(alb.album_title)}</div>
+    <div class="album-year">${esc(alb.year)}</div>
+    <div class="current-value${alb.description ? '' : ' empty'}">${esc(alb.description || 'No description yet.')}</div>
+    <button class="suggest-btn" onclick="openForm(this)">Suggest edit</button>
+    <div class="inline-form"
+         data-artist="${esc(artistName)}"
+         data-album="${esc(alb.album_title)}"
+         data-field="description"
+         data-old="${esc(alb.description || '')}">
+      <textarea placeholder="Your suggested description…"></textarea>
+      <div class="form-actions">
+        <button class="btn-submit" onclick="submitForm(this)">Submit</button>
+        <button class="btn-cancel" onclick="closeForm(this)">Cancel</button>
+      </div>
+      <div class="submit-status"></div>
+    </div>
+  </div>`;
+}
+
+function esc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Card toggle ───────────────────────────────────────────────────────
+function toggleCard(header) {
+  header.closest('.artist-card').classList.toggle('open');
+}
+
+// ── Form open/close ───────────────────────────────────────────────────
+function openForm(btn) {
+  const form = btn.nextElementSibling;
+  form.classList.add('open');
+  form.querySelector('textarea').focus();
+  btn.style.display = 'none';
+}
+
+function closeForm(cancelBtn) {
+  const form = cancelBtn.closest('.inline-form');
+  form.classList.remove('open');
+  form.querySelector('textarea').value = '';
+  form.querySelector('.submit-status').textContent = '';
+  form.previousElementSibling.style.display = '';
+}
+
+// ── Submit ────────────────────────────────────────────────────────────
+async function submitForm(submitBtn) {
+  const form = submitBtn.closest('.inline-form');
+  const textarea = form.querySelector('textarea');
+  const status = form.querySelector('.submit-status');
+  const suggested = textarea.value.trim();
+
+  if (!suggested) {
+    status.textContent = 'Please enter a suggestion.';
+    status.className = 'submit-status err';
+    return;
+  }
+
+  submitBtn.disabled = true;
+  status.textContent = 'Submitting…';
+  status.className = 'submit-status';
+
+  const payload = {
+    artist_name: form.dataset.artist,
+    album_title: form.dataset.album || '',
+    field: form.dataset.field,
+    old_value: form.dataset.old,
+    suggested_value: suggested,
+    _subject: `Editorial suggestion: ${form.dataset.artist}${form.dataset.album ? ' — ' + form.dataset.album : ''}`,
+  };
+
+  try {
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      status.textContent = 'Submitted. Thanks!';
+      status.className = 'submit-status ok';
+      textarea.value = '';
+      submitBtn.disabled = false;
+    } else {
+      throw new Error();
+    }
+  } catch {
+    status.textContent = 'Something went wrong. Try again.';
+    status.className = 'submit-status err';
+    submitBtn.disabled = false;
+  }
+}
+
+// ── Search ────────────────────────────────────────────────────────────
+document.getElementById('search').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  render(q ? artistData.filter(a => a.name.toLowerCase().includes(q)) : artistData);
+});
+
+// ── Init ──────────────────────────────────────────────────────────────
+loadData().catch(() => {
+  document.getElementById('artist-list').innerHTML =
+    '<div class="empty-state">Failed to load data.</div>';
+});
+</script>
+</body>
+</html>
