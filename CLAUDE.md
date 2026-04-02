@@ -96,6 +96,30 @@ The Content team maintains two CSV files in `public/data/`:
 4. Eric reviews — flips `confirmed=yes` when approved
 5. `sync-editorial-csv.py` (runs in CI) auto-adds new catalog artists as `confirmed=no`
 
+### Community Suggestions (guapa.space/contribute)
+Visitors can suggest description edits via the contribute page. Submissions go to Formspree (form ID: `mykbdnak`) → emailed to `eewilliamsremote@gmail.com`.
+
+**Automated pipeline** — runs every hour via Windows Task Scheduler ("Guapa Apply Editorial Suggestions"):
+- Reads Formspree submission emails via IMAP (uses `C:\Users\eewil\homebase\gmail.py`)
+- Applies changes to `artist-editorial.csv` and `album-editorial.csv`
+- Backs up CSVs to `data/backups/YYYY-MM-DD_HHMMSS/` before each run
+- Logs every change (timestamp, IP, old/new value) to `data/editorial-suggestions-log.csv`
+- Tracks processed emails in `data/apply-suggestions-state.json`
+- Originals (Eric's canonical) saved in `data/editorial-originals/` — never touched
+
+**To run manually:**
+```bash
+python scripts/apply-suggestions.py
+```
+
+**After applying:**
+```bash
+git diff public/data/          # review changes
+git add public/data/ && git commit -m "Apply editorial suggestions from site" && git push
+```
+
+**Backups live in** `data/` (gitignored — local only).
+
 ### Guapa Voice
 Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No filler, no hedging. Examples:
 - "That tritone. The Devil's interval. Tony Iommi played it and invented a genre on a rainy day in Birmingham."
