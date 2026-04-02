@@ -89,6 +89,12 @@
       margin-left: 0.3rem;
     }
 
+    /* ── Icon section (mobile only) ─────────────────── */
+    .icon-edit-section { display: none; }
+    @media (max-width: 768px) {
+      .icon-edit-section { display: block; }
+    }
+
     /* ── Missing badge ───────────────────────────────── */
     .missing-badge {
       font-size: 0.68rem;
@@ -449,7 +455,7 @@ function render(artists) {
         <span class="artist-chevron">▶</span>
       </div>
       <div class="artist-body">
-        <div class="edit-section">
+        <div class="edit-section icon-edit-section">
           <div class="edit-section-label">Icon</div>
           <div class="current-value${a.icon ? '' : ' empty'}" style="font-size:1.4rem;padding:0.3rem 0.75rem;">${a.icon || 'No icon yet.'}</div>
           <button class="suggest-btn" onclick="openForm(this)">${a.icon ? 'Suggest icon' : 'Add icon'}</button>
