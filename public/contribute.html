@@ -93,6 +93,47 @@
     .search-bar input:focus { border-color: var(--gray-600); }
     .search-bar input::placeholder { color: var(--gray-600); }
 
+    /* ── Filter tabs ─────────────────────────────────── */
+    .filter-bar {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0.75rem 1.5rem 0;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .filter-btn {
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: none;
+      border: 1px solid var(--gray-800);
+      border-radius: 20px;
+      padding: 0.3rem 0.9rem;
+      color: var(--gray-400);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .filter-btn.active {
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+    .filter-count {
+      font-weight: 400;
+      color: var(--gray-600);
+      margin-left: 0.3rem;
+    }
+
+    /* ── Missing badge ───────────────────────────────── */
+    .missing-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      border: 1px dashed var(--gray-800);
+      border-radius: 3px;
+      padding: 0.1rem 0.4rem;
+      margin-left: 0.5rem;
+      white-space: nowrap;
+    }
+
     /* ── Artist list ─────────────────────────────────── */
     .artist-list {
       max-width: 900px;
@@ -306,6 +347,12 @@
   <input type="text" id="search" placeholder="Search artists..." autocomplete="off">
 </div>
 
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="missing" onclick="setFilter('missing', this)">Missing description <span class="filter-count" id="count-missing"></span></button>
+  <button class="filter-btn" data-filter="has" onclick="setFilter('has', this)">Has description <span class="filter-count" id="count-has"></span></button>
+  <button class="filter-btn" data-filter="all" onclick="setFilter('all', this)">All <span class="filter-count" id="count-all"></span></button>
+</div>
+
 <div class="artist-list" id="artist-list">
   <div class="empty-state" id="loading">Loading...</div>
 </div>
@@ -313,9 +360,10 @@
 <script>
 const FORMSPREE_ID = 'mykbdnak'; // replace with your Formspree form ID
 
-let artistData = [];   // [{ name, icon, description }]
+let artistData = [];   // all artists
 let albumData = {};    // { artist_name_lower: [{ album_title, year, description }] }
-let rendered = [];     // filtered subset
+let activeFilter = 'missing';
+let searchQuery = '';
 
 // ── Load CSVs ────────────────────────────────────────────────────────
 function parseCSV(text) {
@@ -346,7 +394,7 @@ async function loadData() {
   ]);
   const [artistText, albumText] = await Promise.all([artistRes.text(), albumRes.text()]);
 
-  const artists = parseCSV(artistText).filter(r => r.confirmed === 'yes');
+  const artists = parseCSV(artistText);
   artists.sort((a, b) => a.name.localeCompare(b.name));
   artistData = artists;
 
@@ -357,7 +405,37 @@ async function loadData() {
     albumData[key].push(row);
   });
 
-  render(artistData);
+  updateCounts();
+  applyFilters();
+}
+
+// ── Filter ────────────────────────────────────────────────────────────
+function setFilter(filter, btn) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  let filtered = artistData;
+  if (searchQuery) {
+    filtered = filtered.filter(a => a.name.toLowerCase().includes(searchQuery));
+  }
+  if (activeFilter === 'missing') {
+    filtered = filtered.filter(a => !a.description);
+  } else if (activeFilter === 'has') {
+    filtered = filtered.filter(a => !!a.description);
+  }
+  render(filtered);
+}
+
+function updateCounts() {
+  const missing = artistData.filter(a => !a.description).length;
+  const has = artistData.filter(a => !!a.description).length;
+  document.getElementById('count-missing').textContent = missing;
+  document.getElementById('count-has').textContent = has;
+  document.getElementById('count-all').textContent = artistData.length;
 }
 
 // ── Render ────────────────────────────────────────────────────────────
@@ -377,11 +455,13 @@ function render(artists) {
         ${albums.length ? albumRows : '<div style="color:var(--gray-600);font-size:0.8rem;">No album descriptions yet.</div>'}
       </div>`;
 
+    const hasdesc = !!a.description;
+    const btnLabel = hasdesc ? 'Suggest edit' : 'Add description';
     return `
     <div class="artist-card" data-artist="${esc(a.name)}">
       <div class="artist-header" onclick="toggleCard(this)">
         <span class="artist-icon">${a.icon || '•'}</span>
-        <span class="artist-name">${esc(a.name)}</span>
+        <span class="artist-name">${esc(a.name)}${!hasdesc ? '<span class="missing-badge">no description</span>' : ''}</span>
         <span class="artist-desc">${esc(a.description || '')}</span>
         <span class="artist-chevron">▶</span>
       </div>
@@ -389,7 +469,7 @@ function render(artists) {
         <div class="edit-section">
           <div class="edit-section-label">Artist description</div>
           <div class="current-value${a.description ? '' : ' empty'}">${a.description || 'No description yet.'}</div>
-          <button class="suggest-btn" onclick="openForm(this)">Suggest edit</button>
+          <button class="suggest-btn" onclick="openForm(this)">${btnLabel}</button>
           <div class="inline-form" data-artist="${esc(a.name)}" data-field="description" data-old="${esc(a.description || '')}">
             <textarea placeholder="Your suggested description…"></textarea>
             <div class="form-actions">
@@ -505,8 +585,8 @@ async function submitForm(submitBtn) {
 
 // ── Search ────────────────────────────────────────────────────────────
 document.getElementById('search').addEventListener('input', function() {
-  const q = this.value.toLowerCase();
-  render(q ? artistData.filter(a => a.name.toLowerCase().includes(q)) : artistData);
+  searchQuery = this.value.toLowerCase();
+  applyFilters();
 });
 
 // ── Init ──────────────────────────────────────────────────────────────
