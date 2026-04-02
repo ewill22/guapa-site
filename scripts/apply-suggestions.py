@@ -1,62 +1,57 @@
 """
 apply-suggestions.py
 
-Fetches editorial suggestions from Formspree API, applies them to the CSVs,
-and logs every change with IP + timestamp for the audit trail.
+Reads Formspree submission emails via IMAP (using homebase gmail connection),
+applies suggestions to the editorial CSVs, logs every change with metadata.
 
 Usage:
     python scripts/apply-suggestions.py
 
-Required env vars (or edit the CONFIG block below):
-    FORMSPREE_API_KEY   — your Formspree API key (account settings)
-    FORMSPREE_FORM_ID   — the form ID (e.g. xpzgkqrb)
+Requires homebase to be importable (sys.path set below).
 """
 
 import csv
+import email
+import html
 import json
 import os
+import re
 import shutil
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-import urllib.request
-import urllib.error
+# ── Homebase gmail connection ─────────────────────────────────────────
+HOMEBASE = Path(r'C:\Users\eewil\homebase')
+sys.path.insert(0, str(HOMEBASE))
+from gmail import get_imap
 
-# ── CONFIG ────────────────────────────────────────────────────────────
-FORMSPREE_API_KEY = os.environ.get('FORMSPREE_API_KEY', 'YOUR_API_KEY')
-FORMSPREE_FORM_ID = os.environ.get('FORMSPREE_FORM_ID', 'YOUR_FORM_ID')
-
-ARTIST_CSV   = Path('public/data/artist-editorial.csv')
-ALBUM_CSV    = Path('public/data/album-editorial.csv')
-LOG_CSV      = Path('data/editorial-suggestions-log.csv')
-BACKUPS_DIR  = Path('data/backups')
-STATE_FILE   = Path('data/apply-suggestions-state.json')
+# ── Paths ─────────────────────────────────────────────────────────────
+ARTIST_CSV  = Path('public/data/artist-editorial.csv')
+ALBUM_CSV   = Path('public/data/album-editorial.csv')
+LOG_CSV     = Path('data/editorial-suggestions-log.csv')
+BACKUPS_DIR = Path('data/backups')
+STATE_FILE  = Path('data/apply-suggestions-state.json')
 
 LOG_FIELDS = [
-    'applied_at', 'formspree_id', 'submission_at', 'ip',
-    'artist_name', 'album_title', 'field',
-    'old_value', 'new_value',
+    'applied_at', 'email_subject', 'submission_at', 'artist_name',
+    'album_title', 'field', 'old_value', 'new_value',
 ]
 
-# ── Helpers ───────────────────────────────────────────────────────────
+FORMSPREE_SENDER = 'formspree'
 
-def api_get(path):
-    url = f'https://formspree.io/api/0{path}'
-    req = urllib.request.Request(url, headers={
-        'Authorization': f'Bearer {FORMSPREE_API_KEY}',
-        'Accept': 'application/json',
-    })
-    with urllib.request.urlopen(req) as resp:
-        return json.loads(resp.read())
+# ── State (tracks which email UIDs we've already processed) ───────────
 
 def load_state():
     if STATE_FILE.exists():
         return json.loads(STATE_FILE.read_text())
-    return {'processed_ids': []}
+    return {'processed_uids': []}
 
 def save_state(state):
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
     STATE_FILE.write_text(json.dumps(state, indent=2))
+
+# ── Backup ────────────────────────────────────────────────────────────
 
 def backup_csvs():
     stamp = datetime.now(timezone.utc).strftime('%Y-%m-%d_%H%M%S')
@@ -64,17 +59,15 @@ def backup_csvs():
     dest.mkdir(parents=True, exist_ok=True)
     shutil.copy(ARTIST_CSV, dest / 'artist-editorial.csv')
     shutil.copy(ALBUM_CSV,  dest / 'album-editorial.csv')
-    print(f'  Backed up CSVs → {dest}')
+    print(f'  Backed up CSVs -> {dest}')
 
-def read_csv(path):
-    with open(path, encoding='utf-8-sig', newline='') as f:
-        return list(csv.DictReader(f)), None
+# ── CSV helpers ───────────────────────────────────────────────────────
 
 def read_csv_with_fields(path):
     with open(path, encoding='utf-8-sig', newline='') as f:
         reader = csv.DictReader(f)
         rows = list(reader)
-        return rows, reader.fieldnames
+        return rows, list(reader.fieldnames or [])
 
 def write_csv(path, rows, fieldnames):
     with open(path, 'w', encoding='utf-8', newline='') as f:
@@ -91,22 +84,63 @@ def append_log(entry):
             writer.writeheader()
         writer.writerow(entry)
 
+# ── Email parsing ─────────────────────────────────────────────────────
+
+def parse_field(body, field_name):
+    """Extract a field value from Formspree plain-text email body."""
+    # Normalize line endings
+    body = body.replace('\r\n', '\n').replace('\r', '\n')
+    # Split into double-newline chunks, find the one starting with field_name:
+    chunks = re.split(r'\n{2,}', body)
+    for chunk in chunks:
+        lines = chunk.strip().splitlines()
+        if not lines:
+            continue
+        if lines[0].strip().rstrip(':').lower() == field_name.lower():
+            value = '\n'.join(lines[1:]).strip()
+            return html.unescape(value)
+    return ''
+
+def parse_submission_email(msg):
+    """Return dict of fields from a Formspree email, or None if unparseable."""
+    body = ''
+    for part in msg.walk():
+        if part.get_content_type() == 'text/plain':
+            body = part.get_payload(decode=True).decode('utf-8', errors='replace')
+            break
+
+    body = body.replace('\r\n', '\n').replace('\r', '\n')
+    if 'artist_name' not in body:
+        return None
+
+    # Extract submission date from body
+    date_m = re.search(r'Submitted (.+)', body)
+    sub_at = date_m.group(1).strip() if date_m else msg.get('Date', '')
+
+    return {
+        'subject':        msg.get('Subject', ''),
+        'submission_at':  sub_at,
+        'artist_name':    parse_field(body, 'artist_name'),
+        'album_title':    parse_field(body, 'album_title'),
+        'field':          parse_field(body, 'field') or 'description',
+        'old_value':      parse_field(body, 'old_value'),
+        'suggested_value': parse_field(body, 'suggested_value'),
+    }
+
 # ── Apply logic ───────────────────────────────────────────────────────
 
-def apply_artist(rows, fieldnames, artist_name, field, new_value):
-    name_lower = artist_name.lower()
+def apply_artist(rows, artist_name, field, new_value):
     for row in rows:
-        if row['name'].lower() == name_lower:
+        if row['name'].lower() == artist_name.lower():
             old = row.get(field, '')
             row[field] = new_value
             return old, True
     return None, False
 
-def apply_album(rows, fieldnames, artist_name, album_title, field, new_value):
-    a_lower = artist_name.lower()
-    t_lower = album_title.lower()
+def apply_album(rows, artist_name, album_title, field, new_value):
     for row in rows:
-        if row['artist_name'].lower() == a_lower and row['album_title'].lower() == t_lower:
+        if (row['artist_name'].lower() == artist_name.lower() and
+                row['album_title'].lower() == album_title.lower()):
             old = row.get(field, '')
             row[field] = new_value
             return old, True
@@ -115,65 +149,70 @@ def apply_album(rows, fieldnames, artist_name, album_title, field, new_value):
 # ── Main ──────────────────────────────────────────────────────────────
 
 def main():
-    print('Fetching submissions from Formspree...')
-    try:
-        data = api_get(f'/forms/{FORMSPREE_FORM_ID}/submissions')
-    except urllib.error.HTTPError as e:
-        print(f'  API error: {e.code} {e.reason}')
-        sys.exit(1)
+    print('Connecting to Gmail...')
+    conn = get_imap()
+    conn.select('INBOX')
 
-    submissions = data.get('submissions', [])
-    print(f'  {len(submissions)} total submissions')
+    _, data = conn.search(None, f'(FROM "{FORMSPREE_SENDER}")')
+    all_ids = data[0].split()
+    print(f'  {len(all_ids)} Formspree emails total')
 
     state = load_state()
-    processed = set(state['processed_ids'])
-    new_subs = [s for s in submissions if s['id'] not in processed]
-    print(f'  {len(new_subs)} new to process')
+    processed = set(state['processed_uids'])
+    new_ids = [eid for eid in all_ids if eid.decode() not in processed]
+    print(f'  {len(new_ids)} new to process')
 
-    if not new_subs:
+    if not new_ids:
         print('Nothing to do.')
+        conn.logout()
+        return
+
+    # Parse all new emails first, filter to actual submissions
+    submissions = []
+    for eid in new_ids:
+        _, msg_data = conn.fetch(eid, '(RFC822)')
+        msg = email.message_from_bytes(msg_data[0][1])
+        parsed = parse_submission_email(msg)
+        if parsed and parsed['artist_name'] and parsed['suggested_value']:
+            submissions.append((eid.decode(), parsed))
+        else:
+            # Not a submission (e.g. verification email) — mark processed, skip
+            processed.add(eid.decode())
+
+    conn.logout()
+
+    if not submissions:
+        print('No valid submissions found.')
+        save_state({'processed_uids': list(processed)})
         return
 
     backup_csvs()
 
     artist_rows, artist_fields = read_csv_with_fields(ARTIST_CSV)
-    album_rows, album_fields   = read_csv_with_fields(ALBUM_CSV)
+    album_rows,  album_fields  = read_csv_with_fields(ALBUM_CSV)
     applied = 0
 
-    for sub in new_subs:
-        sid    = sub['id']
-        s_at   = sub.get('_date', '')
-        ip     = sub.get('_ip', '')
-        body   = sub.get('data', sub)  # Formspree wraps fields in 'data' on some endpoints
-
-        artist_name    = (body.get('artist_name') or sub.get('artist_name', '')).strip()
-        album_title    = (body.get('album_title') or sub.get('album_title', '')).strip()
-        field          = (body.get('field') or sub.get('field', 'description')).strip()
-        old_value      = (body.get('old_value') or sub.get('old_value', '')).strip()
-        suggested      = (body.get('suggested_value') or sub.get('suggested_value', '')).strip()
-
-        if not artist_name or not suggested:
-            print(f'  [{sid}] Skipping — missing artist_name or suggested_value')
-            processed.add(sid)
-            continue
+    for uid, sub in submissions:
+        artist_name  = sub['artist_name']
+        album_title  = sub['album_title']
+        field        = sub['field']
+        suggested    = sub['suggested_value']
+        old_value    = sub['old_value']
 
         if album_title:
-            # Album edit
-            old, ok = apply_album(album_rows, album_fields, artist_name, album_title, field, suggested)
+            old, ok = apply_album(album_rows, artist_name, album_title, field, suggested)
             target = f'{artist_name} / {album_title}'
         else:
-            # Artist edit
-            old, ok = apply_artist(artist_rows, artist_fields, artist_name, field, suggested)
+            old, ok = apply_artist(artist_rows, artist_name, field, suggested)
             target = artist_name
 
         if ok:
             applied += 1
-            print(f'  [{sid}] Applied — {target} [{field}]')
+            print(f'  Applied — {target} [{field}]')
             append_log({
                 'applied_at':    datetime.now(timezone.utc).isoformat(),
-                'formspree_id':  sid,
-                'submission_at': s_at,
-                'ip':            ip,
+                'email_subject': sub['subject'],
+                'submission_at': sub['submission_at'],
                 'artist_name':   artist_name,
                 'album_title':   album_title,
                 'field':         field,
@@ -181,20 +220,20 @@ def main():
                 'new_value':     suggested,
             })
         else:
-            print(f'  [{sid}] No match — {target}')
+            print(f'  No match — {target}')
 
-        processed.add(sid)
+        processed.add(uid)
 
     if applied:
         write_csv(ARTIST_CSV, artist_rows, artist_fields)
         write_csv(ALBUM_CSV,  album_rows,  album_fields)
         print(f'\nWrote {applied} change(s) to CSV files.')
-        print('Review with: git diff public/data/')
-        print('Commit with: git add public/data/ && git commit -m "Apply editorial suggestions from site"')
+        print('Review: git diff public/data/')
+        print('Commit: git add public/data/ && git commit -m "Apply editorial suggestions from site"')
     else:
         print('\nNo changes applied.')
 
-    save_state({'processed_ids': list(processed)})
+    save_state({'processed_uids': list(processed)})
 
 if __name__ == '__main__':
     main()
