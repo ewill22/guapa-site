@@ -450,6 +450,19 @@ function render(artists) {
       </div>
       <div class="artist-body">
         <div class="edit-section">
+          <div class="edit-section-label">Icon</div>
+          <div class="current-value${a.icon ? '' : ' empty'}" style="font-size:1.4rem;padding:0.3rem 0.75rem;">${a.icon || 'No icon yet.'}</div>
+          <button class="suggest-btn" onclick="openForm(this)">${a.icon ? 'Suggest icon' : 'Add icon'}</button>
+          <div class="inline-form" data-artist="${esc(a.name)}" data-field="icon" data-old="${esc(a.icon || '')}">
+            <input type="text" placeholder="Paste or type an emoji…" maxlength="8" style="background:var(--gray-900);border:1px solid var(--gray-800);border-radius:4px;padding:0.5rem 0.75rem;color:var(--white);font-family:inherit;font-size:1.4rem;width:100%;box-sizing:border-box;outline:none;">
+            <div class="form-actions">
+              <button class="btn-submit" onclick="submitIconForm(this)">Submit</button>
+              <button class="btn-cancel" onclick="closeForm(this)">Cancel</button>
+            </div>
+            <div class="submit-status"></div>
+          </div>
+        </div>
+        <div class="edit-section">
           <div class="edit-section-label">Artist description</div>
           <div class="current-value${a.description ? '' : ' empty'}">${a.description || 'No description yet.'}</div>
           <button class="suggest-btn" onclick="openForm(this)">${btnLabel}</button>
@@ -514,9 +527,57 @@ function openForm(btn) {
 function closeForm(cancelBtn) {
   const form = cancelBtn.closest('.inline-form');
   form.classList.remove('open');
-  form.querySelector('textarea').value = '';
+  const ta = form.querySelector('textarea');
+  const inp = form.querySelector('input');
+  if (ta) ta.value = '';
+  if (inp) inp.value = '';
   form.querySelector('.submit-status').textContent = '';
   form.previousElementSibling.style.display = '';
+}
+
+// ── Submit icon (input instead of textarea) ───────────────────────────
+async function submitIconForm(submitBtn) {
+  const form = submitBtn.closest('.inline-form');
+  const input = form.querySelector('input');
+  const status = form.querySelector('.submit-status');
+  const suggested = input.value.trim();
+
+  if (!suggested) {
+    status.textContent = 'Please enter an emoji.';
+    status.className = 'submit-status err';
+    return;
+  }
+
+  submitBtn.disabled = true;
+  status.textContent = 'Submitting…';
+  status.className = 'submit-status';
+
+  const payload = {
+    artist_name: form.dataset.artist,
+    album_title: '',
+    field: 'icon',
+    old_value: form.dataset.old,
+    suggested_value: suggested,
+    _subject: `Icon suggestion: ${form.dataset.artist}`,
+  };
+
+  try {
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      status.textContent = 'Submitted. Thanks!';
+      status.className = 'submit-status ok';
+      input.value = '';
+      submitBtn.disabled = false;
+    } else { throw new Error(); }
+  } catch {
+    status.textContent = 'Something went wrong. Try again.';
+    status.className = 'submit-status err';
+    submitBtn.disabled = false;
+  }
 }
 
 // ── Submit ────────────────────────────────────────────────────────────
