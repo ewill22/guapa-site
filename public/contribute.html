@@ -520,7 +520,8 @@ function toggleCard(header) {
 function openForm(btn) {
   const form = btn.nextElementSibling;
   form.classList.add('open');
-  form.querySelector('textarea').focus();
+  const focusEl = form.querySelector('textarea') || form.querySelector('input');
+  if (focusEl) focusEl.focus();
   btn.style.display = 'none';
 }
 
