@@ -228,8 +228,11 @@ def main():
         write_csv(ARTIST_CSV, artist_rows, artist_fields)
         write_csv(ALBUM_CSV,  album_rows,  album_fields)
         print(f'\nWrote {applied} change(s) to CSV files.')
-        print('Review: git diff public/data/')
-        print('Commit: git add public/data/ && git commit -m "Apply editorial suggestions from site"')
+        import subprocess
+        subprocess.run(['git', 'add', 'public/data/artist-editorial.csv', 'public/data/album-editorial.csv'], check=True)
+        subprocess.run(['git', 'commit', '-m', f'Apply {applied} editorial suggestion(s) from site'], check=True)
+        subprocess.run(['git', 'push'], check=True)
+        print('Committed and pushed.')
     else:
         print('\nNo changes applied.')
 
