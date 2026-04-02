@@ -25,6 +25,7 @@ from pathlib import Path
 HOMEBASE = Path(r'C:\Users\eewil\homebase')
 sys.path.insert(0, str(HOMEBASE))
 from gmail import get_imap
+from emailer import send_email
 
 # ── Paths ─────────────────────────────────────────────────────────────
 ARTIST_CSV  = Path('public/data/artist-editorial.csv')
@@ -233,6 +234,18 @@ def main():
         subprocess.run(['git', 'commit', '-m', f'Apply {applied} editorial suggestion(s) from site'], check=True)
         subprocess.run(['git', 'push'], check=True)
         print('Committed and pushed.')
+        # Build notification summary
+        lines = []
+        for uid, sub in submissions:
+            target = f"{sub['artist_name']}{' / ' + sub['album_title'] if sub['album_title'] else ''}"
+            lines.append(f"- {target} [{sub['field']}]: {sub['suggested_value']}")
+        body = f"{applied} editorial change(s) applied and pushed to guapa.space:\n\n" + '\n'.join(lines)
+        send_email(
+            subject=f"Guapa: {applied} editorial suggestion(s) applied",
+            body=body,
+            to='ewill22@gmail.com',
+        )
+        print('Notification sent to ewill22@gmail.com.')
     else:
         print('\nNo changes applied.')
 
