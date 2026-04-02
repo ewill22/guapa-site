@@ -331,9 +331,9 @@
 </div>
 
 <div class="filter-bar">
-  <button class="filter-btn active" data-filter="missing" onclick="setFilter('missing', this)">Missing description <span class="filter-count" id="count-missing"></span></button>
+  <button class="filter-btn" data-filter="missing" onclick="setFilter('missing', this)">Missing description <span class="filter-count" id="count-missing"></span></button>
   <button class="filter-btn" data-filter="has" onclick="setFilter('has', this)">Has description <span class="filter-count" id="count-has"></span></button>
-  <button class="filter-btn" data-filter="all" onclick="setFilter('all', this)">All <span class="filter-count" id="count-all"></span></button>
+  <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All <span class="filter-count" id="count-all"></span></button>
 </div>
 
 <div class="artist-list" id="artist-list">
@@ -345,7 +345,7 @@ const FORMSPREE_ID = 'mykbdnak'; // replace with your Formspree form ID
 
 let artistData = [];   // all artists
 let albumData = {};    // { artist_name_lower: [{ album_title, year, description }] }
-let activeFilter = 'missing';
+let activeFilter = 'all';
 let searchQuery = '';
 
 // ── Load CSVs ────────────────────────────────────────────────────────
