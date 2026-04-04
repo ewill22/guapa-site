@@ -316,8 +316,11 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 
 - Python 3.14, MySQL 8.0 local (port 3306, DB: `guapa`, user: `guapa_user`)
 - FastAPI + uvicorn for API
-- Real estate analytics: Atlantic County NJ, 388k+ parcel records, MLS via SJSRMLS
-- Parcel map: standalone HTML at localhost:8000 (not integrated into React yet)
+- Real estate analytics: Atlantic County NJ, 388k+ parcel records, MLS pending via SJSRMLS
+- Guapa RE API: FastAPI parcel map server, auto-starts on login via Task Scheduler
+  - Local: http://localhost:8000 | LAN: http://192.168.1.99:8000
+  - Endpoints: map (`/`), parcels (`/parcels`), address search (`/search`), comps (`/comps`)
+  - Not integrated into React yet — standalone HTML served by the API
 - `dq_enrich.py`: daily enrichment pipeline (clean, dedup, spotify, wiki, covers, genre classify, release_date)
 - `classify_genres.py`: album-level genre/subgenre classification (10 genres, 56 subgenres)
 
@@ -358,7 +361,7 @@ These files are remnants of the removed login/ticker system. Nothing in App.jsx 
 
 ## Known Issues (as of 2026-04-04)
 
-- **Guapa RE local link**: `data-solutions.html:65` links to `http://192.168.1.99:8000` (intentional — local dev tool). External visitors get a graceful fallback: JS checks reachability, and if the link fails, scrolls to the contact form with "Guapa RE (Early Access)" pre-selected.
+- **Guapa RE local link**: `data-solutions.html:65` links to `http://192.168.1.99:8000` (the Guapa RE API auto-starts on login via Task Scheduler in guapa-data). External visitors get a graceful fallback: JS checks reachability, and if the link fails, scrolls to the contact form with "Guapa RE (Early Access)" pre-selected.
 - **Localhost API reference**: `music.html:1191` defines `MUSIC_API = 'http://localhost:8001'` — fails silently on GitHub Pages (static catalog loads correctly as fallback), but the dead reference is confusing
 - **Newsletter form non-functional**: The email signup form in App.jsx has no `action` or `onSubmit` — purely decorative
 - **Newsreader upright loaded**: Google Fonts import includes `Newsreader:ital,wght@0,400;1,400` — the upright weight (`0,400`) is loaded but should never be used per design rules (italic only)
