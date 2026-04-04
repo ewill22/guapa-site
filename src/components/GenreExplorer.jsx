@@ -615,6 +615,69 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                   {discoArtist.url_wikipedia && <a href={discoArtist.url_wikipedia} target="_blank" rel="noopener" className="ge-link ge-link--wiki">Wiki</a>}
                 </div>
               )}
+              {/* Member / Member-of chips */}
+              {(() => {
+                const catKey = catalog && Object.keys(catalog).find(k => catalog[k].name.toLowerCase() === discoArtist.name.toLowerCase());
+                const catArtist = catKey ? catalog[catKey] : null;
+                const memberOf = catArtist?.member_of;
+                const members = catArtist?.members;
+                if (!memberOf?.length && !members?.length) return null;
+                return (
+                  <div className="ge-disco-members">
+                    {memberOf?.length > 0 && (
+                      <div className="ge-member-row">
+                        <span className="ge-member-label">Member of</span>
+                        {memberOf.map(m => m.in_catalog ? (
+                          <button key={m.name} className="ge-member-chip ge-member-chip--link" onClick={() => {
+                            pendingAlbumRef.current = null;
+                            noScrollRef.current = false;
+                            // Find in merged data
+                            let found = null, fGenre = null, fSub = null;
+                            for (const [gid, genre] of Object.entries(mergedData)) {
+                              for (const [sid, sub] of Object.entries(genre.subgenres)) {
+                                for (const [aid, a] of Object.entries(sub.artists)) {
+                                  if (a.name.toLowerCase() === m.name.toLowerCase()) { found = { id: aid, ...a }; fGenre = gid; fSub = sid; break; }
+                                }
+                                if (found) break;
+                              }
+                              if (found) break;
+                            }
+                            setActiveGenre(fGenre); setSelectedSub(fSub);
+                            handleArtistClick(found || { id: m.name, name: m.name, icon: '', description: '', albums: [] });
+                          }}>{m.name}</button>
+                        ) : (
+                          <span key={m.name} className="ge-member-chip">{m.name}</span>
+                        ))}
+                      </div>
+                    )}
+                    {members?.length > 0 && (
+                      <div className="ge-member-row">
+                        <span className="ge-member-label">Members</span>
+                        {members.map(m => m.in_catalog ? (
+                          <button key={m.name} className="ge-member-chip ge-member-chip--link" onClick={() => {
+                            pendingAlbumRef.current = null;
+                            noScrollRef.current = false;
+                            let found = null, fGenre = null, fSub = null;
+                            for (const [gid, genre] of Object.entries(mergedData)) {
+                              for (const [sid, sub] of Object.entries(genre.subgenres)) {
+                                for (const [aid, a] of Object.entries(sub.artists)) {
+                                  if (a.name.toLowerCase() === m.name.toLowerCase()) { found = { id: aid, ...a }; fGenre = gid; fSub = sid; break; }
+                                }
+                                if (found) break;
+                              }
+                              if (found) break;
+                            }
+                            setActiveGenre(fGenre); setSelectedSub(fSub);
+                            handleArtistClick(found || { id: m.name, name: m.name, icon: '', description: '', albums: [] });
+                          }}>{m.name}{m.role ? ` (${m.role})` : ''}</button>
+                        ) : (
+                          <span key={m.name} className="ge-member-chip">{m.name}{m.role ? ` (${m.role})` : ''}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
               {auxCordOpen && onAuxPick && (
                 <button className="ge-aux-btn" onClick={() => {
                   // Open Spotify for earliest album with tracks (last in descending list)
