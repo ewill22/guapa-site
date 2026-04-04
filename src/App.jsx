@@ -488,10 +488,10 @@ export default function App() {
       return;
     }
     if (nowPlaying.year && !nowPlaying.auxCord) {
-      // Daily artist playing — always sync year to album's release year
+      // Daily artist playing — always sync year to album's release year (clamp to timeline range)
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
-        setYear(nowPlaying.year);
+        setYear(Math.max(1960, Math.min(2026, nowPlaying.year)));
         prevAlbumRef.current = key;
       }
     } else if (nowPlaying.isAux && nowPlaying.year) {
@@ -499,7 +499,7 @@ export default function App() {
       if (yearPinned.current) return;
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
-        setYear(nowPlaying.year);
+        setYear(Math.max(1960, Math.min(2026, nowPlaying.year)));
         prevAlbumRef.current = key;
       }
     } else if (nowPlaying.auxCord) {
