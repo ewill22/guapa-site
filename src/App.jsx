@@ -503,10 +503,10 @@ export default function App() {
         prevAlbumRef.current = key;
       }
     } else if (nowPlaying.auxCord) {
-      // Aux cord open (not playing) — random year unless pinned
-      if (yearPinned.current) return;
+      // Aux cord open (not playing) — random year unless pinned, clear deep link
       if (prevAlbumRef.current !== '__aux__') {
-        setYear(randYear());
+        setDeepLink(null);
+        if (!yearPinned.current) setYear(randYear());
         prevAlbumRef.current = '__aux__';
       }
     }
