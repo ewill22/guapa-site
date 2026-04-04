@@ -205,12 +205,12 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - **Alternation**: day-of-year parity (even = throwback, odd = modern)
 - **Permanently stable**: adding/removing artists never shifts other days' picks (no epoch, no rotation index)
 - **Schedule**: plays discography chronologically starting 8am EST, tracks advance by `duration_ms`
-- **Aux Cord**: when discography finishes, random year
+- **Aux Cord**: when discography finishes, deep link clears (artist panel closes) and random year is set
 
 ### On-Load Behavior
 - Year starts as `null` (or from `sessionStorage` if user previously moved the timeline)
 - **During daily artist playback**: year always follows the currently playing album — user can move the slider but it snaps back on album change. Timeline is locked to the music.
-- **During aux cord**: year follows unless user has pinned via manual interaction
+- **During aux cord**: year follows unless user has pinned via manual interaction. Deep link is cleared so the artist panel doesn't persist into a random year's subgenre view.
 - Year persists via `sessionStorage` — sticks across page navigation (main ↔ record store) but resets on new tab
 - Artist of the day auto-opens in Genre Explorer on load (via `deepLink` with `noScroll: true`) — no scroll, just opens the discography
 - KPI tile clicks still scroll to the artist as before
@@ -271,14 +271,14 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Legend below: Emerging (green dashed) / Rising (blue) / Peak (pink) / Fading (red dashed)
 
 ### Coffee Lens (`src/data/coffee-timeline.js`)
-- **Timeline**: Year-based (1960–2026), bars driven by real world coffee production data (millions of 60kg bags, USDA/ICO)
+- **Timeline**: Year-based (1930–2026), bars driven by real world coffee production data (millions of 60kg bags, USDA/ICO) — pre-1960 bars are empty/short since coffee data starts at 1960
 - **Counter-bottom**: "Highlighted Roaster" — Panther Coffee (Miami, est. 2010), with shop link and Instagram. Spans full width of counter-bottom.
 - **Below counter**: Region tiles (South America, Central America, Africa, Blend) → Offering cards (8 coffees linking to Panther Shopify) → Year-based coffee blurbs
 - **Data file**: `src/data/coffee-timeline.js` — `FEATURED_ROASTER`, `PANTHER_OFFERINGS`, `PANTHER_REGIONS`
 - **Future**: Backend will build coffee batch/roast tracking pipeline (similar to NJ dispensary strain tracking), frontend will consume when ready
 
 ### Economics Lens
-- **Timeline**: Year-based (1960–2026), same bar style as music
+- **Timeline**: Year-based (1930–2026), same bar style as music
 - **Counter-bottom**: "Issue of the Moment" — Oil (green accent, Brent Crude benchmark)
 - **Below counter**: Year-based economics blurbs from `blurbs.js`
 

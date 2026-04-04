@@ -6,7 +6,7 @@ export const BLURBS = {
   guapa: {
     2026: [
       { type: 'news', text: 'Guapa RE — our real estate analytics tool for Atlantic County — is now in active development. 388,000+ parcel records and counting.' },
-      { type: 'update', text: 'The Music page got a full genre explorer with decade navigation, artist rankings, and subgenre browsing from 1960 to today.' },
+      { type: 'update', text: 'The Music page got a full genre explorer with decade navigation, artist rankings, and subgenre browsing from the 1930s to today.' },
       { type: 'update', text: 'Data Solutions page is live with a lead form. Three products listed: Guapa RE, Natural Wine Assistant, and Marketing Analytics Consulting.' },
       { type: 'news', text: 'Coffee page launched with a roaster timeline. Origins, regions, and processing methods — the start of the virtual coffee shop.' },
       { type: 'update', text: 'Guapa base design system published. Shared CSS tokens now available across all Guapa projects.' },
