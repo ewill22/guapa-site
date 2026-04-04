@@ -288,6 +288,67 @@
       margin-bottom: 0.4rem;
     }
 
+    /* ── Filter divider ──────────────────────────────── */
+    .filter-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--gray-800);
+      align-self: center;
+    }
+
+    /* ── Editorial toggle ────────────────────────────── */
+    .editorial-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .editorial-toggle-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .toggle-switch {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      background: var(--gray-800);
+      border-radius: 10px;
+      cursor: pointer;
+      border: none;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 14px;
+      height: 14px;
+      background: var(--gray-600);
+      border-radius: 50%;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .toggle-switch.on {
+      background: rgba(126, 200, 155, 0.25);
+    }
+    .toggle-switch.on::after {
+      transform: translateX(16px);
+      background: var(--green);
+    }
+    .editorial-status {
+      font-size: 0.68rem;
+      color: var(--gray-600);
+    }
+    .editorial-status.on { color: var(--green); }
+    .editorial-status.pending {
+      color: var(--yellow);
+      font-style: italic;
+    }
+
     /* ── Empty state ─────────────────────────────────── */
     .empty-state {
       text-align: center;
@@ -340,6 +401,9 @@
   <button class="filter-btn" data-filter="missing" onclick="setFilter('missing', this)">Missing description <span class="filter-count" id="count-missing"></span></button>
   <button class="filter-btn" data-filter="has" onclick="setFilter('has', this)">Has description <span class="filter-count" id="count-has"></span></button>
   <button class="filter-btn active" data-filter="all" onclick="setFilter('all', this)">All <span class="filter-count" id="count-all"></span></button>
+  <span class="filter-divider"></span>
+  <button class="filter-btn" data-filter="in-editorial" onclick="setFilter('in-editorial', this)">In Editorial <span class="filter-count" id="count-in-editorial"></span></button>
+  <button class="filter-btn" data-filter="not-editorial" onclick="setFilter('not-editorial', this)">Not in Editorial <span class="filter-count" id="count-not-editorial"></span></button>
 </div>
 
 <div class="artist-list" id="artist-list">
@@ -415,6 +479,10 @@ function applyFilters() {
     filtered = filtered.filter(a => !a.description);
   } else if (activeFilter === 'has') {
     filtered = filtered.filter(a => !!a.description);
+  } else if (activeFilter === 'in-editorial') {
+    filtered = filtered.filter(a => a.confirmed === 'yes');
+  } else if (activeFilter === 'not-editorial') {
+    filtered = filtered.filter(a => a.confirmed !== 'yes');
   }
   render(filtered);
 }
@@ -422,9 +490,13 @@ function applyFilters() {
 function updateCounts() {
   const missing = artistData.filter(a => !a.description).length;
   const has = artistData.filter(a => !!a.description).length;
+  const inEd = artistData.filter(a => a.confirmed === 'yes').length;
+  const notEd = artistData.filter(a => a.confirmed !== 'yes').length;
   document.getElementById('count-missing').textContent = missing;
   document.getElementById('count-has').textContent = has;
   document.getElementById('count-all').textContent = artistData.length;
+  document.getElementById('count-in-editorial').textContent = inEd;
+  document.getElementById('count-not-editorial').textContent = notEd;
 }
 
 // ── Render ────────────────────────────────────────────────────────────
@@ -450,11 +522,19 @@ function render(artists) {
     <div class="artist-card" data-artist="${esc(a.name)}">
       <div class="artist-header" onclick="toggleCard(this)">
         <span class="artist-icon">${a.icon || '•'}</span>
-        <span class="artist-name">${esc(a.name)}${!hasdesc ? '<span class="missing-badge">no description</span>' : ''}</span>
+        <span class="artist-name">${esc(a.name)}${a.confirmed === 'yes' ? '<span class="missing-badge" style="border-style:solid;color:var(--green);border-color:var(--green);">editorial</span>' : '<span class="missing-badge">not in editorial</span>'}${!hasdesc ? '<span class="missing-badge">no description</span>' : ''}</span>
         <span class="artist-desc">${esc(a.description || '')}</span>
         <span class="artist-chevron">▶</span>
       </div>
       <div class="artist-body">
+        <div class="editorial-toggle">
+          <button class="toggle-switch${a.confirmed === 'yes' ? ' on' : ''}"
+                  data-artist="${esc(a.name)}"
+                  data-confirmed="${a.confirmed === 'yes' ? 'yes' : 'no'}"
+                  onclick="toggleEditorial(this)"></button>
+          <span class="editorial-toggle-label">In Editorial</span>
+          <span class="editorial-status${a.confirmed === 'yes' ? ' on' : ''}" id="editorial-status-${esc(a.name)}">${a.confirmed === 'yes' ? 'Confirmed' : 'Not confirmed'}</span>
+        </div>
         <div class="edit-section icon-edit-section">
           <div class="edit-section-label">Icon</div>
           <div class="current-value${a.icon ? '' : ' empty'}" style="font-size:1.4rem;padding:0.3rem 0.75rem;">${a.icon || 'No icon yet.'}</div>
@@ -631,6 +711,55 @@ async function submitForm(submitBtn) {
     status.textContent = 'Something went wrong. Try again.';
     status.className = 'submit-status err';
     submitBtn.disabled = false;
+  }
+}
+
+// ── Toggle editorial status ───────────────────────────────────────────
+async function toggleEditorial(btn) {
+  const artist = btn.dataset.artist;
+  const wasConfirmed = btn.dataset.confirmed === 'yes';
+  const newVal = wasConfirmed ? 'no' : 'yes';
+
+  // Optimistic UI update
+  btn.classList.toggle('on', !wasConfirmed);
+  btn.dataset.confirmed = newVal;
+  const statusEl = btn.closest('.editorial-toggle').querySelector('.editorial-status');
+  statusEl.textContent = 'Submitting...';
+  statusEl.className = 'editorial-status pending';
+
+  const payload = {
+    artist_name: artist,
+    album_title: '',
+    field: 'confirmed',
+    old_value: wasConfirmed ? 'yes' : 'no',
+    suggested_value: newVal,
+    _subject: `Editorial toggle: ${artist} → ${newVal}`,
+  };
+
+  try {
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      statusEl.textContent = newVal === 'yes' ? 'Confirmed' : 'Not confirmed';
+      statusEl.className = 'editorial-status' + (newVal === 'yes' ? ' on' : '');
+      // Update local data so filters stay correct
+      const entry = artistData.find(a => a.name === artist);
+      if (entry) entry.confirmed = newVal;
+      updateCounts();
+    } else { throw new Error(); }
+  } catch {
+    // Revert on failure
+    btn.classList.toggle('on', wasConfirmed);
+    btn.dataset.confirmed = wasConfirmed ? 'yes' : 'no';
+    statusEl.textContent = 'Failed — try again';
+    statusEl.className = 'editorial-status pending';
+    setTimeout(() => {
+      statusEl.textContent = wasConfirmed ? 'Confirmed' : 'Not confirmed';
+      statusEl.className = 'editorial-status' + (wasConfirmed ? ' on' : '');
+    }, 2000);
   }
 }
 
