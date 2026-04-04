@@ -650,6 +650,7 @@ async function submitIconForm(submitBtn) {
       status.className = 'submit-status ok';
       input.value = '';
       submitBtn.disabled = false;
+      syncEditorialBadge(form);
     } else { throw new Error(); }
   } catch {
     status.textContent = 'Something went wrong. Try again.';
@@ -697,6 +698,7 @@ async function submitForm(submitBtn) {
       status.className = 'submit-status ok';
       textarea.value = '';
       submitBtn.disabled = false;
+      syncEditorialBadge(form);
     } else {
       throw new Error();
     }
@@ -712,11 +714,25 @@ function toggleLocal(btn) {
   const wasOn = btn.dataset.confirmed === 'yes';
   btn.dataset.confirmed = wasOn ? 'no' : 'yes';
   btn.classList.toggle('on', !wasOn);
-  // Update header badge
-  const card = btn.closest('.artist-card');
+}
+
+// Helper: get editorial toggle state for an artist card
+function getEditorialState(form) {
+  const card = form.closest('.artist-card');
+  const toggle = card.querySelector('.toggle-switch');
+  if (!toggle) return null;
+  return toggle.dataset.confirmed;
+}
+
+// Update header badge + local data after successful submit
+function syncEditorialBadge(form) {
+  const card = form.closest('.artist-card');
+  const toggle = card.querySelector('.toggle-switch');
+  if (!toggle) return;
+  const isOn = toggle.dataset.confirmed === 'yes';
   const badge = card.querySelector('.artist-name .missing-badge');
   if (badge) {
-    if (!wasOn) {
+    if (isOn) {
       badge.textContent = 'editorial';
       badge.style.borderStyle = 'solid';
       badge.style.color = 'var(--green)';
@@ -728,14 +744,10 @@ function toggleLocal(btn) {
       badge.style.borderColor = '';
     }
   }
-}
-
-// Helper: get editorial toggle state for an artist card
-function getEditorialState(form) {
-  const card = form.closest('.artist-card');
-  const toggle = card.querySelector('.toggle-switch');
-  if (!toggle) return null;
-  return toggle.dataset.confirmed;
+  const artist = toggle.dataset.artist;
+  const entry = artistData.find(a => a.name === artist);
+  if (entry) entry.confirmed = toggle.dataset.confirmed;
+  updateCounts();
 }
 
 // ── Search ────────────────────────────────────────────────────────────
