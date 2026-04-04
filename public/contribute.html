@@ -339,16 +339,6 @@
       transform: translateX(16px);
       background: var(--green);
     }
-    .editorial-status {
-      font-size: 0.68rem;
-      color: var(--gray-600);
-    }
-    .editorial-status.on { color: var(--green); }
-    .editorial-status.pending {
-      color: var(--yellow);
-      font-style: italic;
-    }
-
     /* ── Empty state ─────────────────────────────────── */
     .empty-state {
       text-align: center;
@@ -531,9 +521,8 @@ function render(artists) {
           <button class="toggle-switch${a.confirmed === 'yes' ? ' on' : ''}"
                   data-artist="${esc(a.name)}"
                   data-confirmed="${a.confirmed === 'yes' ? 'yes' : 'no'}"
-                  onclick="toggleEditorial(this)"></button>
+                  onclick="toggleLocal(this)"></button>
           <span class="editorial-toggle-label">In Editorial</span>
-          <span class="editorial-status${a.confirmed === 'yes' ? ' on' : ''}" id="editorial-status-${esc(a.name)}">${a.confirmed === 'yes' ? 'Included' : 'Not included'}</span>
         </div>
         <div class="edit-section icon-edit-section">
           <div class="edit-section-label">Icon</div>
@@ -639,12 +628,14 @@ async function submitIconForm(submitBtn) {
   status.textContent = 'Submitting…';
   status.className = 'submit-status';
 
+  const editorialState = getEditorialState(form);
   const payload = {
     artist_name: form.dataset.artist,
     album_title: '',
     field: 'icon',
     old_value: form.dataset.old,
     suggested_value: suggested,
+    confirmed: editorialState,
     _subject: `Icon suggestion: ${form.dataset.artist}`,
   };
 
@@ -684,12 +675,14 @@ async function submitForm(submitBtn) {
   status.textContent = 'Submitting…';
   status.className = 'submit-status';
 
+  const editorialState = getEditorialState(form);
   const payload = {
     artist_name: form.dataset.artist,
     album_title: form.dataset.album || '',
     field: form.dataset.field,
     old_value: form.dataset.old,
     suggested_value: suggested,
+    confirmed: editorialState,
     _subject: `Editorial suggestion: ${form.dataset.artist}${form.dataset.album ? ' — ' + form.dataset.album : ''}`,
   };
 
@@ -714,53 +707,35 @@ async function submitForm(submitBtn) {
   }
 }
 
-// ── Toggle editorial status ───────────────────────────────────────────
-async function toggleEditorial(btn) {
-  const artist = btn.dataset.artist;
-  const wasIncluded = btn.dataset.confirmed === 'yes';
-  const newVal = wasIncluded ? 'no' : 'yes';
-
-  // Optimistic UI update
-  btn.classList.toggle('on', !wasIncluded);
-  btn.dataset.confirmed = newVal;
-  const statusEl = btn.closest('.editorial-toggle').querySelector('.editorial-status');
-  statusEl.textContent = 'Submitting...';
-  statusEl.className = 'editorial-status pending';
-
-  const payload = {
-    artist_name: artist,
-    album_title: '',
-    field: 'confirmed',
-    old_value: wasIncluded ? 'yes' : 'no',
-    suggested_value: newVal,
-    _subject: `Editorial toggle: ${artist} → ${newVal}`,
-  };
-
-  try {
-    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (res.ok) {
-      statusEl.textContent = newVal === 'yes' ? 'Included' : 'Not included';
-      statusEl.className = 'editorial-status' + (newVal === 'yes' ? ' on' : '');
-      // Update local data so filters stay correct
-      const entry = artistData.find(a => a.name === artist);
-      if (entry) entry.confirmed = newVal;
-      updateCounts();
-    } else { throw new Error(); }
-  } catch {
-    // Revert on failure
-    btn.classList.toggle('on', wasIncluded);
-    btn.dataset.confirmed = wasIncluded ? 'yes' : 'no';
-    statusEl.textContent = 'Failed — try again';
-    statusEl.className = 'editorial-status pending';
-    setTimeout(() => {
-      statusEl.textContent = wasIncluded ? 'Included' : 'Not included';
-      statusEl.className = 'editorial-status' + (wasIncluded ? ' on' : '');
-    }, 2000);
+// ── Toggle editorial (local only — submitted with the description form) ──
+function toggleLocal(btn) {
+  const wasOn = btn.dataset.confirmed === 'yes';
+  btn.dataset.confirmed = wasOn ? 'no' : 'yes';
+  btn.classList.toggle('on', !wasOn);
+  // Update header badge
+  const card = btn.closest('.artist-card');
+  const badge = card.querySelector('.artist-name .missing-badge');
+  if (badge) {
+    if (!wasOn) {
+      badge.textContent = 'editorial';
+      badge.style.borderStyle = 'solid';
+      badge.style.color = 'var(--green)';
+      badge.style.borderColor = 'var(--green)';
+    } else {
+      badge.textContent = 'not in editorial';
+      badge.style.borderStyle = 'dashed';
+      badge.style.color = '';
+      badge.style.borderColor = '';
+    }
   }
+}
+
+// Helper: get editorial toggle state for an artist card
+function getEditorialState(form) {
+  const card = form.closest('.artist-card');
+  const toggle = card.querySelector('.toggle-switch');
+  if (!toggle) return null;
+  return toggle.dataset.confirmed;
 }
 
 // ── Search ────────────────────────────────────────────────────────────
