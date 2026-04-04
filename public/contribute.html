@@ -533,7 +533,7 @@ function render(artists) {
                   data-confirmed="${a.confirmed === 'yes' ? 'yes' : 'no'}"
                   onclick="toggleEditorial(this)"></button>
           <span class="editorial-toggle-label">In Editorial</span>
-          <span class="editorial-status${a.confirmed === 'yes' ? ' on' : ''}" id="editorial-status-${esc(a.name)}">${a.confirmed === 'yes' ? 'Confirmed' : 'Not confirmed'}</span>
+          <span class="editorial-status${a.confirmed === 'yes' ? ' on' : ''}" id="editorial-status-${esc(a.name)}">${a.confirmed === 'yes' ? 'Included' : 'Not included'}</span>
         </div>
         <div class="edit-section icon-edit-section">
           <div class="edit-section-label">Icon</div>
@@ -717,11 +717,11 @@ async function submitForm(submitBtn) {
 // ── Toggle editorial status ───────────────────────────────────────────
 async function toggleEditorial(btn) {
   const artist = btn.dataset.artist;
-  const wasConfirmed = btn.dataset.confirmed === 'yes';
-  const newVal = wasConfirmed ? 'no' : 'yes';
+  const wasIncluded = btn.dataset.confirmed === 'yes';
+  const newVal = wasIncluded ? 'no' : 'yes';
 
   // Optimistic UI update
-  btn.classList.toggle('on', !wasConfirmed);
+  btn.classList.toggle('on', !wasIncluded);
   btn.dataset.confirmed = newVal;
   const statusEl = btn.closest('.editorial-toggle').querySelector('.editorial-status');
   statusEl.textContent = 'Submitting...';
@@ -731,7 +731,7 @@ async function toggleEditorial(btn) {
     artist_name: artist,
     album_title: '',
     field: 'confirmed',
-    old_value: wasConfirmed ? 'yes' : 'no',
+    old_value: wasIncluded ? 'yes' : 'no',
     suggested_value: newVal,
     _subject: `Editorial toggle: ${artist} → ${newVal}`,
   };
@@ -743,7 +743,7 @@ async function toggleEditorial(btn) {
       body: JSON.stringify(payload),
     });
     if (res.ok) {
-      statusEl.textContent = newVal === 'yes' ? 'Confirmed' : 'Not confirmed';
+      statusEl.textContent = newVal === 'yes' ? 'Included' : 'Not included';
       statusEl.className = 'editorial-status' + (newVal === 'yes' ? ' on' : '');
       // Update local data so filters stay correct
       const entry = artistData.find(a => a.name === artist);
@@ -752,13 +752,13 @@ async function toggleEditorial(btn) {
     } else { throw new Error(); }
   } catch {
     // Revert on failure
-    btn.classList.toggle('on', wasConfirmed);
-    btn.dataset.confirmed = wasConfirmed ? 'yes' : 'no';
+    btn.classList.toggle('on', wasIncluded);
+    btn.dataset.confirmed = wasIncluded ? 'yes' : 'no';
     statusEl.textContent = 'Failed — try again';
     statusEl.className = 'editorial-status pending';
     setTimeout(() => {
-      statusEl.textContent = wasConfirmed ? 'Confirmed' : 'Not confirmed';
-      statusEl.className = 'editorial-status' + (wasConfirmed ? ' on' : '');
+      statusEl.textContent = wasIncluded ? 'Included' : 'Not included';
+      statusEl.className = 'editorial-status' + (wasIncluded ? ' on' : '');
     }, 2000);
   }
 }
