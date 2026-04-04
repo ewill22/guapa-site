@@ -1,11 +1,10 @@
 import GuapaAvatar, { getAvatarColor } from './GuapaAvatar';
-import { LENS_COLORS, LENS_ICONS, LENS_LABELS, getEvent } from '../data/timeline';
+import { LENS_COLORS, LENS_ICONS, LENS_LABELS } from '../data/timeline';
 import './ProfileModal.css';
 
 export default function ProfileModal({ user, onClose }) {
   if (!user) return null;
   const color = LENS_COLORS[user.lens];
-  const ev = getEvent(user.lens, user.year);
 
   return (
     <div className="profile-overlay" onClick={onClose}>
@@ -35,7 +34,7 @@ export default function ProfileModal({ user, onClose }) {
               <div className="profile-exploring-lens" style={{ color }}>
                 {LENS_LABELS[user.lens]} — {user.year}
               </div>
-              <div className="profile-exploring-vibe">{ev?.vibe}</div>
+              <div className="profile-exploring-vibe">{user.year}</div>
             </div>
           </div>
         </div>

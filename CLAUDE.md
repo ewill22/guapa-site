@@ -80,6 +80,7 @@ The Content team maintains two CSV files in `public/data/`:
 | `description` | 1-2 sentence artist blurb in the Guapa voice |
 | `original` | `yes` = one of the founding 145 editorial artists. Permanent flag, never changes. |
 | `drafted` | `yes` = content written, awaiting Eric's review |
+| `eric_take` | Eric's personal take/note on the artist (optional, loaded by `load-editorial.js`) |
 
 ### `album-editorial.csv`
 | Column | Purpose |
@@ -165,15 +166,16 @@ Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No fill
 ### Navigation (must match across ALL pages)
 - Logo image: `assets/guapa_logo_dark.png`, height 36px
 - Logo text: "GUAPA" at 1.8rem bold + "data" at 0.6rem weight 400
-- Desktop nav links (left): Record Store, Data Solutions
+- Desktop nav links (left): Record Store, Data Solutions, Contribute
 - Desktop nav actions (right): Merch → (pink pill), Instagram icon
-- Mobile hamburger: Record Store, Data Solutions, Merch
+- Mobile hamburger: Record Store, Data Solutions, Contribute, Merch
+- **Contribute link is intentionally React-only** — only appears on the main page (Nav.jsx) and `data-solutions.html` / `contribute.html`. The other static pages (`shop.html`, `music.html`, `terms.html`, `privacy.html`) omit it by design.
 - Static HTML pages use inline styles to match React nav exactly
 
 ### Main Page (React — `src/App.jsx`)
 
 1. **Nav** (`src/components/Nav.jsx`)
-2. **Yellow italic banner** (randomly alternates between two quotes on page load, locked via useState initializer)
+2. **Yellow italic banner** (randomly picks from 3 quotes on page load, locked via useState initializer)
 3. **Coffee Shop Counter** (two-column desktop layout):
    - **Left sidebar (desktop)**: KPI tiles (sticky, scrolls with you)
    - **Right main**: Welcome greeting, timeline, lens-specific counter-bottom section
@@ -306,7 +308,7 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 
 - Nav logo: `assets/guapa_logo_dark.png`
 - Footer logo: same `guapa_logo_dark.png` + styled "GUAPA data" text (matches nav lockup)
-- Never use `lockup_light.png` (removed)
+- Never use `lockup_light.png` (file still exists in `public/assets/` but is unused — safe to delete)
 - "collective" or "inc" → always "Guapa Data"
 - "Shop" → always "Merch"
 
@@ -340,6 +342,27 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Coffee link in nav and footer
 - Data Solutions yellow pill button in nav (moved to regular nav link)
 - Progress bar rewind animation (bars now snap to start on song change)
+
+## Inactive Code (kept for future user system)
+
+These files are remnants of the removed login/ticker system. Nothing in App.jsx imports them currently, but they are **intentionally kept** for a possible future user system:
+- `src/components/Ticker.jsx` + `Ticker.css` — scrolling logged-in users bar
+- `src/components/ProfileModal.jsx` + `ProfileModal.css` — user profile card
+- `src/components/GuapaAvatar.jsx` — avatar generator
+- `src/data/guapaLogo.js` — logo SVG data for avatars
+- `src/data/users.js` — mock user data
+
+**Unrelated dead files** (safe to delete):
+- `src/data/taxonomy.js` — exported but never imported anywhere
+- `public/assets/lockup_light.png` — referenced in PUT_IMAGES_HERE.txt but never used
+
+## Known Issues (as of 2026-04-04)
+
+- **Guapa RE local link**: `data-solutions.html:65` links to `http://192.168.1.99:8000` (intentional — local dev tool). External visitors get a graceful fallback: JS checks reachability, and if the link fails, scrolls to the contact form with "Guapa RE (Early Access)" pre-selected.
+- **Localhost API reference**: `music.html:1191` defines `MUSIC_API = 'http://localhost:8001'` — fails silently on GitHub Pages (static catalog loads correctly as fallback), but the dead reference is confusing
+- **Newsletter form non-functional**: The email signup form in App.jsx has no `action` or `onSubmit` — purely decorative
+- **Newsreader upright loaded**: Google Fonts import includes `Newsreader:ital,wght@0,400;1,400` — the upright weight (`0,400`) is loaded but should never be used per design rules (italic only)
+- **Duplicate CNAME**: `CNAME` exists at both repo root and `public/CNAME` — only `public/CNAME` matters (Vite copies it to dist). Root CNAME is harmless but redundant.
 
 ## Social Links
 
