@@ -1,7 +1,7 @@
 // Music genre data — extracted from music.html
 // Genre → Subgenre → Artist hierarchy with status per year
 
-const MIN_YEAR = 1960;
+const MIN_YEAR = 1930;
 const MAX_YEAR = 2025;
 
 function S(ranges) {

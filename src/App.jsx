@@ -313,7 +313,7 @@ const GUAPA_COLOR = '#f0c014';
 export default function App() {
   const [lens, setLens] = useState('music');
   const [year, _setYear] = useState(() => {
-    try { const y = parseInt(sessionStorage.getItem('guapa_playing_year')); if (y >= 1960 && y <= 2026) return y; } catch {}
+    try { const y = parseInt(sessionStorage.getItem('guapa_playing_year')); if (y >= 1930 && y <= 2026) return y; } catch {}
     return null;
   });
   const yearPinned = useRef(year !== null); // true once user manually moves year (or loaded from storage)
@@ -479,7 +479,7 @@ export default function App() {
   }, [dailyArtist, auxSchedule]);
 
   // Sync timeline year + genre explorer to currently playing album
-  const randYear = () => Math.floor(Math.random() * (2026 - 1960 + 1)) + 1960;
+  const randYear = () => Math.floor(Math.random() * (2026 - 1930 + 1)) + 1930;
   useEffect(() => {
     if (!nowPlaying) return;
     if (nowPlaying.waiting) {
@@ -488,10 +488,10 @@ export default function App() {
       return;
     }
     if (nowPlaying.year && !nowPlaying.auxCord) {
-      // Daily artist playing — always sync year to album's release year (clamp to timeline range)
+      // Daily artist playing — always sync year to album's release year
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
-        setYear(Math.max(1960, Math.min(2026, nowPlaying.year)));
+        setYear(nowPlaying.year);
         prevAlbumRef.current = key;
       }
     } else if (nowPlaying.isAux && nowPlaying.year) {
@@ -499,7 +499,7 @@ export default function App() {
       if (yearPinned.current) return;
       const key = `${nowPlaying.album}_${nowPlaying.year}`;
       if (prevAlbumRef.current !== key) {
-        setYear(Math.max(1960, Math.min(2026, nowPlaying.year)));
+        setYear(nowPlaying.year);
         prevAlbumRef.current = key;
       }
     } else if (nowPlaying.auxCord) {
@@ -533,15 +533,15 @@ export default function App() {
     if (isNumeric) {
       const vals = Object.values(data);
       const maxVal = Math.max(...vals);
-      return Array.from({ length: 67 }, (_, i) => {
-        const y = 1960 + i;
+      return Array.from({ length: 97 }, (_, i) => {
+        const y = 1930 + i;
         const v = data[y] || 0;
         return { year: y, h: v > 0 ? 6 + (v / maxVal) * 50 : 3, value: v };
       });
     }
     const ey = keys.map(Number);
-    return Array.from({ length: 67 }, (_, i) => {
-      const y = 1960 + i;
+    return Array.from({ length: 97 }, (_, i) => {
+      const y = 1930 + i;
       const has = ey.includes(y);
       return { year: y, h: has ? 18 + (hashStr(y + src) % 38) : 3 + (hashStr(y + src) % 10) };
     });
@@ -593,7 +593,7 @@ export default function App() {
     if (isGuapa) {
       navDev(dir);
     } else {
-      setYear(y => Math.max(1960, Math.min(2026, y + dir)), true);
+      setYear(y => Math.max(1930, Math.min(2026, y + dir)), true);
     }
   }, [isGuapa, navDev]);
 
@@ -804,15 +804,15 @@ export default function App() {
 
                       <div className="slider-row">
                         <div className="slider-wrapper">
-                          <input type="range" className="year-slider" min="1960" max="2026"
-                            value={year || 1960} onChange={e => setYear(+e.target.value, true)}
+                          <input type="range" className="year-slider" min="1930" max="2026"
+                            value={year || 1930} onChange={e => setYear(+e.target.value, true)}
                             style={{
-                              background: `linear-gradient(to right, ${lc} 0%, ${lc} ${(((year || 1960) - 1960) / 66) * 100}%, var(--gray-800) ${(((year || 1960) - 1960) / 66) * 100}%, var(--gray-800) 100%)`,
+                              background: `linear-gradient(to right, ${lc} 0%, ${lc} ${(((year || 1930) - 1930) / 96) * 100}%, var(--gray-800) ${(((year || 1930) - 1930) / 96) * 100}%, var(--gray-800) 100%)`,
                               accentColor: lc,
                             }}
                           />
                           <div className="timeline-markers">
-                            <span>1960</span><span>1980</span><span>2000</span><span>2026</span>
+                            <span>1930</span><span>1960</span><span>1990</span><span>2026</span>
                           </div>
                         </div>
                       </div>
