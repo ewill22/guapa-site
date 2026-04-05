@@ -126,6 +126,7 @@ def parse_submission_email(msg):
         'field':          parse_field(body, 'field') or 'description',
         'old_value':      parse_field(body, 'old_value'),
         'suggested_value': parse_field(body, 'suggested_value'),
+        'confirmed':      parse_field(body, 'confirmed'),
     }
 
 # ── Apply logic ───────────────────────────────────────────────────────
@@ -200,12 +201,21 @@ def main():
         suggested    = sub['suggested_value']
         old_value    = sub['old_value']
 
+        confirmed = sub.get('confirmed', '')
+
         if album_title:
             old, ok = apply_album(album_rows, artist_name, album_title, field, suggested)
             target = f'{artist_name} / {album_title}'
         else:
             old, ok = apply_artist(artist_rows, artist_name, field, suggested)
             target = artist_name
+
+        # Also apply confirmed toggle if present
+        if confirmed in ('yes', 'no') and not album_title:
+            for row in artist_rows:
+                if row['name'].lower() == artist_name.lower():
+                    row['confirmed'] = confirmed
+                    break
 
         if ok:
             applied += 1
