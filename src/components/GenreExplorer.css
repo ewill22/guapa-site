@@ -991,8 +991,7 @@
   .ge-th-num { width: 22px; }
   .ge-th-dur { width: 36px; }
 
-  .ge-track-genius,
-  .ge-track-cover-badge {
+  .ge-track-genius {
     display: none;
   }
 
