@@ -780,7 +780,7 @@
   border: none;
   padding: 0;
   font: inherit;
-  color: var(--blue);
+  color: var(--pink);
   cursor: pointer;
   transition: color 0.15s;
 }
