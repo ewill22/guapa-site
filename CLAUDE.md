@@ -51,6 +51,7 @@ The creative work sells the serious work. A potential client explores the record
     → pulls Spotify metadata + covers + links
     → enriches release_date from MusicBrainz CC0 (YYYY-MM-DD, 50/day backfill)
     → classifies genres at album level (classify_genres.py)
+    → enriches track-level data: Genius URLs, cover flags, writer credits, in_catalog links
     → sorts albums chronologically per artist (by release_date)
     → exports slim music-catalog.json
     → git push to guapa-site/public/data/music-catalog.json
@@ -61,7 +62,7 @@ guapa-site receives push
 ```
 
 - Backend commits show as `[auto]` in git log — these are safe, just catalog updates
-- Backend owns: data quality, enrichment, genre classification, album-level tagging, release_date enrichment
+- Backend owns: data quality, enrichment, genre classification, album-level tagging, release_date enrichment, track-level enrichment (Genius, covers, writers)
 - Frontend owns: how that data is displayed, UX, editorial content, styling
 - Catalog: 824 artists, ~16K albums, 10 genres, 56 subgenres
 - `release_date` backfill: 2,989 albums done (17%), all editorial artists covered, 50/day until complete (source: MusicBrainz CC0)
@@ -253,6 +254,15 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Active state: white text, `--gray-400` border (neutral — legend colors have priority)
 - Random tile: dashed border, centered text, picks random genre with visible subgenres
 - Album actions: Spotify, Buy Vinyl, Buy CD (Amazon affiliate), Wiki
+
+**Track-level enrichment** (rendered in tracklist rows):
+- `url_genius` → yellow "GENIUS" pill link, right-aligned next to duration column
+- `cover: true` → blue "COVER" badge (--blue) next to track title
+- `writers` → "Written by ..." line below track title, gray-600 text
+- Writers with `in_catalog: true` → clickable blue links that deep-link to that artist's discography in Genre Explorer (uses `navigateToArtist()` helper, same pattern as member_of/members chips)
+- Genius + cover badges hidden on mobile (≤768px) to prevent overflow
+- Currently enriched: Flea, John Frusciante, RHCP, The Jimi Hendrix Experience (4 artists, expanding)
+- Backend spec: `docs/track-enrichment-spec.md`
 
 **Escape / Close behavior**:
 - Closes all selections and scrolls to just below yellow banner
