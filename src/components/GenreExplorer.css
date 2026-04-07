@@ -731,9 +731,9 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--gray-600);
-  background: rgba(156, 163, 175, 0.08);
-  border: 1px solid rgba(156, 163, 175, 0.15);
+  color: var(--blue);
+  background: rgba(136, 168, 212, 0.15);
+  border: 1px solid rgba(136, 168, 212, 0.4);
   padding: 1px 5px;
   border-radius: 3px;
   margin-left: 6px;
@@ -751,8 +751,8 @@
   border: 1px solid rgba(240, 192, 20, 0.15);
   padding: 1px 6px;
   border-radius: 3px;
-  margin-left: 6px;
-  vertical-align: middle;
+  flex-shrink: 0;
+  white-space: nowrap;
   transition: all 0.2s;
 }
 
