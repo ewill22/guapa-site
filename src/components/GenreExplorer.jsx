@@ -751,12 +751,21 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                             return (
                             <div key={ti} className={`ge-track${isNowPlaying ? ' ge-track--playing' : ''}`}>
                               <span className="ge-track-num">{t.track_number || ti + 1}</span>
-                              <span className="ge-track-title">
-                                {t.title}
-                                {t.spotify_id && (
-                                  <a href={`https://open.spotify.com/track/${t.spotify_id}`} target="_blank" rel="noopener" className="ge-track-play" onClick={e => e.stopPropagation()}>&#9654;</a>
+                              <div className="ge-track-info">
+                                <span className="ge-track-title">
+                                  {t.title}
+                                  {t.cover && <span className="ge-track-cover-badge">Cover</span>}
+                                  {t.spotify_id && (
+                                    <a href={`https://open.spotify.com/track/${t.spotify_id}`} target="_blank" rel="noopener" className="ge-track-play" onClick={e => e.stopPropagation()}>&#9654;</a>
+                                  )}
+                                  {t.url_genius && (
+                                    <a href={t.url_genius} target="_blank" rel="noopener" className="ge-track-genius" onClick={e => e.stopPropagation()}>Genius</a>
+                                  )}
+                                </span>
+                                {t.writers && t.writers.length > 0 && (
+                                  <span className="ge-track-writers">Written by {t.writers.map(w => w.name).join(', ')}</span>
                                 )}
-                              </span>
+                              </div>
                               {isNowPlaying && <span className="ge-track-now">Now Playing</span>}
                               <span className="ge-track-dur">{formatDuration(t.duration_ms)}</span>
                             </div>

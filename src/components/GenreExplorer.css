@@ -710,11 +710,66 @@
   font-variant-numeric: tabular-nums;
 }
 
+.ge-track-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .ge-track-title {
   font-size: 0.85rem;
   color: var(--gray-400);
-  flex: 1;
-  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ge-track-cover-badge {
+  font-size: 0.52rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-600);
+  background: rgba(156, 163, 175, 0.08);
+  border: 1px solid rgba(156, 163, 175, 0.15);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.ge-track-genius {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: var(--yellow);
+  background: rgba(240, 192, 20, 0.08);
+  border: 1px solid rgba(240, 192, 20, 0.15);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+  transition: all 0.2s;
+}
+
+@media (hover: hover) {
+  .ge-track-genius:hover {
+    background: rgba(240, 192, 20, 0.18);
+    border-color: rgba(240, 192, 20, 0.3);
+  }
+}
+.ge-track-genius:active {
+  background: rgba(240, 192, 20, 0.18);
+  border-color: rgba(240, 192, 20, 0.3);
+}
+
+.ge-track-writers {
+  font-size: 0.68rem;
+  color: var(--gray-600);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -734,6 +789,9 @@
 .ge-track--playing .ge-track-num,
 .ge-track--playing .ge-track-title {
   color: var(--yellow);
+}
+.ge-track--playing .ge-track-writers {
+  color: var(--gray-400);
 }
 .ge-track-now {
   font-size: 0.6rem;
@@ -913,6 +971,11 @@
   .ge-track-dur { width: 36px; }
   .ge-th-num { width: 22px; }
   .ge-th-dur { width: 36px; }
+
+  .ge-track-genius,
+  .ge-track-cover-badge {
+    display: none;
+  }
 
   .ge-tracklist-header {
     padding: 0 10px;
