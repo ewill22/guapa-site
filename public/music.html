@@ -1883,6 +1883,8 @@
                         const wikiUrl = album.url_wikipedia || artist.url_wikipedia || '#';
                         const amazonQuery = encodeURIComponent(`${artist.name} ${album.title} vinyl`);
                         const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
+                        const amazonCdQuery = encodeURIComponent(`${artist.name} ${album.title} cd`);
+                        const buyCdUrl = `https://www.amazon.com/s?k=${amazonCdQuery}&tag=guapainc-20`;
                         const tracks = album.tracks || [];
                         const trackCount = tracks.length;
                         const runtime = tracks.reduce((s, t) => s + (t.duration_ms || 0), 0);
@@ -1915,6 +1917,7 @@
                                     <div class="disco-album-actions">
                                         <a href="${spotifyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--spotify" onclick="event.stopPropagation()">Spotify</a>
                                         <a href="${buyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--buy" onclick="event.stopPropagation()">Buy Vinyl</a>
+                                        <a href="${buyCdUrl}" target="_blank" rel="noopener" class="disco-link disco-link--buy" onclick="event.stopPropagation()">Buy CD</a>
                                         <a href="${wikiUrl}" target="_blank" rel="noopener" class="disco-link disco-link--wiki" onclick="event.stopPropagation()">Wiki</a>
                                     </div>
                                 </div>
@@ -2181,6 +2184,8 @@
             const tracks = album.tracks || [];
             const amazonQuery = encodeURIComponent(`${artistName || ''} ${album.title} vinyl`);
             const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
+            const amazonCdQuery = encodeURIComponent(`${artistName || ''} ${album.title} cd`);
+            const buyCdUrl = `https://www.amazon.com/s?k=${amazonCdQuery}&tag=guapainc-20`;
 
             return `
                 <div class="disco-album ${isLatest ? 'disco-album--latest' : ''}" data-album-title="${(album.title || '').toLowerCase()}">
@@ -2193,6 +2198,7 @@
                             <div class="disco-album-actions">
                                 <a href="${spotifyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--spotify" onclick="event.stopPropagation()">Spotify</a>
                                 <a href="${buyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--buy" onclick="event.stopPropagation()">Buy Vinyl</a>
+                                <a href="${buyCdUrl}" target="_blank" rel="noopener" class="disco-link disco-link--buy" onclick="event.stopPropagation()">Buy CD</a>
                                 <a href="${wikiUrl}" target="_blank" rel="noopener" class="disco-link disco-link--wiki" onclick="event.stopPropagation()">Wiki</a>
                             </div>
                         </div>
@@ -2467,8 +2473,10 @@
                 const spotifyQuery = encodeURIComponent(`${rel.artist} ${rel.album}`);
                 const spotifyUrl = `https://open.spotify.com/search/${spotifyQuery}`;
                 const amazonQuery = encodeURIComponent(`${rel.artist} ${rel.album} vinyl`);
+                const amazonCdQuery = encodeURIComponent(`${rel.artist} ${rel.album} cd`);
                 let actions = `<a href="${spotifyUrl}" target="_blank" rel="noopener" class="disco-link disco-link--spotify">Spotify</a>`;
                 actions += `<a href="https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20" target="_blank" rel="noopener" class="disco-link disco-link--buy">Buy Vinyl</a>`;
+                actions += `<a href="https://www.amazon.com/s?k=${amazonCdQuery}&tag=guapainc-20" target="_blank" rel="noopener" class="disco-link disco-link--buy">Buy CD</a>`;
 
                 // Tracklist
                 let tracklistHtml = '';
