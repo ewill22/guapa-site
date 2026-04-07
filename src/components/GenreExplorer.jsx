@@ -485,6 +485,23 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
     setLoading(false);
   }, [catalog]);
 
+  const navigateToArtist = useCallback((name) => {
+    pendingAlbumRef.current = null;
+    noScrollRef.current = false;
+    let found = null, fGenre = null, fSub = null;
+    for (const [gid, genre] of Object.entries(mergedData)) {
+      for (const [sid, sub] of Object.entries(genre.subgenres)) {
+        for (const [aid, a] of Object.entries(sub.artists)) {
+          if (a.name.toLowerCase() === name.toLowerCase()) { found = { id: aid, ...a }; fGenre = gid; fSub = sid; break; }
+        }
+        if (found) break;
+      }
+      if (found) break;
+    }
+    setActiveGenre(fGenre); setSelectedSub(fSub);
+    handleArtistClick(found || { id: name, name, icon: '', description: '', albums: [] });
+  }, [mergedData, handleArtistClick]);
+
   // Origin story when genre has no visible subgenres
   const originStory = useMemo(() => {
     if (!activeGenre || visibleSubgenres.length > 0) return null;
@@ -760,7 +777,11 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                                   )}
                                 </span>
                                 {t.writers && t.writers.length > 0 && (
-                                  <span className="ge-track-writers">Written by {t.writers.map(w => w.name).join(', ')}</span>
+                                  <span className="ge-track-writers">Written by {t.writers.map((w, wi) => (
+                                    <span key={wi}>{wi > 0 && ', '}{w.in_catalog ? (
+                                      <button className="ge-writer-link" onClick={(e) => { e.stopPropagation(); navigateToArtist(w.name); }}>{w.name}</button>
+                                    ) : w.name}</span>
+                                  ))}</span>
                                 )}
                               </div>
                               {isNowPlaying && <span className="ge-track-now">Now Playing</span>}
