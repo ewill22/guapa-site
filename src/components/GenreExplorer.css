@@ -770,9 +770,15 @@
 .ge-track-writers {
   font-size: 0.68rem;
   color: var(--gray-600);
-  overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.ge-track-writers::-webkit-scrollbar {
+  display: none;
 }
 
 .ge-writer-link {
