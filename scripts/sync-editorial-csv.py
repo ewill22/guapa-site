@@ -1,6 +1,7 @@
 """
 Sync artist-editorial.csv with music-catalog.json.
-Adds new catalog artists as confirmed=no. Never modifies existing rows.
+- Adds new catalog artists as confirmed=no.
+- Auto-flips any artist with track-level cover/writer enrichment to confirmed=yes.
 Runs in GitHub Actions before build.
 """
 import csv
@@ -28,10 +29,19 @@ def main():
         catalog = json.load(f)
 
     catalog_names = {}
+    enriched = set()  # normalized names of artists with track-level cover/writer data
     for artist in catalog.values():
         name = artist.get("name", "")
-        if name:
-            catalog_names[normalize(name)] = name
+        if not name:
+            continue
+        catalog_names[normalize(name)] = name
+        for album in artist.get("albums", []):
+            for track in album.get("tracks", []):
+                if track.get("cover") or track.get("writers"):
+                    enriched.add(normalize(name))
+                    break
+            if normalize(name) in enriched:
+                break
 
     # Load existing CSV names
     with open(CSV_PATH, encoding="utf-8-sig") as f:
@@ -62,22 +72,35 @@ def main():
                 "eric_take": "",
             })
 
-    if not new_rows:
+    # Auto-flip enriched artists to confirmed=yes
+    flipped = []
+    for row in rows:
+        if normalize(row["name"]) in enriched and (row.get("confirmed") or "").strip().lower() != "yes":
+            row["confirmed"] = "yes"
+            flipped.append(row["name"])
+
+    if not new_rows and not flipped:
         print(f"Editorial CSV is up to date ({len(rows)} artists).")
         return
 
-    # Append new rows
     rows.extend(new_rows)
     with open(CSV_PATH, "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=["name", "confirmed", "icon", "description", "original", "drafted", "eric_take"])
         w.writeheader()
         w.writerows(rows)
 
-    print(f"Added {len(new_rows)} new artists to editorial CSV ({len(rows)} total).")
-    for r in new_rows[:10]:
-        print(f"  + {r['name']}")
-    if len(new_rows) > 10:
-        print(f"  ... and {len(new_rows) - 10} more")
+    if new_rows:
+        print(f"Added {len(new_rows)} new artists to editorial CSV ({len(rows)} total).")
+        for r in new_rows[:10]:
+            print(f"  + {r['name']}")
+        if len(new_rows) > 10:
+            print(f"  ... and {len(new_rows) - 10} more")
+    if flipped:
+        print(f"Auto-confirmed {len(flipped)} enriched artists:")
+        for n in flipped[:10]:
+            print(f"  ~ {n}")
+        if len(flipped) > 10:
+            print(f"  ... and {len(flipped) - 10} more")
 
 if __name__ == "__main__":
     main()

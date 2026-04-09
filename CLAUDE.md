@@ -96,7 +96,7 @@ The Content team maintains two CSV files in `public/data/`:
 2. Write artist description + icon, set `drafted=yes`
 3. Write album descriptions for 4-5 key albums per artist
 4. Eric reviews — flips `confirmed=yes` when approved
-5. `sync-editorial-csv.py` (runs in CI) auto-adds new catalog artists as `confirmed=no`
+5. `sync-editorial-csv.py` (runs in CI) auto-adds new catalog artists as `confirmed=no`, and auto-flips any artist with track-level cover/writer enrichment to `confirmed=yes`
 
 ### Community Suggestions (guapa.space/contribute)
 Visitors can suggest description edits via the contribute page. Submissions go to Formspree (form ID: `mykbdnak`) → emailed to `eewilliamsremote@gmail.com`.
