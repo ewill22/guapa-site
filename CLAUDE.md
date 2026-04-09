@@ -261,7 +261,8 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - `writers` → "Written by ..." line below track title, gray-600 text
 - Writers with `in_catalog: true` → clickable blue links that deep-link to that artist's discography in Genre Explorer (uses `navigateToArtist()` helper, same pattern as member_of/members chips)
 - Genius + cover badges hidden on mobile (≤768px) to prevent overflow
-- Currently enriched: Flea, John Frusciante, RHCP, The Jimi Hendrix Experience (4 artists, expanding)
+- Currently enriched: 16 artists and expanding (Flea, RHCP, Jimi Hendrix Experience, John Frusciante, Mandy Moore, Britney Spears, Christina Aguilera, Debbie Gibson, Bobby Darin, Rick Nelson, A★Teens, RBD, Vanessa Hudgens, etc.)
+- **Auto-confirm rule**: `sync-editorial-csv.py` (runs in CI on every push) scans the catalog for any artist with track-level `cover` flags or `writers` arrays and flips their editorial row to `confirmed=yes`. Means new backend enrichment → artist goes live on the next build, zero manual work.
 - Backend spec: `docs/track-enrichment-spec.md`
 
 **Escape / Close behavior**:
