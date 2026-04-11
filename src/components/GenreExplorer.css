@@ -741,6 +741,20 @@
   vertical-align: middle;
 }
 
+.ge-track-interpolated-badge {
+  font-size: 0.52rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--green);
+  background: rgba(126, 200, 155, 0.15);
+  border: 1px solid rgba(126, 200, 155, 0.4);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
 .ge-track-genius {
   font-size: 0.58rem;
   font-weight: 700;

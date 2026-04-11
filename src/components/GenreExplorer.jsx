@@ -772,6 +772,7 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                                 <span className="ge-track-title">
                                   {t.title}
                                   {t.cover && <span className="ge-track-cover-badge">Cover</span>}
+                                  {t.interpolates && <span className="ge-track-interpolated-badge">Interpolation</span>}
                                   {t.spotify_id && (
                                     <a href={`https://open.spotify.com/track/${t.spotify_id}`} target="_blank" rel="noopener" className="ge-track-play" onClick={e => e.stopPropagation()}>&#9654;</a>
                                   )}
