@@ -92,16 +92,18 @@ The Content team maintains two CSV files in `public/data/`:
 | `description` | 1-2 sentence album blurb — highlight standout tracks, in the Guapa voice |
 
 ### Workflow
-1. Pick 5 unconfirmed artists per batch
-2. Write artist description + icon, set `drafted=yes`
-3. Write album descriptions for 4-5 key albums per artist
-4. Eric reviews — flips `confirmed=yes` when approved
-5. `sync-editorial-csv.py` (runs in CI) auto-adds new catalog artists as `confirmed=no`, and auto-flips any artist with track-level cover/writer enrichment to `confirmed=yes`
+1. **Priority 1**: Fill confirmed artists missing icons or descriptions (these are live on the site — gaps are visible to visitors)
+2. **Priority 2**: Pick 5 unconfirmed artists per batch
+3. Write artist description + icon, set `confirmed=yes`, `drafted=yes`
+4. Write album descriptions for 4-5 key albums per artist
+5. **CRITICAL: Verify all track/song names against `music-catalog.json` before committing.** Never write song names from memory — always cross-reference the actual track listing for that specific album. An audit on 2026-04-10 found 17 descriptions referencing songs from the wrong album by the same artist (e.g., "Oye Como Va" on Dance Mania but actually on El Rey Bravo).
+6. Eric reviews via the contribute page — can submit corrections same-day if anything is off
+7. `sync-editorial-csv.py` (runs in CI) auto-adds new catalog artists as `confirmed=no`
 
 ### Community Suggestions (guapa.space/contribute)
 Visitors can suggest description edits via the contribute page. Submissions go to Formspree (form ID: `mykbdnak`) → emailed to `eewilliamsremote@gmail.com`.
 
-**Automated pipeline** — runs every hour via Windows Task Scheduler ("Guapa Apply Editorial Suggestions"):
+**Automated pipeline** — runs every 5 minutes via Windows Task Scheduler ("Guapa Apply Editorial Suggestions"):
 - Reads Formspree submission emails via IMAP (uses `C:\Users\eewil\homebase\gmail.py`)
 - Applies changes to `artist-editorial.csv` and `album-editorial.csv`
 - Backs up CSVs to `data/backups/YYYY-MM-DD_HHMMSS/` before each run
