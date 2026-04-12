@@ -1861,7 +1861,8 @@
                         const art = album.cover_art_large || album.cover_art_small;
                         const artStyle = art ? `background-image: url(${art}); background-size: cover; background-position: center;` : '';
                         const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (artist.url_spotify || '#'));
-                        const wikiUrl = album.url_wikipedia || artist.url_wikipedia || '#';
+                        const wikiUrl = album.url_wikipedia || `https://en.wikipedia.org/wiki/${encodeURIComponent(album.title + ' (album)')}`;
+
                         const amazonQuery = encodeURIComponent(`${artist.name} ${album.title} vinyl`);
                         const buyUrl = album.url_amazon || `https://www.amazon.com/s?k=${amazonQuery}&tag=guapainc-20`;
                         const amazonCdQuery = encodeURIComponent(`${artist.name} ${album.title} cd`);
