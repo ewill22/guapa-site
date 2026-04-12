@@ -1971,6 +1971,16 @@
             updateDecadeButtons();
             renderAlbumBars();
             renderYearReleases();
+            // Hide new releases when browsing past decades
+            const nrSection = document.getElementById('newReleasesSection');
+            if (nrSection && nrSection.style.display !== 'none') {
+                const currentDecade = Math.floor(currentYear / 10) * 10;
+                nrSection.style.display = currentDecade === 2020 ? '' : 'none';
+                nrSection.dataset.active = 'true';  // mark that it was shown
+            } else if (nrSection && nrSection.dataset.active === 'true') {
+                const currentDecade = Math.floor(currentYear / 10) * 10;
+                if (currentDecade === 2020) nrSection.style.display = '';
+            }
         }
 
 
