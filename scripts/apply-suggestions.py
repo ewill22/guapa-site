@@ -242,6 +242,8 @@ def main():
         import subprocess
         subprocess.run(['git', 'add', 'public/data/artist-editorial.csv', 'public/data/album-editorial.csv'], check=True)
         subprocess.run(['git', 'commit', '-m', f'Apply {applied} editorial suggestion(s) from site'], check=True)
+        # Pull first in case remote has diverged (e.g. daily pipeline pushed catalog update)
+        subprocess.run(['git', 'pull', '--rebase', 'origin', 'main'], check=True)
         subprocess.run(['git', 'push'], check=True)
         print('Committed and pushed.')
         # Build notification summary
