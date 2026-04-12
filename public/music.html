@@ -1103,10 +1103,10 @@
 
                 </section>
 
-                <!-- New Releases (Fri-Sun, shown above year releases) -->
+                <!-- New Releases (always shown, preview on Thursdays) -->
                 <section class="new-releases" id="newReleasesSection" style="display: none;">
                     <div class="nr-header">
-                        <h2 class="nr-title">New This Week</h2>
+                        <h2 class="nr-title" id="nrTitle">New This Week</h2>
                         <span class="nr-date" id="nrDate"></span>
                         <span class="nr-count" id="nrCount"></span>
                     </div>
@@ -2399,13 +2399,11 @@
             return `${mins} min`;
         }
 
-        function isNewReleasesDay() {
-            const day = new Date().getDay(); // 0=Sun, 5=Fri, 6=Sat
-            return day === 0 || day === 5 || day === 6;
+        function isPreviewDay() {
+            return new Date().getDay() === 4; // Thursday = preview of tomorrow's releases
         }
 
         async function loadNewReleases() {
-            if (!isNewReleasesDay()) return null;
             try {
                 const r = await fetch('data/new-releases.json');
                 if (!r.ok) return null;
@@ -2432,11 +2430,14 @@
             // Show new releases section above year releases
             document.getElementById('newReleasesSection').style.display = '';
 
-            // Header
+            // Header — Thursday shows "Dropping Tomorrow", rest of week shows "New This Week"
             const dateStr = data.date;
             const d = new Date(dateStr + 'T00:00:00');
             const formatted = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
             document.getElementById('nrDate').textContent = formatted;
+            if (isPreviewDay()) {
+                document.getElementById('nrTitle').textContent = 'Dropping Tomorrow';
+            }
             document.getElementById('nrCount').textContent = `${releases.length} new release${releases.length !== 1 ? 's' : ''}`;
 
             // Alpha nav
