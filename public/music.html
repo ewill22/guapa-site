@@ -2491,18 +2491,52 @@
 
                 // Tracklist
                 let tracklistHtml = '';
-                if (rel.tracks && rel.tracks.length > 0) {
+                // Cross-reference tracks with catalog for enrichment data
+                let enrichedTracks = rel.tracks || [];
+                if (_staticCatalog && enrichedTracks.length > 0) {
+                    // Find artist in catalog (try exact name, then first part of collab)
+                    const artistNames = rel.artist.split(' / ');
+                    let catArtist = null;
+                    for (const n of artistNames) {
+                        catArtist = _staticCatalog[n.toLowerCase()];
+                        if (catArtist) break;
+                    }
+                    if (catArtist) {
+                        const catAlbum = (catArtist.albums || []).find(a => a.title.toLowerCase() === rel.album.toLowerCase());
+                        if (catAlbum && catAlbum.tracks) {
+                            const catTrackMap = {};
+                            for (const ct of catAlbum.tracks) {
+                                catTrackMap[ct.title.toLowerCase()] = ct;
+                            }
+                            enrichedTracks = enrichedTracks.map(t => {
+                                const ct = catTrackMap[cleanTitle(t.title).toLowerCase()];
+                                return ct ? { ...t, ...ct, track_number: t.track_number } : t;
+                            });
+                        }
+                    }
+                }
+
+                if (enrichedTracks.length > 0) {
                     tracklistHtml = `<div class="disco-tracklist">
                         <div class="disco-tracklist-header">
                             <span class="th-num">#</span>
                             <span class="th-title">Title</span>
                             <span class="th-duration">Time</span>
                         </div>
-                        ${rel.tracks.map(t => `<div class="disco-track">
+                        ${enrichedTracks.map(t => {
+                            const cBadge = t.cover ? '<span class="disco-track-cover-badge">Cover</span>' : '';
+                            const iBadge = t.interpolates ? '<span class="disco-track-interpolated-badge">Interpolation</span>' : '';
+                            const writ = (t.writers && t.writers.length > 0)
+                                ? '<span class="disco-track-writers">Written by ' + t.writers.map(w => w.name).join(', ') + '</span>'
+                                : '';
+                            const gLink = t.url_genius ? ` <a href="${t.url_genius}" target="_blank" rel="noopener" class="disco-track-genius" onclick="event.stopPropagation()">Genius</a>` : '';
+                            return `<div class="disco-track">
                             <span class="disco-track-num">${t.track_number}</span>
-                            <span class="disco-track-title">${cleanTitle(t.title)}</span>
+                            <span class="disco-track-title">${cleanTitle(t.title)}${cBadge}${iBadge}${writ ? '<br>' + writ : ''}</span>
+                            ${gLink}
                             <span class="disco-track-duration">${formatDur(t.duration_ms)}</span>
-                        </div>`).join('')}
+                        </div>`;
+                        }).join('')}
                     </div>`;
                 }
 
@@ -2530,8 +2564,8 @@
         renderAlbumBars();
         renderYearReleases();
 
-        // Check for new releases (Fri-Sun)
-        loadNewReleases().then(data => {
+        // Check for new releases — ensure catalog is loaded first for enrichment data
+        Promise.all([loadNewReleases(), loadStaticCatalog()]).then(([data]) => {
             if (data) renderNewReleases(data);
         });
 
