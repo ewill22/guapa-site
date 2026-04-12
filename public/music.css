@@ -536,6 +536,67 @@
     color: var(--gray-600);
 }
 
+/* Track enrichment badges & links */
+.disco-track-cover-badge,
+.disco-track-interpolated-badge {
+    font-size: 0.52rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+.disco-track-cover-badge {
+    color: var(--blue);
+    border: 1px solid rgba(136, 168, 212, 0.25);
+}
+.disco-track-interpolated-badge {
+    color: var(--green);
+    border: 1px solid rgba(126, 200, 155, 0.25);
+}
+.disco-track-writers {
+    font-size: 0.68rem;
+    color: var(--gray-600);
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+}
+.disco-track-writers::-webkit-scrollbar { display: none; }
+.disco-writer-link {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: var(--pink);
+    cursor: pointer;
+    transition: color 0.15s;
+}
+.disco-writer-link:hover { color: var(--white); }
+.disco-track-genius {
+    font-size: 0.58rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    color: rgba(240, 192, 20, 0.6);
+    border: 1px solid rgba(240, 192, 20, 0.15);
+    border-radius: 3px;
+    padding: 1px 6px;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+.disco-track-genius:hover {
+    background: rgba(240, 192, 20, 0.18);
+    border-color: rgba(240, 192, 20, 0.3);
+}
+
+@media (max-width: 600px) {
+    .disco-track-genius { display: none; }
+}
+
 /* ========================================
    BROADCAST BANNER
 ======================================== */

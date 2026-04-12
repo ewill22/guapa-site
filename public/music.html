@@ -1880,11 +1880,21 @@
                                     <span class="th-title">Title</span>
                                     <span class="th-duration">Time</span>
                                 </div>
-                                ${tracks.map(t => `<div class="disco-track">
+                                ${tracks.map(t => {
+                                    const spotIcon = t.spotify_id ? ` <a href="https://open.spotify.com/track/${t.spotify_id}" target="_blank" rel="noopener" style="color:#1DB954;text-decoration:none;font-size:0.65rem;" onclick="event.stopPropagation()" title="Play on Spotify">▶</a>` : '';
+                                    const cBadge = t.cover ? '<span class="disco-track-cover-badge">Cover</span>' : '';
+                                    const iBadge = t.interpolates ? '<span class="disco-track-interpolated-badge">Interpolation</span>' : '';
+                                    const writ = (t.writers && t.writers.length > 0)
+                                        ? '<span class="disco-track-writers">Written by ' + t.writers.map(w => w.name).join(', ') + '</span>'
+                                        : '';
+                                    const gLink = t.url_genius ? ` <a href="${t.url_genius}" target="_blank" rel="noopener" class="disco-track-genius" onclick="event.stopPropagation()">Genius</a>` : '';
+                                    return `<div class="disco-track">
                                     <span class="disco-track-num">${t.track_number || ''}</span>
-                                    <span class="disco-track-title">${t.title}${t.spotify_id ? ` <a href="https://open.spotify.com/track/${t.spotify_id}" target="_blank" rel="noopener" style="color:#1DB954;text-decoration:none;font-size:0.65rem;" onclick="event.stopPropagation()" title="Play on Spotify">▶</a>` : ''}</span>
+                                    <span class="disco-track-title">${t.title}${spotIcon}${cBadge}${iBadge}${writ ? '<br>' + writ : ''}</span>
+                                    ${gLink}
                                     <span class="disco-track-duration">${formatDur(t.duration_ms)}</span>
-                                </div>`).join('')}
+                                </div>`;
+                                }).join('')}
                             </div>`;
                         }
 
@@ -2199,18 +2209,27 @@
                             <span class="th-num">#</span>
                             <span class="th-title">Title</span>
                             <span class="th-duration">Time</span>
-                            <span class="th-data">Data</span>
                         </div>
                         ${tracks.map(t => {
                             const spotifyIcon = t.spotify_id
                                 ? `<a href="https://open.spotify.com/track/${t.spotify_id}" target="_blank" rel="noopener" style="color: #1DB954; text-decoration: none; font-size: 0.65rem;" onclick="event.stopPropagation()" title="Play on Spotify">\u25B6</a>`
                                 : '';
+                            const coverBadge = t.cover ? '<span class="disco-track-cover-badge">Cover</span>' : '';
+                            const interpBadge = t.interpolates ? '<span class="disco-track-interpolated-badge">Interpolation</span>' : '';
+                            const writers = (t.writers && t.writers.length > 0)
+                                ? '<span class="disco-track-writers">Written by ' + t.writers.map(w => w.in_catalog
+                                    ? `<button class="disco-writer-link" onclick="event.stopPropagation(); navigateToArtistByName('${w.name.replace(/'/g, "\\'")}')">${w.name}</button>`
+                                    : w.name).join(', ') + '</span>'
+                                : '';
+                            const geniusLink = t.url_genius
+                                ? `<a href="${t.url_genius}" target="_blank" rel="noopener" class="disco-track-genius" onclick="event.stopPropagation()">Genius</a>`
+                                : '';
                             return `
                                 <div class="disco-track">
                                     <span class="disco-track-num">${t.track_number || ''}</span>
-                                    <span class="disco-track-title">${t.title} ${spotifyIcon}</span>
+                                    <span class="disco-track-title">${t.title} ${spotifyIcon}${coverBadge}${interpBadge}${writers ? '<br>' + writers : ''}</span>
+                                    ${geniusLink}
                                     <span class="disco-track-duration">${formatDuration(t.duration_ms)}</span>
-                                    <span class="disco-track-data">coming soon</span>
                                 </div>
                             `;
                         }).join('')}
@@ -2361,6 +2380,21 @@
             }
 
             return true;
+        }
+
+        // Navigate to an artist by name (used by writer credit links)
+        function navigateToArtistByName(name) {
+            const lowerName = name.toLowerCase();
+            for (const [genreId, genre] of Object.entries(musicData)) {
+                for (const [subId, sub] of Object.entries(genre.subgenres)) {
+                    for (const artist of Object.values(sub.artists)) {
+                        if (artist.name.toLowerCase() === lowerName) {
+                            showDiscography(artist, genreId, subId);
+                            return;
+                        }
+                    }
+                }
+            }
         }
 
         // Set initial year: use playing year from main page if available, otherwise random
