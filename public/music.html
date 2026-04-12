@@ -1171,6 +1171,7 @@
         const MUSIC_API = 'http://localhost:8001';
         let _staticCatalog = null;
         let _staticLoaded = false;
+        let _albumEditorial = null;
 
         // Load static catalog JSON (works on GitHub Pages without an API)
         async function loadStaticCatalog() {
@@ -1181,6 +1182,81 @@
             } catch {}
             _staticLoaded = true;
             return _staticCatalog;
+        }
+
+        // Load album editorial descriptions from CSV
+        async function loadAlbumEditorial() {
+            if (_albumEditorial) return _albumEditorial;
+            try {
+                const r = await fetch('data/album-editorial.csv');
+                if (!r.ok) return null;
+                const text = await r.text();
+                _albumEditorial = parseAlbumEditorialCSV(text);
+            } catch {}
+            return _albumEditorial;
+        }
+
+        function normalizeEditorialName(name) {
+            return name
+                .replace(/[\u2018\u2019\u2032]/g, "'")
+                .replace(/[\u2010\u2013\u2014]/g, '-')
+                .toLowerCase();
+        }
+
+        function parseAlbumEditorialCSV(text) {
+            const map = {};
+            const lines = text.split('\n');
+            if (lines.length < 2) return map;
+            let header = lines[0];
+            if (header.charCodeAt(0) === 0xFEFF) header = header.slice(1);
+            const cols = header.split(',');
+            const artistIdx = cols.indexOf('artist_name');
+            const albumIdx = cols.indexOf('album_title');
+            const descIdx = cols.indexOf('description');
+            for (let i = 1; i < lines.length; i++) {
+                const fields = parseCSVRow(lines[i].trim());
+                if (!fields) continue;
+                const artist = fields[artistIdx] || '';
+                const album = fields[albumIdx] || '';
+                const desc = fields[descIdx] || '';
+                if (!artist || !album || !desc) continue;
+                const key = normalizeEditorialName(artist) + '|||' + normalizeEditorialName(album);
+                map[key] = desc;
+            }
+            return map;
+        }
+
+        function parseCSVRow(row) {
+            if (!row) return null;
+            const fields = [];
+            let i = 0;
+            while (i <= row.length) {
+                if (i === row.length) { fields.push(''); break; }
+                if (row[i] === '"') {
+                    let val = '';
+                    i++;
+                    while (i < row.length) {
+                        if (row[i] === '"') {
+                            if (row[i + 1] === '"') { val += '"'; i += 2; }
+                            else { i++; break; }
+                        } else { val += row[i]; i++; }
+                    }
+                    fields.push(val);
+                    if (row[i] === ',') i++;
+                } else {
+                    const next = row.indexOf(',', i);
+                    if (next === -1) { fields.push(row.slice(i)); break; }
+                    fields.push(row.slice(i, next));
+                    i = next + 1;
+                }
+            }
+            return fields;
+        }
+
+        function getAlbumDesc(artistName, albumTitle) {
+            if (!_albumEditorial) return '';
+            const key = normalizeEditorialName(artistName) + '|||' + normalizeEditorialName(albumTitle);
+            return _albumEditorial[key] || '';
         }
 
         async function apiFetch(path) {
@@ -1914,6 +1990,7 @@
                                     </div>
                                 </div>
                             </div>
+                            ${(() => { const d = getAlbumDesc(artist.name, album.title); return d ? `<p class="disco-album-desc">${d}</p>` : ''; })()}
                             ${tracklistHtml}
                         </div>`;
                     }).join('');
@@ -2205,6 +2282,7 @@
                             </div>
                         </div>
                     </div>
+                    ${(() => { const d = getAlbumDesc(artistName, album.title); return d ? `<p class="disco-album-desc">${d}</p>` : ''; })()}
                     <div class="disco-tracklist">
                         <div class="disco-tracklist-header">
                             <span class="th-num">#</span>
@@ -2566,6 +2644,7 @@
         renderYearReleases();
 
         // Check for new releases — ensure catalog is loaded first for enrichment data
+        loadAlbumEditorial();
         Promise.all([loadNewReleases(), loadStaticCatalog()]).then(([data]) => {
             if (data) renderNewReleases(data);
         });
