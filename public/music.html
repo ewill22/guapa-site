@@ -906,26 +906,6 @@
             letter-spacing: 0.05em;
             margin-left: 10px;
         }
-        .nr-alpha-nav {
-            display: flex;
-            gap: 4px;
-            flex-wrap: wrap;
-            margin-bottom: var(--space-md);
-        }
-        .nr-alpha-btn {
-            background: transparent;
-            border: 1px solid var(--gray-800);
-            border-radius: 3px;
-            color: var(--gray-500);
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 3px 7px;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s;
-        }
-        .nr-alpha-btn:hover { color: var(--white); border-color: var(--gray-600); }
-        .nr-alpha-btn.active { color: var(--yellow); border-color: var(--yellow); }
 
         /* ========================================
            YEAR RELEASES (Record Store Aisle)
@@ -2440,27 +2420,12 @@
             }
             document.getElementById('nrCount').textContent = `${releases.length} new release${releases.length !== 1 ? 's' : ''}`;
 
-            // Alpha nav
-            const letters = [...new Set(releases.map(r => r.artist[0].toUpperCase()))].sort();
-            let alphaHtml = '';
-            if (letters.length > 1) {
-                alphaHtml = '<div class="nr-alpha-nav">';
-                for (const letter of letters) {
-                    alphaHtml += `<button class="nr-alpha-btn" onclick="document.getElementById(\'nr-${letter}\').scrollIntoView({behavior:\'smooth\',block:\'start\'})">${letter}</button>`;
-                }
-                alphaHtml += '</div>';
-            }
-
             // Clean track titles (remove wrapping quotes from MusicBrainz)
             const cleanTitle = (t) => t.replace(/^"(.*)"$/, '$1');
 
             // Releases — reuse disco-* classes from discography section
-            let html = alphaHtml;
-            let lastLetter = '';
+            let html = '';
             for (const rel of releases) {
-                const letter = rel.artist[0].toUpperCase();
-                const id = letter !== lastLetter ? ` id="nr-${letter}"` : '';
-                lastLetter = letter;
 
                 const coverUrl = rel.cover_art
                     ? (rel.cover_art.large || rel.cover_art.small || '')
