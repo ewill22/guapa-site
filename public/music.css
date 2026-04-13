@@ -608,10 +608,6 @@
     border-color: rgba(240, 192, 20, 0.3);
 }
 
-@media (max-width: 600px) {
-    .disco-track-genius { display: none; }
-}
-
 /* ========================================
    BROADCAST BANNER
 ======================================== */
