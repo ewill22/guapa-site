@@ -1,15 +1,30 @@
 # Coffee Harvest Data
 
-Source of truth for `src/data/coffee-harvest.js` — country-by-year coffee production used by the coffee lens.
+Source of truth for the coffee lens's harvest numbers. Guapa principle: **never be a source of truth — display facts from the best sources we can find, show disagreements transparently.**
 
-## Source
+## File layout
 
-**USDA FAS PSD** (Production, Supply & Distribution database)
-- URL: https://apps.fas.usda.gov/psdonline/
-- Bulk download: https://apps.fas.usda.gov/psdonline/downloads/psd_coffee_csv.zip
-- License: **U.S. Public Domain** (OPEN Government Data Act) — unrestricted commercial use, attribution courtesy
-- Coverage: 1960 – present, ~29 significant producer countries (peak ≥ 1M 60kg bags)
-- Refresh cadence: USDA revises monthly; marketing-year values finalize with each revision
+| File | Role | Who edits |
+|---|---|---|
+| `src/data/coffee-usda.js` | USDA FAS PSD data - auto-generated | `refresh.ps1` (never by hand) |
+| `src/data/coffee-harvest.js` | Composed multi-source view: sources catalog, overlays (Conab, FNC, etc.), editorial events, helpers | Hand-maintained |
+
+`coffee-harvest.js` imports from `coffee-usda.js` and merges overlays in. Only `coffee-usda.js` gets regenerated on refresh.
+
+## Sources
+
+| Source | Type | Coverage | License | Status |
+|---|---|---|---|---|
+| **USDA FAS PSD** | US foreign ag service | Global, 1960-present, ~29 producers | U.S. Public Domain | ✅ Ingested (auto-refreshable) |
+| **Conab** | Brazilian federal agency | Brazil, 2001-present | BR Lei 12.527/2011 + Decree 8.777/2016 (open, attribution) | 🌱 Seed only (4 years) |
+| **FNC** | Colombian producer federation | Colombia | Publicly published, attribution | 🔜 Pending |
+| **Cecafé** | Brazilian exporters council | Brazil (exports, not production) | Publicly published, attribution | 🔜 Pending |
+| **VICOFA** | Vietnamese industry association | Vietnam | Publicly published, attribution | 🔜 Pending |
+| **UCDA** | Ugandan statutory authority | Uganda | Publicly published, attribution | 🔜 Pending |
+| **ECTA** | Ethiopian regulatory authority | Ethiopia | Publicly published, attribution | 🔜 Pending |
+| **ICO** | Intergovernmental | Global reference | Member-gated for full DB | 📎 Reference only |
+
+Full metadata for each source lives in `COFFEE_SOURCES` in `coffee-harvest.js`.
 
 ## Usage
 
@@ -17,23 +32,47 @@ Source of truth for `src/data/coffee-harvest.js` — country-by-year coffee prod
 powershell -ExecutionPolicy Bypass -File refresh.ps1
 ```
 
-Run from anywhere — the script resolves its own directory. It downloads the ZIP, extracts, aggregates attribute 028 (Total Production), keeps the latest monthly revision per year, groups into four regions, and emits `src/data/coffee-harvest.js`.
+Downloads `psd_coffee_csv.zip`, aggregates attribute 028 (Total Production), keeps the latest monthly revision per year, groups into four regions, and emits `src/data/coffee-usda.js`.
 
-Working files land in `scripts/coffee-harvest/.work/` (gitignored).
+Working files land in `.work/` (gitignored). The hand-maintained composed file (`coffee-harvest.js`) is never touched by this script.
 
-## Output shape
+## Output shape (composed, from `coffee-harvest.js`)
 
 ```js
-COFFEE_DATA_SOURCE       // attribution metadata (name, url, license, fetchedOn)
-COFFEE_PRODUCERS         // { [country]: { region, peak, latest, production: { [year]: bags_millions } } }
-COFFEE_REGIONS           // ordered region tiles with display color
-regionTotal(region, yr)  // sum for a region in a year
-globalTotal(yr)          // global sum for a year
-countriesInRegion(r, yr) // sorted producers in a region (optionally filtered to a year)
+COFFEE_SOURCES               // catalog of every agency/board with metadata
+COFFEE_PRODUCERS             // { [country]: { region, defaultSource, sources: { [key]: { peak, latest, production } } } }
+OVERLAY_PRODUCERS            // hand-curated non-USDA series (Conab, FNC, ...)
+COFFEE_EVENTS                // editorial annotations for source divergences (e.g. 2021 Brazil frost)
+COFFEE_REGIONS               // ordered region tiles with display color
+
+producerSeries(country, source?)
+regionTotal(region, year, source?)
+globalTotal(year, source?)
+countriesInRegion(region, year?, source?)
+eventsFor(country, year?)
+sourcesForProducer(country)
 ```
 
-All production values are **millions of 60kg bags** (USDA's native unit).
+All production values: **millions of 60kg bags** (industry standard).
+
+## Adding a new source
+
+1. Add a full entry to `COFFEE_SOURCES` in `coffee-harvest.js` (name, fullName, country, url, license, methodology, cadence, attribution, notes, status).
+2. Add the country series to `OVERLAY_PRODUCERS[sourceKey][Country]` with the `production: { year: bags }` shape.
+3. If values diverge meaningfully from USDA on a notable year, add a `COFFEE_EVENTS` entry so the UI can surface the editorial note.
+4. Commit - no script to run unless USDA also needs refresh.
 
 ## Backend handoff
 
-This lives in the frontend repo for phase 1. Once the coffee lens UI is settled, this whole folder + the emitted JS is intended to migrate to the backend (guapa-data) pipeline, which will regenerate the JS on the same cadence as `music-catalog.json` and push to `guapa-site` via the auto-commit flow.
+This folder migrates to guapa-data once the coffee lens UI is settled. Backend will own the USDA refresh cadence, and eventually the overlay ingestions (Conab Pentaho, FNC, etc.) as their own auto-commit flows.
+
+## Open TODOs
+
+- Full Conab Brazil series - options:
+  - Email `conab.geasa@conab.gov.br` for CSV feed
+  - Parse Conab quarterly PDF bulletins (historical archive on their site)
+  - Reverse-engineer the Pentaho CDA endpoint with proper session handling
+- FNC Colombia monthly production/export series
+- Cecafé Brazil weekly export bulletins (different axis from production, but complementary)
+- VICOFA / Vietnam Customs for Vietnam
+- Add 1975 Brazil "Black Frost" and 1989 ICA collapse to `COFFEE_EVENTS`
