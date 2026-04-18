@@ -159,7 +159,7 @@ function buildMergedData(catalog, editorialData, editorial) {
       })),
       _albumCount: albumCount,
       _beginYear: years.length ? Math.min(...years) : null,
-      _endYear: years.length ? Math.max(...years) : null,
+      _endYear: years.length ? Math.min(Math.max(...years) + 3, 2030) : null,
       url_spotify: catArtist.url_spotify || null,
       url_wikipedia: catArtist.url_wikipedia || null,
     };
@@ -178,14 +178,14 @@ function buildMergedData(catalog, editorialData, editorial) {
         if (ca) {
           const years = (ca.albums || []).map(a => a.release_year).filter(Boolean);
           artist._beginYear = years.length ? Math.min(...years) : null;
-          artist._endYear = years.length ? Math.max(...years) : null;
+          artist._endYear = years.length ? Math.min(Math.max(...years) + 3, 2030) : null;
           if (!artist.url_spotify) artist.url_spotify = ca.url_spotify || null;
           if (!artist.url_wikipedia) artist.url_wikipedia = ca.url_wikipedia || null;
         } else {
           // Fall back to editorial album years
           const years = (artist.albums || []).map(a => a.year).filter(Boolean);
           artist._beginYear = years.length ? Math.min(...years) : null;
-          artist._endYear = years.length ? Math.max(...years) : null;
+          artist._endYear = years.length ? Math.min(Math.max(...years) + 3, 2030) : null;
         }
       }
     }
