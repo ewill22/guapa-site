@@ -2,6 +2,21 @@
 
 Source of truth for the coffee lens's harvest numbers. Guapa principle: **never be a source of truth — display facts from the best sources we can find, show disagreements transparently.**
 
+## Current state (2026-04-18)
+
+**Phase 1 shipped.** Data foundation is live but nothing in the UI consumes it yet. The existing coffee lens still reads from `TIMELINE.coffee` in `src/data/timeline.js` (a hardcoded global series). Phase 2 (UI redesign) and Phase 3 (roasters/roasts) are designed and paused.
+
+**Where we stopped:**
+- USDA FAS PSD fully ingested and auto-refreshable via `refresh.ps1`
+- Conab Brazil seeded with 4 verified years (2021, 2022, 2023, 2024) from secondary citations
+- 2021 Brazil Frost `COFFEE_EVENTS` entry acts as the "two sources disagree, here's why" exemplar
+- Rich `COFFEE_SOURCES` metadata entries for 8 agencies/bodies (USDA, Conab, FNC, Cecafé, VICOFA, UCDA, ECTA, ICO) — most are stubs awaiting ingestion
+- Helper functions in place (`regionTotal`, `globalTotal`, `countriesInRegion`, `producerSeries`, `eventsFor`, `sourcesForProducer`) — all take an optional `source` argument
+
+**What's blocking more progress:**
+- Conab's historical series lives behind a Pentaho BI dashboard that requires session state — direct API returns 501. Options: (a) email `conab.geasa@conab.gov.br` for a CSV feed, (b) manually extract from their PDF quarterly bulletins, (c) reverse-engineer the Pentaho CDA endpoint with proper session handshake. Pick one when ready to resume.
+- The other national boards (FNC, VICOFA, UCDA, ECTA) just need a first pass each.
+
 ## File layout
 
 | File | Role | Who edits |

@@ -286,12 +286,35 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Input font: 0.78rem desktop, 16px mobile (prevents iOS auto-zoom)
 - Legend below: Emerging (green dashed) / Rising (blue) / Peak (pink) / Fading (red dashed)
 
-### Coffee Lens (`src/data/coffee-timeline.js`)
-- **Timeline**: Year-based (1930–2026), bars driven by real world coffee production data (millions of 60kg bags, USDA/ICO) — pre-1960 bars are empty/short since coffee data starts at 1960
+### Coffee Lens
+- **Timeline**: Year-based (1930–2026), bars currently driven by `TIMELINE.coffee` (hardcoded global production in `src/data/timeline.js`). Planned: swap to `globalTotal(year)` from `coffee-harvest.js` once phase 2 UI lands.
 - **Counter-bottom**: "Highlighted Roaster" — Panther Coffee (Miami, est. 2010), with shop link and Instagram. Spans full width of counter-bottom.
-- **Below counter**: Region tiles (South America, Central America, Africa, Blend) → Offering cards (8 coffees linking to Panther Shopify) → Year-based coffee blurbs
-- **Data file**: `src/data/coffee-timeline.js` — `FEATURED_ROASTER`, `PANTHER_OFFERINGS`, `PANTHER_REGIONS`
-- **Future**: Backend will build coffee batch/roast tracking pipeline (similar to NJ dispensary strain tracking), frontend will consume when ready
+- **Below counter (current)**: Region tiles (South America, Central America, Africa, Blend) → Offering cards (8 coffees linking to Panther Shopify) → Year-based coffee blurbs
+- **Below counter (phase 2, designed not built)**: Region tiles stacked vertically on the left; right panel shows the selected region's harvest numbers for the current timeline year, top producers, grow calendar, weather. Clicking a region eventually reveals roasters (artist-style) → roasts (album-style).
+
+#### Data files
+| File | Role | Who edits |
+|---|---|---|
+| `src/data/coffee-timeline.js` | Panther roaster POC — `FEATURED_ROASTER`, `PANTHER_OFFERINGS`, `PANTHER_REGIONS`, `COFFEE_BLURBS` (daily roast seed) | Hand-maintained |
+| `src/data/coffee-usda.js` | USDA FAS PSD global production (29 producers, 1960–present, public domain) | **Auto-generated** by `scripts/coffee-harvest/refresh.ps1` — do not hand-edit |
+| `src/data/coffee-harvest.js` | Multi-source composer: `COFFEE_SOURCES` catalog, `OVERLAY_PRODUCERS` (Conab seed + stubs), `COFFEE_EVENTS`, helpers (`regionTotal`, `globalTotal`, `countriesInRegion`, `producerSeries`, `eventsFor`) | Hand-maintained |
+| `scripts/coffee-harvest/` | Refresh script + README documenting sources, licenses, and open TODOs for backend handoff | Eric / backend team |
+
+#### Source principle (see feedback memory "guapa-not-source-of-truth")
+Every number on the coffee lens must carry an attribution to a named source (USDA, Conab, FNC, Cecafé, VICOFA, UCDA, ECTA, ICO, …). When sources disagree on the same country × year, show both with an editorial note rather than picking one silently. The 2021 Brazil frost entry in `COFFEE_EVENTS` is the exemplar: USDA 58.1M vs Conab 47.72M, with a `preferredSource: 'conab'` pointer and a note explaining why Conab is the sharper read for that event.
+
+#### Phase status (as of 2026-04-18)
+- ✅ **Phase 1 (data foundation)** shipped. USDA ingested; Conab Brazil seeded (4 verified years); rich sources catalog stubbed for FNC, Cecafé, VICOFA, UCDA, ECTA, ICO.
+- ⏸️ **Phase 2 (UI redesign)** — paused. Designed, not built.
+- ⏸️ **Phase 3 (roasters as artists / roasts as albums)** — deep-first plan is Panther + 1–2 others once Phase 2 is live.
+
+#### Known TODOs (see `scripts/coffee-harvest/README.md` for full list)
+- Full Conab Brazil historical series (email `conab.geasa@conab.gov.br` or parse Pentaho CDA)
+- FNC Colombia monthly production/export series
+- Cecafé Brazil weekly export bulletins (different axis from production)
+- VICOFA Vietnam, UCDA Uganda, ECTA Ethiopia
+- Add 1975 Brazil "Black Frost" and 1989 ICA collapse entries to `COFFEE_EVENTS`
+- Backend (guapa-data) to eventually own the refresh cadence + overlay ingestions + coffee batch/roast tracking pipeline
 
 ### Economics Lens
 - **Timeline**: Year-based (1930–2026), same bar style as music
