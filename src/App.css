@@ -484,7 +484,10 @@ html {
 
 /* Big region tiles - below counter, above country grid */
 .coffee-regions-block {
-  margin-bottom: var(--space-lg, 24px);
+  margin-bottom: var(--space-sm, 8px);
+}
+.coffee-regions-block + .coffee-countries .coffee-section-label {
+  margin-top: 0;
 }
 .coffee-regions-row {
   display: grid;
