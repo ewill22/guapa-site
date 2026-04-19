@@ -254,6 +254,50 @@ export const COFFEE_REGIONS = [
 ];
 
 // ============================================================
+// GROW CALENDAR - hand-curated flowering + harvest months per
+// top producer. Month indices are 1-12. Some countries have two
+// harvests per year (main + fly/mitaca); we capture both.
+// Sources: ICO country reports, USDA FAS attache reports.
+// ============================================================
+
+export const COFFEE_GROW_CALENDAR = {
+  Brazil:              { flowering: [9, 10],    harvest: [[5, 9]],              note: 'Main Arabica harvest May-Sep; biennial cycle alternates high/low years.' },
+  Colombia:            { flowering: [2, 3, 8],  harvest: [[10, 1], [4, 6]],     note: 'Two harvests: main (Oct-Jan, ~60%) and mitaca (Apr-Jun, ~40%).' },
+  Vietnam:             { flowering: [1, 3],     harvest: [[10, 1]],             note: 'Robusta-dominant; concentrated Oct-Jan harvest in Central Highlands.' },
+  Ethiopia:            { flowering: [3, 5],     harvest: [[10, 12]],            note: 'Dry-processed (natural) dominant; late-year harvest in Sidama/Yirgacheffe.' },
+  Honduras:            { flowering: [4, 5],     harvest: [[11, 4]],             note: 'Long harvest window spanning most altitude bands.' },
+  Peru:                { flowering: [9, 11],    harvest: [[4, 9]],              note: 'High-altitude Arabica; harvest Apr-Sep.' },
+  Uganda:              { flowering: [2, 4, 9],  harvest: [[10, 2], [4, 6]],     note: 'Two crops: main (Oct-Feb) and fly (Apr-Jun).' },
+  Indonesia:           { flowering: [9, 11],    harvest: [[4, 9]],              note: 'Robusta Sumatra/Java dominant; harvest Apr-Sep.' },
+  Mexico:              { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Chiapas and Veracruz dominant.' },
+  Guatemala:           { flowering: [2, 4],     harvest: [[11, 3]],             note: 'Antigua, Huehuetenango regions; harvest Nov-Mar.' },
+  Nicaragua:           { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Jinotega and Matagalpa dominant.' },
+  'Costa Rica':        { flowering: [3, 5],     harvest: [[11, 3]],             note: 'Tarrazu, Central Valley; strict wet-mill tradition.' },
+  'El Salvador':       { flowering: [3, 5],     harvest: [[10, 2]],             note: 'Bourbon-heritage varietals.' },
+  Kenya:               { flowering: [2, 4, 10], harvest: [[10, 12], [5, 7]],    note: 'Two crops: main (Oct-Dec) and fly (May-Jul); SL28/SL34 varietals.' },
+  Tanzania:            { flowering: [9, 11],    harvest: [[7, 12]],             note: 'Arabica (North) + Robusta (West); harvest Jul-Dec.' },
+  India:               { flowering: [2, 4],     harvest: [[11, 2]],             note: 'Monsooned Malabar; blossom showers trigger flowering.' },
+  'Papua New Guinea':  { flowering: [8, 10],    harvest: [[4, 9]],              note: 'Smallholder-dominant, Eastern Highlands.' },
+  "Cote d'Ivoire":     { flowering: [3, 5],     harvest: [[11, 4]],             note: 'Robusta-dominant.' },
+  Cameroon:            { flowering: [3, 5],     harvest: [[10, 1]],             note: 'Mixed Arabica/Robusta.' },
+};
+
+export function growCalendarFor(country) {
+  return COFFEE_GROW_CALENDAR[country] || null;
+}
+
+// Which harvest phase is a country in for a given month (1-12)?
+// Returns 'flowering' | 'harvest' | 'resting' | null
+export function growPhaseIn(country, month) {
+  const cal = COFFEE_GROW_CALENDAR[country];
+  if (!cal) return null;
+  const inRange = (m, [a, b]) => (a <= b ? m >= a && m <= b : m >= a || m <= b);
+  if (cal.harvest?.some(range => inRange(month, range))) return 'harvest';
+  if (cal.flowering?.includes(month)) return 'flowering';
+  return 'resting';
+}
+
+// ============================================================
 // HELPERS - every function accepts an optional `source` arg.
 // Pass null (default) to use each producer's defaultSource.
 // ============================================================

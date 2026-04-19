@@ -11,8 +11,13 @@ import { BLURBS } from './data/blurbs';
 import { loadEditorial, loadAlbumEditorial, normalizeName } from './data/load-editorial';
 import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
 import {
-  FEATURED_ROASTER, PANTHER_OFFERINGS, PANTHER_REGIONS,
+  FEATURED_ROASTER, PANTHER_OFFERINGS,
 } from './data/coffee-timeline';
+import {
+  COFFEE_REGIONS, COFFEE_SOURCES, COFFEE_PRODUCERS,
+  regionTotal, globalTotal, countriesInRegion, eventsFor,
+  growCalendarFor, growPhaseIn,
+} from './data/coffee-harvest';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
 
@@ -366,6 +371,7 @@ export default function App() {
   }, [dailyArtist, catalog]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [selectedCoffeeRegion, setSelectedCoffeeRegion] = useState(null);
   const searchRef = useRef(null);
   const genreExplorerRef = useRef(null);
 
@@ -964,19 +970,159 @@ export default function App() {
               )}
 
               {/* Coffee lens — featured roaster + offerings + weekly blurbs */}
-              {lens === 'coffee' && (
+              {lens === 'coffee' && (() => {
+                const coffeeYear = year ?? 2024;
+                return (
                 <div className="coffee-section">
-                  {/* Region Breakdown */}
-                  <div className="coffee-regions">
-                    <h3 className="coffee-section-label">Regions</h3>
-                    <div className="coffee-region-cards">
-                      {PANTHER_REGIONS.map(r => (
-                        <div key={r.name} className="coffee-region-card" style={{ borderColor: r.color }}>
-                          <span className="coffee-region-name" style={{ color: r.color }}>{r.name}</span>
-                          <span className="coffee-region-count">{r.count} offering{r.count !== 1 ? 's' : ''}</span>
-                          {r.countries.length > 0 && <span className="coffee-region-countries">{r.countries.join(', ')}</span>}
-                        </div>
-                      ))}
+                  {/* Harvest Grid - regions (left) + producers (right) */}
+                  <div className="coffee-harvest-grid">
+                    <div className="coffee-region-column">
+                      <h3 className="coffee-section-label">Regions — {coffeeYear}</h3>
+                      {COFFEE_REGIONS.map(region => {
+                        const total = regionTotal(region.name, coffeeYear);
+                        const producers = countriesInRegion(region.name, coffeeYear);
+                        const top = producers[0];
+                        const isActive = selectedCoffeeRegion === region.name;
+                        const isDimmed = selectedCoffeeRegion && !isActive;
+                        return (
+                          <button
+                            key={region.key}
+                            type="button"
+                            className={`coffee-region-tile${isActive ? ' is-active' : ''}${isDimmed ? ' is-dimmed' : ''}`}
+                            style={isActive ? { borderColor: region.color } : undefined}
+                            onClick={() => setSelectedCoffeeRegion(isActive ? null : region.name)}
+                          >
+                            <div className="coffee-region-tile-head">
+                              <span className="coffee-region-tile-dot" style={{ background: region.color }} />
+                              <span className="coffee-region-tile-name" style={{ color: region.color }}>{region.name}</span>
+                            </div>
+                            {total > 0 ? (
+                              <div className="coffee-region-tile-total">
+                                <span className="coffee-region-tile-value">{total.toFixed(1)}M</span>
+                                <span className="coffee-region-tile-unit">60kg bags</span>
+                              </div>
+                            ) : (
+                              <div className="coffee-region-tile-nodata">No tracked data for {coffeeYear}</div>
+                            )}
+                            {top && (
+                              <div className="coffee-region-tile-top">
+                                Top: {top.country} <span>({top.bags.toFixed(1)}M)</span>
+                              </div>
+                            )}
+                            <div className="coffee-region-tile-count">
+                              {producers.length} producer{producers.length !== 1 ? 's' : ''}
+                            </div>
+                          </button>
+                        );
+                      })}
+                      <div className="coffee-harvest-footer">
+                        Global {coffeeYear}: <strong>{globalTotal(coffeeYear).toFixed(1)}M bags</strong>
+                        <span> — Source: USDA FAS PSD (public domain)</span>
+                      </div>
+                    </div>
+
+                    <div className="coffee-producers-column">
+                      <h3 className="coffee-section-label">
+                        <span>Producers — {coffeeYear}</span>
+                        {selectedCoffeeRegion && (
+                          <button
+                            type="button"
+                            className="coffee-clear-filter"
+                            onClick={() => setSelectedCoffeeRegion(null)}
+                          >
+                            clear filter
+                          </button>
+                        )}
+                      </h3>
+                      <div className="coffee-producer-list">
+                        {COFFEE_REGIONS
+                          .filter(r => !selectedCoffeeRegion || r.name === selectedCoffeeRegion)
+                          .map(region => {
+                            const producers = countriesInRegion(region.name, coffeeYear);
+                            if (producers.length === 0) {
+                              return (
+                                <div key={region.key} className="coffee-producer-group">
+                                  <div className="coffee-producer-group-head" style={{ borderColor: region.color }}>
+                                    <span style={{ color: region.color }}>{region.name}</span>
+                                  </div>
+                                  <div className="coffee-producer-empty">No tracked data for {coffeeYear}</div>
+                                </div>
+                              );
+                            }
+                            const regionSum = producers.reduce((s, p) => s + p.bags, 0);
+                            const nowMonth = new Date().getMonth() + 1;
+                            const monthShort = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+                            const monthFull = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                            return (
+                              <div key={region.key} className="coffee-producer-group">
+                                <div className="coffee-producer-group-head" style={{ borderColor: region.color }}>
+                                  <span style={{ color: region.color }}>{region.name}</span>
+                                  <span className="coffee-producer-group-total">{regionSum.toFixed(1)}M bags</span>
+                                </div>
+                                {producers.map(p => {
+                                  const share = regionSum > 0 ? (p.bags / regionSum) * 100 : 0;
+                                  const cal = growCalendarFor(p.country);
+                                  const phase = growPhaseIn(p.country, nowMonth);
+                                  const src = COFFEE_SOURCES[p.source];
+                                  const events = eventsFor(p.country, coffeeYear);
+                                  return (
+                                    <div key={p.country} className="coffee-producer-row">
+                                      <div className="coffee-producer-row-main">
+                                        <div className="coffee-producer-row-name">
+                                          <span className="coffee-producer-country">{p.country}</span>
+                                          {phase && phase !== 'resting' && (
+                                            <span className={`coffee-producer-phase coffee-producer-phase--${phase}`}>
+                                              {phase === 'harvest' ? 'harvesting now' : 'flowering now'}
+                                            </span>
+                                          )}
+                                        </div>
+                                        <div className="coffee-producer-row-numbers">
+                                          <span className="coffee-producer-bags">{p.bags.toFixed(1)}M</span>
+                                          <span className="coffee-producer-share">{share.toFixed(0)}% of region</span>
+                                        </div>
+                                      </div>
+                                      <div className="coffee-producer-bar">
+                                        <div
+                                          className="coffee-producer-bar-fill"
+                                          style={{ width: `${share}%`, background: region.color }}
+                                        />
+                                      </div>
+                                      {cal && (
+                                        <div className="coffee-producer-calendar" title={cal.note}>
+                                          {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
+                                            const ph = growPhaseIn(p.country, m);
+                                            const isNow = m === nowMonth;
+                                            return (
+                                              <span
+                                                key={m}
+                                                className={`coffee-cal-month coffee-cal-month--${ph}${isNow ? ' is-now' : ''}`}
+                                                title={`${monthFull[m-1]}: ${ph}`}
+                                              >
+                                                {monthShort[m-1]}
+                                              </span>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
+                                      {events.length > 0 && (
+                                        <div className="coffee-producer-event">
+                                          <span className="coffee-producer-event-head">{events[0].headline}</span>
+                                          <p>{events[0].note}</p>
+                                        </div>
+                                      )}
+                                      {src && (
+                                        <div className="coffee-producer-source">
+                                          <span className="coffee-source-pill">{src.name}</span>
+                                          <span className="coffee-source-license">{src.license}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            );
+                          })}
+                      </div>
                     </div>
                   </div>
 
@@ -1032,7 +1178,8 @@ export default function App() {
                     </div>
                   )}
                 </div>
-              )}
+                );
+              })()}
 
               {/* Text blurbs for non-music, non-coffee lenses */}
               {lens !== 'music' && lens !== 'coffee' && blurbData ? (
