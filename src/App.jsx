@@ -63,11 +63,8 @@ function renderBlurbText(text, base) {
 // Find the nearest year with blurb data for a given lens
 function getBlurbs(lens, year) {
   const data = BLURBS[lens];
-  if (!data) return null;
-  if (data[year]) return { year, items: data[year] };
-  const yrs = Object.keys(data).map(Number).sort((a, b) => b - a);
-  for (const y of yrs) if (y <= year) return { year: y, items: data[y] };
-  return null;
+  if (!data || !data[year]) return null;
+  return { year, items: data[year] };
 }
 
 // Deterministic shuffle: sort artists by hash(cycleId + name)
@@ -1210,11 +1207,6 @@ export default function App() {
                   {/* Year-based coffee blurbs */}
                   {blurbData && (
                     <div className="coffee-activity">
-                      <div className="blurbs-header">
-                        {blurbData.year !== year && (
-                          <span className="blurbs-nearest">Showing {blurbData.year} — nearest data to {year}</span>
-                        )}
-                      </div>
                       <div className="blurbs-list">
                         {blurbData.items.map((blurb, i) => (
                           <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
@@ -1256,11 +1248,6 @@ export default function App() {
               {/* Text blurbs for non-music, non-coffee, non-sports lenses */}
               {lens !== 'music' && lens !== 'coffee' && lens !== 'sports' && blurbData ? (
                 <>
-                  <div className="blurbs-header">
-                    {blurbData.year !== year && (
-                      <span className="blurbs-nearest">Showing {blurbData.year} — nearest data to {year}</span>
-                    )}
-                  </div>
                   <div className="blurbs-list">
                     {blurbData.items.map((blurb, i) => (
                       <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
