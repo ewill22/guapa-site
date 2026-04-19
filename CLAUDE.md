@@ -182,13 +182,14 @@ Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No fill
 3. **Coffee Shop Counter** (two-column desktop layout):
    - **Left sidebar (desktop)**: KPI tiles (sticky, scrolls with you)
    - **Right main**: Welcome greeting, timeline, lens-specific counter-bottom section
-   - **Counter-bottom by lens**: Search bar + legend (music), Highlighted Roaster info (coffee), Issue of the Moment (economics)
+   - **Counter-bottom by lens**: Search bar + legend (music), intro greeting (coffee), Issue of the Moment (economics), "Seasons, dynasties, upsets" intro (sports)
    - **Mobile (≤900px)**: Everything flattens via `display: contents`, reordered: KPI tiles(1) → greeting(2) → search(3) → albums(4) → timeline(5) → legend(6) → genre explorer(7)
 4. **Below counter** — lens-specific content:
    - **Music lens** (default): Genre Explorer (auto-opens artist of the day on load, no scroll)
-   - **Guapa lens**: Weekly dev blurbs (Fri–Thu grouping)
-   - **Coffee lens**: Region tiles, Panther Coffee offerings grid, year-based coffee blurbs
+   - **Guapa lens**: Weekly dev blurbs (Fri–Thu grouping) + Commit history-by-week panel
+   - **Coffee lens**: Four region tiles → country grid (one country per row, full-width) with 12-month grow calendars → year-based coffee blurbs
    - **Economics lens**: Year-based economics blurbs
+   - **Sports lens**: Placeholder "coming soon" card (blue accent)
 5. **Newsletter** (pink background, email signup)
 6. **Footer** (`src/components/Footer.jsx`) — logo lockup + links + FTC affiliate disclosure
 
@@ -287,26 +288,30 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Legend below: Emerging (green dashed) / Rising (blue) / Peak (pink) / Fading (red dashed)
 
 ### Coffee Lens
-- **Timeline**: Year-based (1930–2026), bars currently driven by `TIMELINE.coffee` (hardcoded global production in `src/data/timeline.js`). Planned: swap to `globalTotal(year)` from `coffee-harvest.js` once phase 2 UI lands.
-- **Counter-bottom**: "Highlighted Roaster" — Panther Coffee (Miami, est. 2010), with shop link and Instagram. Spans full width of counter-bottom.
-- **Below counter (current)**: Region tiles (South America, Central America, Africa, Blend) → Offering cards (8 coffees linking to Panther Shopify) → Year-based coffee blurbs
-- **Below counter (phase 2, designed not built)**: Region tiles stacked vertically on the left; right panel shows the selected region's harvest numbers for the current timeline year, top producers, grow calendar, weather. Clicking a region eventually reveals roasters (artist-style) → roasts (album-style).
+- **Timeline**: Year-based (1930–2026), bars currently driven by `TIMELINE.coffee` (hardcoded global production in `src/data/timeline.js`). Planned: swap to `globalTotal(year)` from `coffee-harvest.js`.
+- **Counter-bottom**: Intro greeting — "Listen to the world through music. _Explore it through coffee._" with a short sub-line. Full-width, replaces the old Highlighted Roaster section.
+- **Below counter**:
+  - **Region tiles row** — four big tiles (South America, Central America, Africa, Blend) stretched full-width of the container; each shows that region's total harvest for the selected year. Clicking a tile filters the country grid below; clicking again clears.
+  - **Country grid** — one country per row, full-width. Each row: country name (region-colored), phase badge (harvest / flowering / resting), harvest bags + global share, share bar, 12-month calendar strip highlighting the current month, Editorial pill (methodology tooltip + clickable per-country source refs), event note if any, source attribution pill.
+  - **Year-based coffee blurbs** — editorial commentary keyed to the selected year from `BLURBS.coffee`.
 
 #### Data files
 | File | Role | Who edits |
 |---|---|---|
-| `src/data/coffee-timeline.js` | Panther roaster POC — `FEATURED_ROASTER`, `PANTHER_OFFERINGS`, `PANTHER_REGIONS`, `COFFEE_BLURBS` (daily roast seed) | Hand-maintained |
+| `src/data/coffee-timeline.js` | Panther roaster POC — `FEATURED_ROASTER`, `PANTHER_OFFERINGS`, `PANTHER_REGIONS`, `COFFEE_BLURBS` (daily roast seed). Currently unused in `App.jsx` but kept for phase 3 (roasters as artists). | Hand-maintained |
 | `src/data/coffee-usda.js` | USDA FAS PSD global production (29 producers, 1960–present, public domain) | **Auto-generated** by `scripts/coffee-harvest/refresh.ps1` — do not hand-edit |
-| `src/data/coffee-harvest.js` | Multi-source composer: `COFFEE_SOURCES` catalog, `OVERLAY_PRODUCERS` (Conab seed + stubs), `COFFEE_EVENTS`, helpers (`regionTotal`, `globalTotal`, `countriesInRegion`, `producerSeries`, `eventsFor`) | Hand-maintained |
+| `src/data/coffee-harvest.js` | Multi-source composer: `COFFEE_SOURCES` catalog, `OVERLAY_PRODUCERS` (Conab seed + stubs), `COFFEE_EVENTS`, `COFFEE_GROW_CALENDAR` (29 countries, flowering/harvest/resting months), `GROW_CALENDAR_REFS` (editorial methodology + per-country source refs), helpers (`regionTotal`, `globalTotal`, `countriesInRegion`, `producerSeries`, `eventsFor`, `growCalendarFor`, `growPhaseIn`) | Hand-maintained |
 | `scripts/coffee-harvest/` | Refresh script + README documenting sources, licenses, and open TODOs for backend handoff | Eric / backend team |
 
 #### Source principle (see feedback memory "guapa-not-source-of-truth")
 Every number on the coffee lens must carry an attribution to a named source (USDA, Conab, FNC, Cecafé, VICOFA, UCDA, ECTA, ICO, …). When sources disagree on the same country × year, show both with an editorial note rather than picking one silently. The 2021 Brazil frost entry in `COFFEE_EVENTS` is the exemplar: USDA 58.1M vs Conab 47.72M, with a `preferredSource: 'conab'` pointer and a note explaining why Conab is the sharper read for that event.
 
-#### Phase status (as of 2026-04-18)
-- ✅ **Phase 1 (data foundation)** shipped. USDA ingested; Conab Brazil seeded (4 verified years); rich sources catalog stubbed for FNC, Cecafé, VICOFA, UCDA, ECTA, ICO.
-- ⏸️ **Phase 2 (UI redesign)** — paused. Designed, not built.
-- ⏸️ **Phase 3 (roasters as artists / roasts as albums)** — deep-first plan is Panther + 1–2 others once Phase 2 is live.
+**Grow calendar** follows the same principle — labeled as **Editorial** in the UI (yellow-tinted pill). Each country carries a `refs` array (base `[ico, usdaFas]`, plus national boards where applicable: Brazil→conab, Colombia→fnc, Vietnam→vicofa, Ethiopia→ecta, Uganda→ucda). The Editorial pill tooltip shows the full methodology statement; source refs underneath are clickable links.
+
+#### Phase status (as of 2026-04-19)
+- ✅ **Phase 1 (data foundation)** shipped 2026-04-18. USDA ingested; Conab Brazil seeded (4 verified years); rich sources catalog stubbed for FNC, Cecafé, VICOFA, UCDA, ECTA, ICO.
+- ✅ **Phase 2 (UI redesign)** shipped 2026-04-19. Four region tiles + full-width country grid with grow calendars. Roaster / offerings content removed; intro greeting replaces the Highlighted Roaster section.
+- ⏸️ **Phase 3 (roasters as artists / roasts as albums)** — paused. Panther + 1–2 others once we resume.
 
 #### Known TODOs (see `scripts/coffee-harvest/README.md` for full list)
 - Full Conab Brazil historical series (email `conab.geasa@conab.gov.br` or parse Pentaho CDA)
@@ -314,12 +319,34 @@ Every number on the coffee lens must carry an attribution to a named source (USD
 - Cecafé Brazil weekly export bulletins (different axis from production)
 - VICOFA Vietnam, UCDA Uganda, ECTA Ethiopia
 - Add 1975 Brazil "Black Frost" and 1989 ICA collapse entries to `COFFEE_EVENTS`
+- Swap `TIMELINE.coffee` hardcoded bars for `globalTotal(year)` from `coffee-harvest.js`
 - Backend (guapa-data) to eventually own the refresh cadence + overlay ingestions + coffee batch/roast tracking pipeline
 
 ### Economics Lens
 - **Timeline**: Year-based (1930–2026), same bar style as music
 - **Counter-bottom**: "Issue of the Moment" — Oil (green accent, Brent Crude benchmark)
 - **Below counter**: Year-based economics blurbs from `blurbs.js`
+
+### Sports Lens (placeholder)
+- **Status**: Placeholder only — no data, no timeline content. Shipped 2026-04-19 as a 4th lens option to anchor future work.
+- **Accent**: Blue (`#88a8d4`), trophy icon (`🏆`).
+- **Counter-bottom**: "Seasons, dynasties, _upsets_." intro with a "coming soon" sub-line.
+- **Below counter**: Centered `sports-coming-soon` card with lens icon, headline, and a short body. No timeline bars (empty `TIMELINE.sports` falls through to flat hash-based heights).
+- **When resuming**: add TIMELINE events, a real counter-bottom section (Team / League / Moment of the Year?), and year-based blurbs in `BLURBS.sports`.
+
+### Guapa Lens (Dev)
+The default lens — shown when no other lens is active (`lens === null`). This is the "how we built it" view.
+- **Timeline**: Day-based, not year-based. One bar per day from `DEV_FIRST_DATE` (2026-02-19) to today. Bar heights scale by commit count. Uses `DEV_DAYS` built in `App.jsx` from `DEV_COMMITS` in `src/data/dev-timeline.js`.
+- **Counter-bottom**: "Today's Build" card showing commits-this-week + the top news blurb from the current week.
+- **Below counter**:
+  - **Weekly blurbs panel** — Fri→Thu grouping (Friday = week start, matches music release day). Shows the current week's dev-timeline entries by day.
+  - **Dev stats strip** (under the slider) — three tiles: total commits, active days / total days, peak day (commits + date).
+  - **Commit history by week** — scrollable list of every week with a horizontal bar, commit count, and active-days count. Click any row to jump the timeline to the last active day of that week.
+- **Data file**: `src/data/dev-timeline.js` — hand-maintained.
+  - `DEV_FIRST_DATE` — first commit across guapa-site + guapa-data combined.
+  - `DEV_COMMITS` — `{ 'YYYY-MM-DD': count }` of combined commits per day. Not every date needs an entry (missing = 0).
+  - `DEV_BLURBS` — `{ 'YYYY-MM-DD': [{ type, text | label/value/change }] }`. Types: `news` (big moments), `update` (normal work), `metric` (number + change). Only populate days worth commenting on.
+- **Refresh recipe** — run `git log --all --pretty=format:"%ad" --date=short` in each repo, combine counts per date, update `DEV_COMMITS`. Add `DEV_BLURBS` entries for any new high-activity or milestone days.
 
 ### Sub-Pages (Static HTML in `public/`)
 - `music.html` — Record Store: year-based releases browser with search, discography, and timeline. Uses catalog + editorial CSV to show confirmed artists' albums grouped alphabetically by artist for the selected year.
@@ -382,6 +409,7 @@ Every number on the coffee lens must carry an attribution to a named source (USD
 - Coffee link in nav and footer
 - Data Solutions yellow pill button in nav (moved to regular nav link)
 - Progress bar rewind animation (bars now snap to start on song change)
+- Coffee lens Highlighted Roaster card and Panther offerings grid (replaced by intro greeting + region tiles + country grid in phase 2, 2026-04-19)
 
 ## Inactive Code (kept for future user system)
 

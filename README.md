@@ -29,7 +29,14 @@ npm run dev
 
 ## Site Structure
 
-**Hybrid approach:** The homepage is a React SPA with lens-based views (music, coffee, economics). Sub-pages are static HTML in `public/`.
+**Hybrid approach:** The homepage is a React SPA with lens-based views (music, coffee, economics, sports). Sub-pages are static HTML in `public/`.
+
+**Lenses:**
+- **Music** (default active) — daily artist rotation, Genre Explorer, record-store deep links
+- **Coffee** — four region tiles + full-width country grid with 12-month grow calendars, year-based blurbs (multi-source harvest data: USDA FAS PSD + Conab + editorial overlays)
+- **Economics** — year-based commentary, "Issue of the Moment" card
+- **Sports** — placeholder, coming soon
+- **Guapa (dev)** — the "how we built it" view: day-based timeline, weekly dev blurbs, commit history by week
 
 | Route | Type | Description |
 |-------|------|-------------|
@@ -79,6 +86,8 @@ Automatic via GitHub Actions on every push to `main`. Custom domain `guapa.space
 ## Versioning
 
 - **v1.0** — tagged and branched as `v1-stable` on 2026-04-04. Full launch: record store, genre explorer, coffee/economics lenses, data solutions, editorial pipeline, community suggestions.
+- **2026-04-18** — Coffee lens phase 1: multi-source harvest data foundation (`src/data/coffee-harvest.js`). USDA FAS PSD ingested, Conab Brazil seeded, source attribution + disagreement-handling baked in.
+- **2026-04-19** — Coffee lens phase 2: four region tiles + full-width country grid with grow calendars. Sports lens placeholder added. Dev lens refreshed with commit history by week + stats strip (total / active days / peak day).
 
 ## Design
 
