@@ -666,66 +666,6 @@ img {
 }
 
 /* ========================================
-   NEWSLETTER
-======================================== */
-.newsletter {
-    padding: var(--space-xl) 0;
-    background: var(--pink);
-    color: var(--black);
-}
-
-.newsletter-content {
-    max-width: 500px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.newsletter-content h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: var(--space-xs);
-}
-
-.newsletter-content p {
-    color: var(--black);
-    opacity: 0.8;
-    margin-bottom: var(--space-lg);
-}
-
-.newsletter-form {
-    display: flex;
-    gap: var(--space-xs);
-}
-
-.newsletter-form input {
-    flex: 1;
-    padding: var(--space-sm);
-    background: var(--white);
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    color: var(--black);
-    font-size: 0.9rem;
-}
-
-.newsletter-form input::placeholder {
-    color: var(--gray-600);
-}
-
-.newsletter-form input:focus {
-    outline: none;
-    border-color: var(--black);
-}
-
-.newsletter-form .btn-primary {
-    background: var(--black);
-    color: var(--pink);
-}
-
-.newsletter-form .btn-primary:hover {
-    background: var(--gray-900);
-}
-
-/* ========================================
    FOOTER
 ======================================== */
 .footer {
@@ -876,10 +816,6 @@ img {
     
     .about-image {
         order: -1;
-    }
-    
-    .newsletter-form {
-        flex-direction: column;
     }
     
     .footer-grid {

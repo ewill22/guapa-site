@@ -32,7 +32,7 @@ The creative work sells the serious work. A potential client explores the record
 
 - **Framework**: Vite + React
 - **Styling**: CSS (no Tailwind, no CSS-in-JS)
-- **Fonts**: Instrument Sans (UI) + Newsreader italic only (editorial headlines, about, newsletter)
+- **Fonts**: Instrument Sans (UI) + Newsreader italic only (editorial headlines, about)
 - **Deployment**: GitHub Actions CI/CD → GitHub Pages (every push to main auto-deploys)
 - **Live URL**: https://guapa.space (custom domain active, CNAME in `public/CNAME`)
 - **Repo**: https://github.com/ewill22/guapa-site (username: ewill22)
@@ -190,8 +190,7 @@ Short. Opinionated. Fragment-heavy. Lead with the iconic song or moment. No fill
    - **Coffee lens**: Four region tiles → country grid (one country per row, full-width) with 12-month grow calendars → year-based coffee blurbs
    - **Economics lens**: Year-based economics blurbs
    - **Sports lens**: Placeholder "coming soon" card (blue accent)
-5. **Newsletter** (pink background, email signup)
-6. **Footer** (`src/components/Footer.jsx`) — logo lockup + links + FTC affiliate disclosure
+5. **Footer** (`src/components/Footer.jsx`) — logo lockup + links + FTC affiliate disclosure
 
 ### KPI Tiles (Now Playing System)
 Three tiles stacked vertically, each with a color-matched progress bar:
@@ -428,7 +427,6 @@ These files are remnants of the removed login/ticker system. Nothing in App.jsx 
 
 - **Guapa RE local link**: `data-solutions.html:65` links to `http://192.168.1.99:8000` (the Guapa RE API auto-starts on login via Task Scheduler in guapa-data). External visitors get a graceful fallback: JS checks reachability, and if the link fails, scrolls to the contact form with "Guapa RE (Early Access)" pre-selected.
 - **Localhost API reference**: `music.html:1191` defines `MUSIC_API = 'http://localhost:8001'` — fails silently on GitHub Pages (static catalog loads correctly as fallback), but the dead reference is confusing
-- **Newsletter form non-functional**: The email signup form in App.jsx has no `action` or `onSubmit` — purely decorative
 - **Newsreader upright loaded**: Google Fonts import includes `Newsreader:ital,wght@0,400;1,400` — the upright weight (`0,400`) is loaded but should never be used per design rules (italic only)
 - **Duplicate CNAME**: `CNAME` exists at both repo root and `public/CNAME` — only `public/CNAME` matters (Vite copies it to dist). Root CNAME is harmless but redundant.
 

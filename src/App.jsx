@@ -1292,20 +1292,6 @@ export default function App() {
           </div>{/* close page-layout */}
 
         </section>
-
-        {/* Newsletter */}
-        <section className="newsletter">
-          <div className="container">
-            <div className="newsletter-content">
-              <h2>Stay in the loop</h2>
-              <p>Get updates on new drops and Guapa Data projects.</p>
-              <div className="newsletter-form">
-                <input type="email" placeholder="your@email.com" />
-                <button className="btn btn-primary">Subscribe</button>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
 
       <Footer />

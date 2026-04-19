@@ -1758,26 +1758,6 @@ html {
   font-size: 0.78rem; color: var(--gray-500);
 }
 
-/* Newsletter */
-.newsletter { padding: var(--space-xl) 0; background: var(--pink); color: var(--black); }
-.newsletter-content { max-width: 500px; margin: 0 auto; text-align: center; }
-.newsletter-content h2 {
-  font-family: var(--font-serif); font-style: italic;
-  font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 400;
-  margin-bottom: var(--space-xs);
-}
-.newsletter-content p { color: var(--black); opacity: 0.8; margin-bottom: var(--space-lg); }
-.newsletter-form { display: flex; gap: var(--space-xs); }
-.newsletter-form input {
-  flex: 1; padding: var(--space-sm); background: var(--white);
-  border: 1px solid transparent; border-radius: var(--radius-sm);
-  color: var(--black); font-size: 0.9rem;
-}
-.newsletter-form input::placeholder { color: var(--gray-600); }
-.newsletter-form input:focus { outline: none; border-color: var(--black); }
-.newsletter-form .btn-primary { background: var(--black); color: var(--pink); }
-.newsletter-form .btn-primary:hover { background: var(--gray-900); }
-
 /* ========================================
    RESPONSIVE
 ======================================== */
@@ -1895,6 +1875,5 @@ html {
   .event-bars { width: 100%; }
   .counter-timeline { padding: var(--space-sm); }
   .counter-greeting, .counter-bean, .counter-search, .counter-albums, .counter-search-footer { padding: var(--space-sm) var(--space-md); }
-  .newsletter-form { flex-direction: column; }
   .blurb-metric { flex-wrap: wrap; }
 }
