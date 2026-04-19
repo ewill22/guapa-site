@@ -451,7 +451,129 @@ html {
   color: var(--gray-600);
 }
 
-/* Harvest grid - phase 2 layout */
+/* Counter-bottom regions row (coffee lens) */
+.counter-regions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.counter-regions-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.counter-region-tile {
+  padding: 8px 10px;
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  background: var(--gray-900);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.15s, opacity 0.15s, transform 0.15s;
+}
+@media (hover: hover) {
+  .counter-region-tile:hover { border-color: var(--gray-600); }
+}
+.counter-region-tile:active { transform: scale(0.99); }
+.counter-region-tile.is-dimmed { opacity: 0.5; }
+.counter-region-tile-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.counter-region-tile-total {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  font-variant-numeric: tabular-nums;
+}
+.counter-region-tile-total strong {
+  color: var(--white);
+  font-weight: 700;
+}
+.counter-region-tile-nodata {
+  font-size: 0.72rem;
+  color: var(--gray-600);
+  font-style: italic;
+}
+.counter-region-tile-count {
+  font-size: 0.65rem;
+  color: var(--gray-600);
+}
+
+/* Country tile grid */
+.coffee-countries { margin-bottom: var(--space-lg, 24px); }
+.coffee-section-sub {
+  font-weight: 400;
+  font-size: 0.65rem;
+  color: var(--gray-600);
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.coffee-country-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-sm);
+}
+.coffee-country-tile {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  background: var(--gray-900);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.15s;
+}
+@media (hover: hover) {
+  .coffee-country-tile:hover { border-color: var(--gray-400); }
+}
+.coffee-country-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.coffee-country-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.coffee-country-numbers {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* Highlighted Roaster card (below countries, above offerings) */
+.coffee-roaster-card {
+  padding: var(--space-md);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  background: var(--gray-900);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg, 24px);
+}
+.coffee-roaster-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.coffee-roaster-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Legacy 2-col harvest grid - kept for any stragglers but unused */
 .coffee-harvest-grid {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -1495,6 +1617,8 @@ html {
   .coffee-region-column { position: static; }
   .coffee-region-tile-value { font-size: 1.3rem; }
   .coffee-cal-month { font-size: 0.5rem; }
+  .counter-regions-row { grid-template-columns: repeat(2, 1fr); }
+  .coffee-country-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 600px) {

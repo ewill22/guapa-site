@@ -871,14 +871,35 @@ export default function App() {
                   )}
                 </div>
               ) : lens === 'coffee' ? (
-                <div className="counter-bean counter-roaster">
-                  <span className="kpi-label">Highlighted Roaster</span>
-                  <span className="bean-name">{FEATURED_ROASTER.name}</span>
-                  <span className="bean-origin">{FEATURED_ROASTER.location} — est. {FEATURED_ROASTER.founded}</span>
-                  <span className="bean-notes">{FEATURED_ROASTER.philosophy}</span>
-                  <div className="counter-roaster-links">
-                    <a href={FEATURED_ROASTER.url} target="_blank" rel="noopener noreferrer" className="counter-roaster-link">Shop</a>
-                    <span className="bean-process">{FEATURED_ROASTER.instagram}</span>
+                <div className="counter-regions">
+                  <span className="kpi-label">Regions — {year ?? 2024}</span>
+                  <div className="counter-regions-row">
+                    {COFFEE_REGIONS.map(region => {
+                      const cy = year ?? 2024;
+                      const total = regionTotal(region.name, cy);
+                      const producers = countriesInRegion(region.name, cy);
+                      const isActive = selectedCoffeeRegion === region.name;
+                      const isDimmed = selectedCoffeeRegion && !isActive;
+                      return (
+                        <button
+                          key={region.key}
+                          type="button"
+                          className={`counter-region-tile${isActive ? ' is-active' : ''}${isDimmed ? ' is-dimmed' : ''}`}
+                          style={isActive ? { borderColor: region.color } : undefined}
+                          onClick={() => setSelectedCoffeeRegion(isActive ? null : region.name)}
+                        >
+                          <span className="counter-region-tile-name" style={{ color: region.color }}>{region.name}</span>
+                          {total > 0 ? (
+                            <span className="counter-region-tile-total">
+                              <strong>{total.toFixed(1)}M</strong> bags
+                            </span>
+                          ) : (
+                            <span className="counter-region-tile-nodata">no data</span>
+                          )}
+                          <span className="counter-region-tile-count">{producers.length} producer{producers.length !== 1 ? 's' : ''}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ) : lens === 'economics' ? (
@@ -972,157 +993,111 @@ export default function App() {
               {/* Coffee lens — featured roaster + offerings + weekly blurbs */}
               {lens === 'coffee' && (() => {
                 const coffeeYear = year ?? 2024;
+                const nowMonth = new Date().getMonth() + 1;
+                const monthShort = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+                const monthFull = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                const regionByName = Object.fromEntries(COFFEE_REGIONS.map(r => [r.name, r]));
+                const allCountries = COFFEE_REGIONS.flatMap(r => countriesInRegion(r.name, coffeeYear).map(c => ({ ...c, regionName: r.name })));
+                const filtered = selectedCoffeeRegion
+                  ? allCountries.filter(c => c.regionName === selectedCoffeeRegion)
+                  : allCountries;
+                const countryTiles = [...filtered].sort((a, b) => a.country.localeCompare(b.country));
                 return (
                 <div className="coffee-section">
-                  {/* Harvest Grid - regions (left) + producers (right) */}
-                  <div className="coffee-harvest-grid">
-                    <div className="coffee-region-column">
-                      <h3 className="coffee-section-label">Regions — {coffeeYear}</h3>
-                      {COFFEE_REGIONS.map(region => {
-                        const total = regionTotal(region.name, coffeeYear);
-                        const producers = countriesInRegion(region.name, coffeeYear);
-                        const top = producers[0];
-                        const isActive = selectedCoffeeRegion === region.name;
-                        const isDimmed = selectedCoffeeRegion && !isActive;
-                        return (
-                          <button
-                            key={region.key}
-                            type="button"
-                            className={`coffee-region-tile${isActive ? ' is-active' : ''}${isDimmed ? ' is-dimmed' : ''}`}
-                            style={isActive ? { borderColor: region.color } : undefined}
-                            onClick={() => setSelectedCoffeeRegion(isActive ? null : region.name)}
-                          >
-                            <div className="coffee-region-tile-head">
-                              <span className="coffee-region-tile-dot" style={{ background: region.color }} />
-                              <span className="coffee-region-tile-name" style={{ color: region.color }}>{region.name}</span>
-                            </div>
-                            {total > 0 ? (
-                              <div className="coffee-region-tile-total">
-                                <span className="coffee-region-tile-value">{total.toFixed(1)}M</span>
-                                <span className="coffee-region-tile-unit">60kg bags</span>
+                  <div className="coffee-countries">
+                    <h3 className="coffee-section-label">
+                      <span>
+                        {selectedCoffeeRegion ? `${selectedCoffeeRegion} — ${coffeeYear}` : `All Producers — ${coffeeYear}`}
+                        <span className="coffee-section-sub">
+                          {' '}· {countryTiles.length} countries · Global {globalTotal(coffeeYear).toFixed(1)}M bags · USDA FAS PSD
+                        </span>
+                      </span>
+                      {selectedCoffeeRegion && (
+                        <button
+                          type="button"
+                          className="coffee-clear-filter"
+                          onClick={() => setSelectedCoffeeRegion(null)}
+                        >
+                          clear filter
+                        </button>
+                      )}
+                    </h3>
+                    {countryTiles.length === 0 ? (
+                      <div className="coffee-producer-empty">No tracked data for {coffeeYear}</div>
+                    ) : (
+                      <div className="coffee-country-grid">
+                        {countryTiles.map(p => {
+                          const region = regionByName[p.regionName];
+                          const regionSum = countriesInRegion(p.regionName, coffeeYear).reduce((s, x) => s + x.bags, 0);
+                          const share = regionSum > 0 ? (p.bags / regionSum) * 100 : 0;
+                          const cal = growCalendarFor(p.country);
+                          const phase = growPhaseIn(p.country, nowMonth);
+                          const src = COFFEE_SOURCES[p.source];
+                          const events = eventsFor(p.country, coffeeYear);
+                          return (
+                            <div key={p.country} className="coffee-country-tile" style={{ borderColor: region.color + '40' }}>
+                              <div className="coffee-country-head">
+                                <span className="coffee-country-name" style={{ color: region.color }}>{p.country}</span>
+                                {phase && phase !== 'resting' && (
+                                  <span className={`coffee-producer-phase coffee-producer-phase--${phase}`}>
+                                    {phase === 'harvest' ? 'harvesting' : 'flowering'}
+                                  </span>
+                                )}
                               </div>
-                            ) : (
-                              <div className="coffee-region-tile-nodata">No tracked data for {coffeeYear}</div>
-                            )}
-                            {top && (
-                              <div className="coffee-region-tile-top">
-                                Top: {top.country} <span>({top.bags.toFixed(1)}M)</span>
+                              <div className="coffee-country-numbers">
+                                <span className="coffee-producer-bags">{p.bags.toFixed(1)}M</span>
+                                <span className="coffee-producer-share">{share.toFixed(0)}% of {p.regionName.split(' ')[0]}</span>
                               </div>
-                            )}
-                            <div className="coffee-region-tile-count">
-                              {producers.length} producer{producers.length !== 1 ? 's' : ''}
+                              <div className="coffee-producer-bar">
+                                <div className="coffee-producer-bar-fill" style={{ width: `${share}%`, background: region.color }} />
+                              </div>
+                              {cal && (
+                                <div className="coffee-producer-calendar" title={cal.note}>
+                                  {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
+                                    const ph = growPhaseIn(p.country, m);
+                                    const isNow = m === nowMonth;
+                                    return (
+                                      <span
+                                        key={m}
+                                        className={`coffee-cal-month coffee-cal-month--${ph}${isNow ? ' is-now' : ''}`}
+                                        title={`${monthFull[m-1]}: ${ph}`}
+                                      >
+                                        {monthShort[m-1]}
+                                      </span>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                              {events.length > 0 && (
+                                <div className="coffee-producer-event">
+                                  <span className="coffee-producer-event-head">{events[0].headline}</span>
+                                  <p>{events[0].note}</p>
+                                </div>
+                              )}
+                              {src && (
+                                <div className="coffee-producer-source">
+                                  <span className="coffee-source-pill">{src.name}</span>
+                                  <span className="coffee-source-license">{src.license}</span>
+                                </div>
+                              )}
                             </div>
-                          </button>
-                        );
-                      })}
-                      <div className="coffee-harvest-footer">
-                        Global {coffeeYear}: <strong>{globalTotal(coffeeYear).toFixed(1)}M bags</strong>
-                        <span> — Source: USDA FAS PSD (public domain)</span>
+                          );
+                        })}
                       </div>
-                    </div>
+                    )}
+                  </div>
 
-                    <div className="coffee-producers-column">
-                      <h3 className="coffee-section-label">
-                        <span>Producers — {coffeeYear}</span>
-                        {selectedCoffeeRegion && (
-                          <button
-                            type="button"
-                            className="coffee-clear-filter"
-                            onClick={() => setSelectedCoffeeRegion(null)}
-                          >
-                            clear filter
-                          </button>
-                        )}
-                      </h3>
-                      <div className="coffee-producer-list">
-                        {COFFEE_REGIONS
-                          .filter(r => !selectedCoffeeRegion || r.name === selectedCoffeeRegion)
-                          .map(region => {
-                            const producers = countriesInRegion(region.name, coffeeYear);
-                            if (producers.length === 0) {
-                              return (
-                                <div key={region.key} className="coffee-producer-group">
-                                  <div className="coffee-producer-group-head" style={{ borderColor: region.color }}>
-                                    <span style={{ color: region.color }}>{region.name}</span>
-                                  </div>
-                                  <div className="coffee-producer-empty">No tracked data for {coffeeYear}</div>
-                                </div>
-                              );
-                            }
-                            const regionSum = producers.reduce((s, p) => s + p.bags, 0);
-                            const nowMonth = new Date().getMonth() + 1;
-                            const monthShort = ['J','F','M','A','M','J','J','A','S','O','N','D'];
-                            const monthFull = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                            return (
-                              <div key={region.key} className="coffee-producer-group">
-                                <div className="coffee-producer-group-head" style={{ borderColor: region.color }}>
-                                  <span style={{ color: region.color }}>{region.name}</span>
-                                  <span className="coffee-producer-group-total">{regionSum.toFixed(1)}M bags</span>
-                                </div>
-                                {producers.map(p => {
-                                  const share = regionSum > 0 ? (p.bags / regionSum) * 100 : 0;
-                                  const cal = growCalendarFor(p.country);
-                                  const phase = growPhaseIn(p.country, nowMonth);
-                                  const src = COFFEE_SOURCES[p.source];
-                                  const events = eventsFor(p.country, coffeeYear);
-                                  return (
-                                    <div key={p.country} className="coffee-producer-row">
-                                      <div className="coffee-producer-row-main">
-                                        <div className="coffee-producer-row-name">
-                                          <span className="coffee-producer-country">{p.country}</span>
-                                          {phase && phase !== 'resting' && (
-                                            <span className={`coffee-producer-phase coffee-producer-phase--${phase}`}>
-                                              {phase === 'harvest' ? 'harvesting now' : 'flowering now'}
-                                            </span>
-                                          )}
-                                        </div>
-                                        <div className="coffee-producer-row-numbers">
-                                          <span className="coffee-producer-bags">{p.bags.toFixed(1)}M</span>
-                                          <span className="coffee-producer-share">{share.toFixed(0)}% of region</span>
-                                        </div>
-                                      </div>
-                                      <div className="coffee-producer-bar">
-                                        <div
-                                          className="coffee-producer-bar-fill"
-                                          style={{ width: `${share}%`, background: region.color }}
-                                        />
-                                      </div>
-                                      {cal && (
-                                        <div className="coffee-producer-calendar" title={cal.note}>
-                                          {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
-                                            const ph = growPhaseIn(p.country, m);
-                                            const isNow = m === nowMonth;
-                                            return (
-                                              <span
-                                                key={m}
-                                                className={`coffee-cal-month coffee-cal-month--${ph}${isNow ? ' is-now' : ''}`}
-                                                title={`${monthFull[m-1]}: ${ph}`}
-                                              >
-                                                {monthShort[m-1]}
-                                              </span>
-                                            );
-                                          })}
-                                        </div>
-                                      )}
-                                      {events.length > 0 && (
-                                        <div className="coffee-producer-event">
-                                          <span className="coffee-producer-event-head">{events[0].headline}</span>
-                                          <p>{events[0].note}</p>
-                                        </div>
-                                      )}
-                                      {src && (
-                                        <div className="coffee-producer-source">
-                                          <span className="coffee-source-pill">{src.name}</span>
-                                          <span className="coffee-source-license">{src.license}</span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            );
-                          })}
-                      </div>
+                  {/* Highlighted Roaster - context for the offerings below */}
+                  <div className="coffee-roaster-card">
+                    <div className="coffee-roaster-head">
+                      <span className="kpi-label">Highlighted Roaster</span>
+                      <a href={FEATURED_ROASTER.url} target="_blank" rel="noopener noreferrer" className="counter-roaster-link">Shop</a>
+                    </div>
+                    <div className="coffee-roaster-body">
+                      <span className="bean-name">{FEATURED_ROASTER.name}</span>
+                      <span className="bean-origin">{FEATURED_ROASTER.location} — est. {FEATURED_ROASTER.founded}</span>
+                      <span className="bean-notes">{FEATURED_ROASTER.philosophy}</span>
+                      <span className="bean-process">{FEATURED_ROASTER.instagram}</span>
                     </div>
                   </div>
 
