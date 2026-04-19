@@ -868,36 +868,13 @@ export default function App() {
                   )}
                 </div>
               ) : lens === 'coffee' ? (
-                <div className="counter-regions">
-                  <span className="kpi-label">Regions — {year ?? 2024}</span>
-                  <div className="counter-regions-row">
-                    {COFFEE_REGIONS.map(region => {
-                      const cy = year ?? 2024;
-                      const total = regionTotal(region.name, cy);
-                      const producers = countriesInRegion(region.name, cy);
-                      const isActive = selectedCoffeeRegion === region.name;
-                      const isDimmed = selectedCoffeeRegion && !isActive;
-                      return (
-                        <button
-                          key={region.key}
-                          type="button"
-                          className={`counter-region-tile${isActive ? ' is-active' : ''}${isDimmed ? ' is-dimmed' : ''}`}
-                          style={isActive ? { borderColor: region.color } : undefined}
-                          onClick={() => setSelectedCoffeeRegion(isActive ? null : region.name)}
-                        >
-                          <span className="counter-region-tile-name" style={{ color: region.color }}>{region.name}</span>
-                          {total > 0 ? (
-                            <span className="counter-region-tile-total">
-                              <strong>{total.toFixed(1)}M</strong> bags
-                            </span>
-                          ) : (
-                            <span className="counter-region-tile-nodata">no data</span>
-                          )}
-                          <span className="counter-region-tile-count">{producers.length} producer{producers.length !== 1 ? 's' : ''}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                <div className="counter-coffee-intro">
+                  <h2 className="counter-coffee-intro-headline">
+                    Listen to the world through music. <em>Explore it through coffee.</em>
+                  </h2>
+                  <p className="counter-coffee-intro-sub">
+                    Every country a tile, every tile a harvest. Pick a region below to zoom in, or scroll the full producer list.
+                  </p>
                 </div>
               ) : lens === 'economics' ? (
                 <div className="counter-bean counter-roaster">
@@ -1001,13 +978,47 @@ export default function App() {
                 const countryTiles = [...filtered].sort((a, b) => a.country.localeCompare(b.country));
                 return (
                 <div className="coffee-section">
-                  <div className="coffee-intro">
-                    <h2 className="coffee-intro-headline">
-                      Listen to the world through music. <em>Explore it through coffee.</em>
-                    </h2>
-                    <p className="coffee-intro-sub">
-                      Every country a tile, every tile a harvest. Pick a region above to zoom in, or scroll the full producer list below.
-                    </p>
+                  <div className="coffee-regions-block">
+                    <h3 className="coffee-section-label">Regions — {coffeeYear}</h3>
+                    <div className="coffee-regions-row">
+                      {COFFEE_REGIONS.map(region => {
+                        const total = regionTotal(region.name, coffeeYear);
+                        const producers = countriesInRegion(region.name, coffeeYear);
+                        const top = producers[0];
+                        const isActive = selectedCoffeeRegion === region.name;
+                        const isDimmed = selectedCoffeeRegion && !isActive;
+                        return (
+                          <button
+                            key={region.key}
+                            type="button"
+                            className={`coffee-region-big-tile${isActive ? ' is-active' : ''}${isDimmed ? ' is-dimmed' : ''}`}
+                            style={isActive ? { borderColor: region.color } : undefined}
+                            onClick={() => setSelectedCoffeeRegion(isActive ? null : region.name)}
+                          >
+                            <div className="coffee-region-big-head">
+                              <span className="coffee-region-big-dot" style={{ background: region.color }} />
+                              <span className="coffee-region-big-name" style={{ color: region.color }}>{region.name}</span>
+                            </div>
+                            {total > 0 ? (
+                              <div className="coffee-region-big-total">
+                                <span className="coffee-region-big-value">{total.toFixed(1)}M</span>
+                                <span className="coffee-region-big-unit">60kg bags</span>
+                              </div>
+                            ) : (
+                              <div className="coffee-region-big-nodata">No tracked data for {coffeeYear}</div>
+                            )}
+                            {top && (
+                              <div className="coffee-region-big-top">
+                                Top: {top.country} <span>({top.bags.toFixed(1)}M)</span>
+                              </div>
+                            )}
+                            <div className="coffee-region-big-count">
+                              {producers.length} producer{producers.length !== 1 ? 's' : ''}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                   <div className="coffee-countries">
                     <h3 className="coffee-section-label">
