@@ -280,6 +280,16 @@ export const COFFEE_GROW_CALENDAR = {
   'Papua New Guinea':  { flowering: [8, 10],    harvest: [[4, 9]],              note: 'Smallholder-dominant, Eastern Highlands.' },
   "Cote d'Ivoire":     { flowering: [3, 5],     harvest: [[11, 4]],             note: 'Robusta-dominant.' },
   Cameroon:            { flowering: [3, 5],     harvest: [[10, 1]],             note: 'Mixed Arabica/Robusta.' },
+  Ecuador:             { flowering: [10, 12],   harvest: [[5, 9]],              note: 'Arabica Sierra; harvest May-Sep.' },
+  Venezuela:           { flowering: [4, 6],     harvest: [[10, 2]],             note: 'Andean Arabica; harvest Oct-Feb.' },
+  'Dominican Republic':{ flowering: [3, 5],     harvest: [[10, 5]],             note: 'Long harvest window across altitude bands.' },
+  Angola:               { flowering: [9, 11],    harvest: [[4, 9]],              note: 'Robusta-dominant; recovering post-war industry.' },
+  'Congo (Kinshasa)':  { flowering: [2, 4, 8],  harvest: [[3, 6], [9, 12]],     note: 'Two seasons (Robusta-dominant, with Arabica in Kivu).' },
+  Madagascar:          { flowering: [9, 11],    harvest: [[5, 10]],             note: 'Robusta-dominant.' },
+  Malaysia:            { flowering: [2, 4],     harvest: [[3, 10]],             note: 'Liberica and Robusta; long harvest window.' },
+  China:               { flowering: [3, 5],     harvest: [[11, 2]],             note: 'Yunnan-dominant Arabica; harvest Nov-Feb.' },
+  Thailand:            { flowering: [3, 5],     harvest: [[10, 2]],             note: 'North Arabica + South Robusta.' },
+  Philippines:         { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Four species grown; varies by region.' },
 };
 
 export function growCalendarFor(country) {
