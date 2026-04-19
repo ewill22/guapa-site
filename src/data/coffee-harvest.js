@@ -254,42 +254,66 @@ export const COFFEE_REGIONS = [
 ];
 
 // ============================================================
-// GROW CALENDAR - hand-curated flowering + harvest months per
-// top producer. Month indices are 1-12. Some countries have two
-// harvests per year (main + fly/mitaca); we capture both.
-// Sources: ICO country reports, USDA FAS attache reports.
+// GROW CALENDAR - editorial approximations of typical flowering
+// and harvest windows per producing country.
+//
+// IMPORTANT: These are NOT primary-source survey data. Actual
+// timing varies materially by region within a country, altitude,
+// and year-to-year weather (blossom showers, drought, frost).
+// Windows are cross-referenced against ICO country profiles,
+// USDA FAS attache reports, and national coffee-authority
+// publications, but synthesized here as editorial summaries.
+//
+// Per-country `refs` points to the sources consulted. UI must
+// label this section as editorial reference, not cited survey.
 // ============================================================
 
+export const GROW_CALENDAR_REFS = {
+  methodology: 'Harvest and flowering windows are editorial approximations of typical seasons. Actual timing varies by region within a country, altitude, and year-to-year weather. Cross-referenced against ICO country profiles, USDA FAS attache reports, and national coffee-authority publications - not a primary-source survey.',
+  attribution: 'Editorial reference - ICO + USDA FAS',
+  sources: {
+    ico:     { name: 'ICO Country Profiles',   url: 'https://ico.org/countries_e.asp' },
+    usdaFas: { name: 'USDA FAS Coffee',        url: 'https://www.fas.usda.gov/commodities/coffee' },
+    fnc:     { name: 'FNC (Colombia)',         url: 'https://federaciondecafeteros.org/' },
+    vicofa:  { name: 'VICOFA (Vietnam)',       url: 'https://vicofa.org.vn/' },
+    ucda:    { name: 'UCDA (Uganda)',          url: 'https://ugandacoffee.go.ug/' },
+    ecta:    { name: 'ECTA (Ethiopia)',        url: 'https://ecta.gov.et/' },
+    conab:   { name: 'Conab (Brazil)',         url: 'https://www.conab.gov.br/' },
+  },
+};
+
+const BASE_REFS = ['ico', 'usdaFas'];
+
 export const COFFEE_GROW_CALENDAR = {
-  Brazil:              { flowering: [9, 10],    harvest: [[5, 9]],              note: 'Main Arabica harvest May-Sep; biennial cycle alternates high/low years.' },
-  Colombia:            { flowering: [2, 3, 8],  harvest: [[10, 1], [4, 6]],     note: 'Two harvests: main (Oct-Jan, ~60%) and mitaca (Apr-Jun, ~40%).' },
-  Vietnam:             { flowering: [1, 3],     harvest: [[10, 1]],             note: 'Robusta-dominant; concentrated Oct-Jan harvest in Central Highlands.' },
-  Ethiopia:            { flowering: [3, 5],     harvest: [[10, 12]],            note: 'Dry-processed (natural) dominant; late-year harvest in Sidama/Yirgacheffe.' },
-  Honduras:            { flowering: [4, 5],     harvest: [[11, 4]],             note: 'Long harvest window spanning most altitude bands.' },
-  Peru:                { flowering: [9, 11],    harvest: [[4, 9]],              note: 'High-altitude Arabica; harvest Apr-Sep.' },
-  Uganda:              { flowering: [2, 4, 9],  harvest: [[10, 2], [4, 6]],     note: 'Two crops: main (Oct-Feb) and fly (Apr-Jun).' },
-  Indonesia:           { flowering: [9, 11],    harvest: [[4, 9]],              note: 'Robusta Sumatra/Java dominant; harvest Apr-Sep.' },
-  Mexico:              { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Chiapas and Veracruz dominant.' },
-  Guatemala:           { flowering: [2, 4],     harvest: [[11, 3]],             note: 'Antigua, Huehuetenango regions; harvest Nov-Mar.' },
-  Nicaragua:           { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Jinotega and Matagalpa dominant.' },
-  'Costa Rica':        { flowering: [3, 5],     harvest: [[11, 3]],             note: 'Tarrazu, Central Valley; strict wet-mill tradition.' },
-  'El Salvador':       { flowering: [3, 5],     harvest: [[10, 2]],             note: 'Bourbon-heritage varietals.' },
-  Kenya:               { flowering: [2, 4, 10], harvest: [[10, 12], [5, 7]],    note: 'Two crops: main (Oct-Dec) and fly (May-Jul); SL28/SL34 varietals.' },
-  Tanzania:            { flowering: [9, 11],    harvest: [[7, 12]],             note: 'Arabica (North) + Robusta (West); harvest Jul-Dec.' },
-  India:               { flowering: [2, 4],     harvest: [[11, 2]],             note: 'Monsooned Malabar; blossom showers trigger flowering.' },
-  'Papua New Guinea':  { flowering: [8, 10],    harvest: [[4, 9]],              note: 'Smallholder-dominant, Eastern Highlands.' },
-  "Cote d'Ivoire":     { flowering: [3, 5],     harvest: [[11, 4]],             note: 'Robusta-dominant.' },
-  Cameroon:            { flowering: [3, 5],     harvest: [[10, 1]],             note: 'Mixed Arabica/Robusta.' },
-  Ecuador:             { flowering: [10, 12],   harvest: [[5, 9]],              note: 'Arabica Sierra; harvest May-Sep.' },
-  Venezuela:           { flowering: [4, 6],     harvest: [[10, 2]],             note: 'Andean Arabica; harvest Oct-Feb.' },
-  'Dominican Republic':{ flowering: [3, 5],     harvest: [[10, 5]],             note: 'Long harvest window across altitude bands.' },
-  Angola:               { flowering: [9, 11],    harvest: [[4, 9]],              note: 'Robusta-dominant; recovering post-war industry.' },
-  'Congo (Kinshasa)':  { flowering: [2, 4, 8],  harvest: [[3, 6], [9, 12]],     note: 'Two seasons (Robusta-dominant, with Arabica in Kivu).' },
-  Madagascar:          { flowering: [9, 11],    harvest: [[5, 10]],             note: 'Robusta-dominant.' },
-  Malaysia:            { flowering: [2, 4],     harvest: [[3, 10]],             note: 'Liberica and Robusta; long harvest window.' },
-  China:               { flowering: [3, 5],     harvest: [[11, 2]],             note: 'Yunnan-dominant Arabica; harvest Nov-Feb.' },
-  Thailand:            { flowering: [3, 5],     harvest: [[10, 2]],             note: 'North Arabica + South Robusta.' },
-  Philippines:         { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Four species grown; varies by region.' },
+  Brazil:              { flowering: [9, 10],    harvest: [[5, 9]],              note: 'Main Arabica harvest May-Sep; biennial cycle alternates high/low years.', refs: ['ico', 'usdaFas', 'conab'] },
+  Colombia:            { flowering: [2, 3, 8],  harvest: [[10, 1], [4, 6]],     note: 'Two harvests: main (Oct-Jan, ~60%) and mitaca (Apr-Jun, ~40%).',            refs: ['ico', 'usdaFas', 'fnc'] },
+  Vietnam:             { flowering: [1, 3],     harvest: [[10, 1]],             note: 'Robusta-dominant; concentrated Oct-Jan harvest in Central Highlands.',        refs: ['ico', 'usdaFas', 'vicofa'] },
+  Ethiopia:            { flowering: [3, 5],     harvest: [[10, 12]],            note: 'Dry-processed (natural) dominant; late-year harvest in Sidama/Yirgacheffe.',  refs: ['ico', 'usdaFas', 'ecta'] },
+  Honduras:            { flowering: [4, 5],     harvest: [[11, 4]],             note: 'Long harvest window spanning most altitude bands.',                           refs: BASE_REFS },
+  Peru:                { flowering: [9, 11],    harvest: [[4, 9]],              note: 'High-altitude Arabica; harvest Apr-Sep.',                                     refs: BASE_REFS },
+  Uganda:              { flowering: [2, 4, 9],  harvest: [[10, 2], [4, 6]],     note: 'Two crops: main (Oct-Feb) and fly (Apr-Jun).',                                refs: ['ico', 'usdaFas', 'ucda'] },
+  Indonesia:           { flowering: [9, 11],    harvest: [[4, 9]],              note: 'Robusta Sumatra/Java dominant; harvest Apr-Sep.',                             refs: BASE_REFS },
+  Mexico:              { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Chiapas and Veracruz dominant.',                                              refs: BASE_REFS },
+  Guatemala:           { flowering: [2, 4],     harvest: [[11, 3]],             note: 'Antigua, Huehuetenango regions; harvest Nov-Mar.',                            refs: BASE_REFS },
+  Nicaragua:           { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Jinotega and Matagalpa dominant.',                                            refs: BASE_REFS },
+  'Costa Rica':        { flowering: [3, 5],     harvest: [[11, 3]],             note: 'Tarrazu, Central Valley; strict wet-mill tradition.',                         refs: BASE_REFS },
+  'El Salvador':       { flowering: [3, 5],     harvest: [[10, 2]],             note: 'Bourbon-heritage varietals.',                                                 refs: BASE_REFS },
+  Kenya:               { flowering: [2, 4, 10], harvest: [[10, 12], [5, 7]],    note: 'Two crops: main (Oct-Dec) and fly (May-Jul); SL28/SL34 varietals.',           refs: BASE_REFS },
+  Tanzania:            { flowering: [9, 11],    harvest: [[7, 12]],             note: 'Arabica (North) + Robusta (West); harvest Jul-Dec.',                          refs: BASE_REFS },
+  India:               { flowering: [2, 4],     harvest: [[11, 2]],             note: 'Monsooned Malabar; blossom showers trigger flowering.',                       refs: BASE_REFS },
+  'Papua New Guinea':  { flowering: [8, 10],    harvest: [[4, 9]],              note: 'Smallholder-dominant, Eastern Highlands.',                                    refs: BASE_REFS },
+  "Cote d'Ivoire":     { flowering: [3, 5],     harvest: [[11, 4]],             note: 'Robusta-dominant.',                                                           refs: BASE_REFS },
+  Cameroon:            { flowering: [3, 5],     harvest: [[10, 1]],             note: 'Mixed Arabica/Robusta.',                                                      refs: BASE_REFS },
+  Ecuador:             { flowering: [10, 12],   harvest: [[5, 9]],              note: 'Arabica Sierra; harvest May-Sep.',                                            refs: BASE_REFS },
+  Venezuela:           { flowering: [4, 6],     harvest: [[10, 2]],             note: 'Andean Arabica; harvest Oct-Feb.',                                            refs: BASE_REFS },
+  'Dominican Republic':{ flowering: [3, 5],     harvest: [[10, 5]],             note: 'Long harvest window across altitude bands.',                                  refs: BASE_REFS },
+  Angola:              { flowering: [9, 11],    harvest: [[4, 9]],              note: 'Robusta-dominant; recovering post-war industry.',                             refs: BASE_REFS },
+  'Congo (Kinshasa)':  { flowering: [2, 4, 8],  harvest: [[3, 6], [9, 12]],     note: 'Two seasons (Robusta-dominant, with Arabica in Kivu).',                       refs: BASE_REFS },
+  Madagascar:          { flowering: [9, 11],    harvest: [[5, 10]],             note: 'Robusta-dominant.',                                                           refs: BASE_REFS },
+  Malaysia:            { flowering: [2, 4],     harvest: [[3, 10]],             note: 'Liberica and Robusta; long harvest window.',                                  refs: BASE_REFS },
+  China:               { flowering: [3, 5],     harvest: [[11, 2]],             note: 'Yunnan-dominant Arabica; harvest Nov-Feb.',                                   refs: BASE_REFS },
+  Thailand:            { flowering: [3, 5],     harvest: [[10, 2]],             note: 'North Arabica + South Robusta.',                                              refs: BASE_REFS },
+  Philippines:         { flowering: [3, 5],     harvest: [[10, 3]],             note: 'Four species grown; varies by region.',                                       refs: BASE_REFS },
 };
 
 export function growCalendarFor(country) {

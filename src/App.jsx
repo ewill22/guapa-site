@@ -13,7 +13,7 @@ import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
 import {
   COFFEE_REGIONS, COFFEE_SOURCES, COFFEE_PRODUCERS,
   regionTotal, globalTotal, countriesInRegion, eventsFor,
-  growCalendarFor, growPhaseIn,
+  growCalendarFor, growPhaseIn, GROW_CALENDAR_REFS,
 } from './data/coffee-harvest';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
@@ -1049,21 +1049,39 @@ export default function App() {
                                 <div className="coffee-producer-bar-fill" style={{ width: `${share}%`, background: region.color }} />
                               </div>
                               {cal && (
-                                <div className="coffee-producer-calendar" title={cal.note}>
-                                  {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
-                                    const ph = growPhaseIn(p.country, m);
-                                    const isNow = m === nowMonth;
-                                    return (
-                                      <span
-                                        key={m}
-                                        className={`coffee-cal-month coffee-cal-month--${ph}${isNow ? ' is-now' : ''}`}
-                                        title={`${monthFull[m-1]}: ${ph}`}
-                                      >
-                                        {monthShort[m-1]}
-                                      </span>
-                                    );
-                                  })}
-                                </div>
+                                <>
+                                  <div className="coffee-producer-calendar" title={cal.note}>
+                                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
+                                      const ph = growPhaseIn(p.country, m);
+                                      const isNow = m === nowMonth;
+                                      return (
+                                        <span
+                                          key={m}
+                                          className={`coffee-cal-month coffee-cal-month--${ph}${isNow ? ' is-now' : ''}`}
+                                          title={`${monthFull[m-1]}: ${ph}`}
+                                        >
+                                          {monthShort[m-1]}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                  <div className="coffee-producer-calendar-attr" title={GROW_CALENDAR_REFS.methodology}>
+                                    <span className="coffee-source-pill coffee-source-pill--editorial">Editorial</span>
+                                    <span className="coffee-source-license">
+                                      Grow calendar ref:{' '}
+                                      {(cal.refs || []).map((key, i) => {
+                                        const s = GROW_CALENDAR_REFS.sources[key];
+                                        if (!s) return null;
+                                        return (
+                                          <span key={key}>
+                                            {i > 0 && ' · '}
+                                            <a href={s.url} target="_blank" rel="noopener noreferrer">{s.name}</a>
+                                          </span>
+                                        );
+                                      })}
+                                    </span>
+                                  </div>
+                                </>
                               )}
                               {events.length > 0 && (
                                 <div className="coffee-producer-event">

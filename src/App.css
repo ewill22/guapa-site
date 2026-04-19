@@ -862,9 +862,29 @@ html {
   border-radius: 3px;
   color: var(--gray-400);
 }
+.coffee-source-pill--editorial {
+  border-color: rgba(240, 192, 20, 0.35);
+  color: var(--yellow, #f0c014);
+  cursor: help;
+}
 .coffee-source-license {
   font-size: 0.62rem;
   color: var(--gray-600);
+}
+.coffee-source-license a {
+  color: var(--gray-400);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--gray-800);
+}
+@media (hover: hover) {
+  .coffee-source-license a:hover { color: var(--pink); border-bottom-color: var(--pink); }
+}
+.coffee-producer-calendar-attr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: -2px;
 }
 
 /* Offering cards */
