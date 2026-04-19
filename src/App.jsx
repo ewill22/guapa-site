@@ -1001,6 +1001,14 @@ export default function App() {
                 const countryTiles = [...filtered].sort((a, b) => a.country.localeCompare(b.country));
                 return (
                 <div className="coffee-section">
+                  <div className="coffee-intro">
+                    <h2 className="coffee-intro-headline">
+                      Listen to the world through music. <em>Explore it through coffee.</em>
+                    </h2>
+                    <p className="coffee-intro-sub">
+                      Every country a tile, every tile a harvest. Pick a region above to zoom in, or scroll the full producer list below.
+                    </p>
+                  </div>
                   <div className="coffee-countries">
                     <h3 className="coffee-section-label">
                       <span>
