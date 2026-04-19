@@ -11,9 +11,6 @@ import { BLURBS } from './data/blurbs';
 import { loadEditorial, loadAlbumEditorial, normalizeName } from './data/load-editorial';
 import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
 import {
-  FEATURED_ROASTER, PANTHER_OFFERINGS,
-} from './data/coffee-timeline';
-import {
   COFFEE_REGIONS, COFFEE_SOURCES, COFFEE_PRODUCERS,
   regionTotal, globalTotal, countriesInRegion, eventsFor,
   growCalendarFor, growPhaseIn,
@@ -1085,43 +1082,6 @@ export default function App() {
                         })}
                       </div>
                     )}
-                  </div>
-
-                  {/* Highlighted Roaster - context for the offerings below */}
-                  <div className="coffee-roaster-card">
-                    <div className="coffee-roaster-head">
-                      <span className="kpi-label">Highlighted Roaster</span>
-                      <a href={FEATURED_ROASTER.url} target="_blank" rel="noopener noreferrer" className="counter-roaster-link">Shop</a>
-                    </div>
-                    <div className="coffee-roaster-body">
-                      <span className="bean-name">{FEATURED_ROASTER.name}</span>
-                      <span className="bean-origin">{FEATURED_ROASTER.location} — est. {FEATURED_ROASTER.founded}</span>
-                      <span className="bean-notes">{FEATURED_ROASTER.philosophy}</span>
-                      <span className="bean-process">{FEATURED_ROASTER.instagram}</span>
-                    </div>
-                  </div>
-
-                  {/* Current Offerings */}
-                  <div className="coffee-offerings">
-                    <h3 className="coffee-section-label">Current Offerings</h3>
-                    <div className="coffee-offering-list">
-                      {PANTHER_OFFERINGS.map(o => (
-                        <a key={o.name} href={o.url} target="_blank" rel="noopener noreferrer" className="coffee-offering-card">
-                          <div className="coffee-offering-top">
-                            <span className="coffee-offering-name">{o.name}</span>
-                            <span className="coffee-offering-price">${o.price}</span>
-                          </div>
-                          <span className="coffee-offering-origin">{o.origin}</span>
-                          {o.variety && <span className="coffee-offering-detail">{o.variety} — {o.elevation}</span>}
-                          <span className="coffee-offering-notes">{o.notes}</span>
-                          <div className="coffee-offering-tags">
-                            <span className="coffee-tag coffee-tag--process">{o.process}</span>
-                            <span className="coffee-tag coffee-tag--type">{o.type === 'single-origin' ? 'Single Origin' : 'Blend'}</span>
-                          </div>
-                          {o.producerNote && <span className="coffee-offering-producer">{o.producerNote}</span>}
-                        </a>
-                      ))}
-                    </div>
                   </div>
 
                   {/* Year-based coffee blurbs */}

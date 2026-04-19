@@ -516,7 +516,7 @@ html {
 }
 .coffee-country-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-sm);
 }
 .coffee-country-tile {
@@ -1618,13 +1618,15 @@ html {
   .coffee-region-tile-value { font-size: 1.3rem; }
   .coffee-cal-month { font-size: 0.5rem; }
   .counter-regions-row { grid-template-columns: repeat(2, 1fr); }
-  .coffee-country-grid { grid-template-columns: 1fr; }
+  .coffee-country-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 600px) {
   .counter-search-input {
     font-size: 16px; /* >= 16px prevents iOS auto-zoom on focus */
   }
+  .counter-regions-row { grid-template-columns: 1fr; }
+  .coffee-country-grid { grid-template-columns: 1fr; }
   .counter-tiles {
     flex-direction: column;
   }
