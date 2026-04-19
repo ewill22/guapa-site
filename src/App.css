@@ -481,6 +481,52 @@ html {
   line-height: 1.4;
   max-width: 70ch;
 }
+.counter-sports-intro .counter-coffee-intro-headline em {
+  color: #88a8d4;
+}
+.sports-coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+  gap: var(--space-sm);
+  border: 1px solid var(--gray-800);
+  border-radius: 12px;
+  background: var(--gray-900);
+}
+.sports-coming-soon-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+.sports-coming-soon-head {
+  font-family: var(--font-main);
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0;
+  color: var(--white);
+  letter-spacing: -0.01em;
+}
+.sports-coming-soon-head em {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #88a8d4;
+}
+.sports-coming-soon-body {
+  margin: 0;
+  max-width: 480px;
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.sports-coming-soon-sub {
+  margin: 0;
+  color: var(--gray-600);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
 
 /* Big region tiles - below counter, above country grid */
 .coffee-regions-block {
@@ -1364,6 +1410,144 @@ html {
   display: flex; justify-content: space-between; margin-top: 5px;
 }
 .timeline-markers span { font-size: 0.6rem; color: var(--gray-600); }
+
+/* Dev stats strip — sits under the timeline slider in the guapa lens */
+.dev-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--gray-800);
+}
+.dev-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+.dev-stat-value {
+  font-family: var(--font-main);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.dev-stat-label {
+  font-size: 0.62rem;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Dev history — weekly commits list under the blurbs section */
+.dev-history-section {
+  margin-top: var(--space-lg);
+  padding: var(--space-md);
+  border: 1px solid var(--gray-800);
+  border-radius: 12px;
+  background: var(--gray-900);
+}
+.dev-history-head {
+  margin: 0 0 var(--space-sm);
+  font-family: var(--font-main);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-400);
+}
+.dev-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dev-history-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 100px 70px;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--gray-400);
+  font-family: var(--font-main);
+  font-size: 0.78rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+.dev-history-row.is-active {
+  border-color: var(--gray-800);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--white);
+}
+@media (hover: hover) {
+  .dev-history-row:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--white);
+  }
+}
+.dev-history-row:active {
+  background: rgba(255, 255, 255, 0.03);
+}
+.dev-history-week {
+  font-size: 0.72rem;
+  color: var(--gray-600);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.dev-history-row.is-active .dev-history-week {
+  color: var(--gray-400);
+}
+.dev-history-bar-wrap {
+  position: relative;
+  height: 6px;
+  background: var(--gray-800);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.dev-history-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 3px;
+  opacity: 0.85;
+}
+.dev-history-count {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--white);
+}
+.dev-history-count-unit {
+  font-size: 0.62rem;
+  color: var(--gray-600);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-left: 2px;
+}
+.dev-history-days {
+  font-size: 0.65rem;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: right;
+}
+@media (max-width: 600px) {
+  .dev-history-row {
+    grid-template-columns: 1fr 70px;
+    grid-template-areas:
+      "week count"
+      "bar bar"
+      "days days";
+    row-gap: 6px;
+  }
+  .dev-history-week { grid-area: week; }
+  .dev-history-count { grid-area: count; text-align: right; }
+  .dev-history-bar-wrap { grid-area: bar; }
+  .dev-history-days { grid-area: days; text-align: left; }
+}
 
 /* Lens Selector */
 .lens-selector {

@@ -19,7 +19,7 @@ import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
 
 // Only these three lenses (dev is the default "guapa" view)
-const LENSES = ['music', 'coffee', 'economics'];
+const LENSES = ['music', 'coffee', 'economics', 'sports'];
 
 // Get today's date in EST (UTC-5) so daily picks change at midnight EST, not UTC
 function getTodayEST() {
@@ -526,6 +526,35 @@ export default function App() {
     }));
   }, []);
 
+  // Cumulative dev stats
+  const devStats = useMemo(() => {
+    const total = DEV_DAYS.reduce((s, d) => s + d.commits, 0);
+    const activeDays = DEV_DAYS.filter(d => d.commits > 0).length;
+    const peak = DEV_DAYS.reduce((best, d) => d.commits > (best?.commits || 0) ? d : best, null);
+    return { total, activeDays, totalDays: DEV_DAYS.length, peak };
+  }, []);
+
+  // Weekly commit history (Fri-Thu buckets, newest first)
+  const devWeekHistory = useMemo(() => {
+    const buckets = new Map();
+    for (const d of DEV_DAYS) {
+      if (!d.commits) continue;
+      const date = new Date(d.date + 'T00:00:00');
+      const dow = date.getDay(); // 0=Sun, 5=Fri
+      const friOffset = dow === 5 ? 0 : -(((dow - 5) + 7) % 7);
+      const weekStart = new Date(date);
+      weekStart.setDate(weekStart.getDate() + friOffset);
+      const key = weekStart.toISOString().slice(0, 10);
+      if (!buckets.has(key)) buckets.set(key, { start: key, days: [], total: 0 });
+      const b = buckets.get(key);
+      b.days.push(d);
+      b.total += d.commits;
+    }
+    const arr = [...buckets.values()].sort((a, b) => b.start.localeCompare(a.start));
+    const maxTotal = arr.reduce((m, w) => Math.max(m, w.total), 1);
+    return arr.map(w => ({ ...w, bar: w.total / maxTotal }));
+  }, []);
+
   // Standard lens bars
   const bars = useMemo(() => {
     const src = lens || 'music';
@@ -775,6 +804,20 @@ export default function App() {
                           </div>
                         </div>
                       </div>
+                      <div className="dev-stats-strip">
+                        <div className="dev-stat">
+                          <span className="dev-stat-value" style={{ color: lc }}>{devStats.total.toLocaleString()}</span>
+                          <span className="dev-stat-label">total commits</span>
+                        </div>
+                        <div className="dev-stat">
+                          <span className="dev-stat-value" style={{ color: lc }}>{devStats.activeDays}</span>
+                          <span className="dev-stat-label">active / {devStats.totalDays} days</span>
+                        </div>
+                        <div className="dev-stat">
+                          <span className="dev-stat-value" style={{ color: lc }}>{devStats.peak?.commits || 0}</span>
+                          <span className="dev-stat-label">peak ({devStats.peak?.date?.slice(5) || '—'})</span>
+                        </div>
+                      </div>
                     </>
                   ) : (
                     <>
@@ -884,6 +927,15 @@ export default function App() {
                   <span className="bean-notes">The price that moves everything — transport, food, plastics, geopolitics. When oil moves, the world reprices.</span>
                   <span className="bean-process">Brent Crude benchmark</span>
                 </div>
+              ) : lens === 'sports' ? (
+                <div className="counter-coffee-intro counter-sports-intro">
+                  <h2 className="counter-coffee-intro-headline">
+                    Seasons, dynasties, <em>upsets</em>.
+                  </h2>
+                  <p className="counter-coffee-intro-sub">
+                    Sports lens — coming soon. A timeline of the leagues, the rivalries, the players who bent a year around themselves.
+                  </p>
+                </div>
               ) : (
                 <div className="counter-bean counter-roaster">
                   <span className="kpi-label">Today's Build</span>
@@ -911,50 +963,84 @@ export default function App() {
 
           {/* Blurbs — below the counter */}
           {isGuapa ? (
-            weekBlurbs ? (
-              <div className="blurbs-section">
-                <div className="blurbs-header">
-                  <span className="blurbs-nearest">Week of {weekBlurbs.startStr.slice(5)} — {weekBlurbs.weekCommits} commits</span>
+            <>
+              {weekBlurbs ? (
+                <div className="blurbs-section">
+                  <div className="blurbs-header">
+                    <span className="blurbs-nearest">Week of {weekBlurbs.startStr.slice(5)} — {weekBlurbs.weekCommits} commits</span>
+                  </div>
+                  {weekBlurbs.entries.map(entry => (
+                    <div key={entry.date} className="blurbs-day-group">
+                      <div className="blurbs-day-label">{entry.date}</div>
+                      <div className="blurbs-list">
+                        {entry.blurbs.map((blurb, i) => (
+                          <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
+                            {blurb.type === 'metric' ? (
+                              <div className="blurb-metric">
+                                <span className="blurb-metric-label">{blurb.label}</span>
+                                <span className="blurb-metric-value" style={{ color: lc }}>{blurb.value}</span>
+                                <span className="blurb-metric-change">{blurb.change}</span>
+                              </div>
+                            ) : (
+                              <div className="blurb-content">
+                                <span className={`blurb-type blurb-type--${blurb.type}`}>{blurb.type}</span>
+                                <p>{blurb.text}</p>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                {weekBlurbs.entries.map(entry => (
-                  <div key={entry.date} className="blurbs-day-group">
-                    <div className="blurbs-day-label">{entry.date}</div>
-                    <div className="blurbs-list">
-                      {entry.blurbs.map((blurb, i) => (
-                        <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
-                          {blurb.type === 'metric' ? (
-                            <div className="blurb-metric">
-                              <span className="blurb-metric-label">{blurb.label}</span>
-                              <span className="blurb-metric-value" style={{ color: lc }}>{blurb.value}</span>
-                              <span className="blurb-metric-change">{blurb.change}</span>
-                            </div>
-                          ) : (
-                            <div className="blurb-content">
-                              <span className={`blurb-type blurb-type--${blurb.type}`}>{blurb.type}</span>
-                              <p>{blurb.text}</p>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+              ) : (
+                <div className="blurbs-section">
+                  <div className="blurbs-header">
+                    <span className="blurbs-nearest">Week of {DEV_DAYS[devDay]?.date?.slice(5)}</span>
+                  </div>
+                  <div className="blurbs-list">
+                    <div className="blurb-card blurb-card--update">
+                      <div className="blurb-content">
+                        <span className="blurb-type blurb-type--update">quiet</span>
+                        <p>No activity this week yet.</p>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="blurbs-section">
-                <div className="blurbs-header">
-                  <span className="blurbs-nearest">Week of {DEV_DAYS[devDay]?.date?.slice(5)}</span>
                 </div>
-                <div className="blurbs-list">
-                  <div className="blurb-card blurb-card--update">
-                    <div className="blurb-content">
-                      <span className="blurb-type blurb-type--update">quiet</span>
-                      <p>No activity this week yet.</p>
-                    </div>
-                  </div>
+              )}
+
+              {/* Historical commits per week */}
+              <div className="dev-history-section">
+                <h3 className="dev-history-head">Commit history — by week</h3>
+                <div className="dev-history-list">
+                  {devWeekHistory.map(w => {
+                    const selectedWeekStart = weekBlurbs?.startStr;
+                    const isActive = w.start === selectedWeekStart;
+                    return (
+                      <button
+                        key={w.start}
+                        type="button"
+                        className={`dev-history-row${isActive ? ' is-active' : ''}`}
+                        onClick={() => {
+                          const lastDay = w.days[w.days.length - 1];
+                          const idx = DEV_DAYS.findIndex(d => d.date === lastDay.date);
+                          if (idx >= 0) setDevDay(idx);
+                        }}
+                      >
+                        <span className="dev-history-week">Week of {w.start.slice(5)}</span>
+                        <span className="dev-history-bar-wrap">
+                          <span className="dev-history-bar" style={{ width: `${w.bar * 100}%`, background: lc }} />
+                        </span>
+                        <span className="dev-history-count" style={isActive ? { color: lc } : undefined}>
+                          {w.total} <span className="dev-history-count-unit">{w.total === 1 ? 'commit' : 'commits'}</span>
+                        </span>
+                        <span className="dev-history-days">{w.days.length} {w.days.length === 1 ? 'day' : 'days'}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
-            )
+            </>
           ) : (
             <div className="blurbs-section">
               {/* Genre Explorer for music lens */}
@@ -1153,8 +1239,22 @@ export default function App() {
                 );
               })()}
 
-              {/* Text blurbs for non-music, non-coffee lenses */}
-              {lens !== 'music' && lens !== 'coffee' && blurbData ? (
+              {/* Sports lens placeholder */}
+              {lens === 'sports' && (
+                <div className="sports-coming-soon">
+                  <div className="sports-coming-soon-icon" style={{ color: lc }}>{LENS_ICONS.sports}</div>
+                  <h2 className="sports-coming-soon-head">Sports lens — <em>coming soon</em></h2>
+                  <p className="sports-coming-soon-body">
+                    A timeline of leagues, dynasties, and the players who bent a year around themselves. Not live yet — this is the placeholder.
+                  </p>
+                  <p className="sports-coming-soon-sub">
+                    Tap Music, Coffee, or Economics above to explore what's already built.
+                  </p>
+                </div>
+              )}
+
+              {/* Text blurbs for non-music, non-coffee, non-sports lenses */}
+              {lens !== 'music' && lens !== 'coffee' && lens !== 'sports' && blurbData ? (
                 <>
                   <div className="blurbs-header">
                     {blurbData.year !== year && (
@@ -1180,7 +1280,7 @@ export default function App() {
                     ))}
                   </div>
                 </>
-              ) : lens !== 'music' && lens !== 'coffee' && !yearAlbums.length && (
+              ) : lens !== 'music' && lens !== 'coffee' && lens !== 'sports' && !yearAlbums.length && (
                 <div className="blurbs-placeholder">
                   <img src={`${base}assets/guapa_logo_dark.png`} alt="Guapa" className="blurbs-placeholder-logo" style={{ filter: `hue-rotate(${hashStr(year + lens) % 360}deg)` }} />
                 </div>
