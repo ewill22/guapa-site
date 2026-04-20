@@ -555,20 +555,18 @@ export default function App() {
   // Standard lens bars
   const bars = useMemo(() => {
     const src = lens || 'music';
-    const data = TIMELINE[src] || {};
-    const keys = Object.keys(data);
-    // Coffee uses real production numbers; other lenses use hash-based heights
-    const isNumeric = keys.length > 0 && typeof data[keys[0]] === 'number';
-    if (isNumeric) {
-      const vals = Object.values(data);
-      const maxVal = Math.max(...vals);
-      return Array.from({ length: 97 }, (_, i) => {
-        const y = 1930 + i;
-        const v = data[y] || 0;
-        return { year: y, h: v > 0 ? 6 + (v / maxVal) * 50 : 3, value: v };
-      });
+    // Coffee pulls real production totals from the composed multi-source dataset
+    if (src === 'coffee') {
+      const totals = Array.from({ length: 97 }, (_, i) => globalTotal(1930 + i));
+      const maxVal = Math.max(...totals, 1);
+      return totals.map((v, i) => ({
+        year: 1930 + i,
+        h: v > 0 ? 6 + (v / maxVal) * 50 : 3,
+        value: v,
+      }));
     }
-    const ey = keys.map(Number);
+    const data = TIMELINE[src] || {};
+    const ey = Object.keys(data).map(Number);
     return Array.from({ length: 97 }, (_, i) => {
       const y = 1930 + i;
       const has = ey.includes(y);

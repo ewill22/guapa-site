@@ -287,7 +287,7 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - Legend below: Emerging (green dashed) / Rising (blue) / Peak (pink) / Fading (red dashed)
 
 ### Coffee Lens
-- **Timeline**: Year-based (1930–2026), bars currently driven by `TIMELINE.coffee` (hardcoded global production in `src/data/timeline.js`). Planned: swap to `globalTotal(year)` from `coffee-harvest.js`.
+- **Timeline**: Year-based (1930–2026), bars driven by `globalTotal(year)` from `coffee-harvest.js` (composed multi-source production totals). `TIMELINE.coffee` is an empty stub — no hand-maintained coffee series.
 - **Counter-bottom**: Intro greeting — "Listen to the world through music. _Explore it through coffee._" with a short sub-line. Full-width, replaces the old Highlighted Roaster section.
 - **Below counter**:
   - **Region tiles row** — four big tiles (South America, Central America, Africa, Blend) stretched full-width of the container; each shows that region's total harvest for the selected year. Clicking a tile filters the country grid below; clicking again clears.
@@ -318,7 +318,6 @@ Every number on the coffee lens must carry an attribution to a named source (USD
 - Cecafé Brazil weekly export bulletins (different axis from production)
 - VICOFA Vietnam, UCDA Uganda, ECTA Ethiopia
 - Add 1975 Brazil "Black Frost" and 1989 ICA collapse entries to `COFFEE_EVENTS`
-- Swap `TIMELINE.coffee` hardcoded bars for `globalTotal(year)` from `coffee-harvest.js`
 - Backend (guapa-data) to eventually own the refresh cadence + overlay ingestions + coffee batch/roast tracking pipeline
 
 ### Economics Lens
@@ -426,7 +425,6 @@ These files are remnants of the removed login/ticker system. Nothing in App.jsx 
 ## Known Issues (as of 2026-04-04)
 
 - **Guapa RE local link**: `data-solutions.html:65` links to `http://192.168.1.99:8000` (the Guapa RE API auto-starts on login via Task Scheduler in guapa-data). External visitors get a graceful fallback: JS checks reachability, and if the link fails, scrolls to the contact form with "Guapa RE (Early Access)" pre-selected.
-- **Localhost API reference**: `music.html:1191` defines `MUSIC_API = 'http://localhost:8001'` — fails silently on GitHub Pages (static catalog loads correctly as fallback), but the dead reference is confusing
 - **Newsreader upright loaded**: Google Fonts import includes `Newsreader:ital,wght@0,400;1,400` — the upright weight (`0,400`) is loaded but should never be used per design rules (italic only)
 - **Duplicate CNAME**: `CNAME` exists at both repo root and `public/CNAME` — only `public/CNAME` matters (Vite copies it to dist). Root CNAME is harmless but redundant.
 
