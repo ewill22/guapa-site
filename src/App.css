@@ -1338,6 +1338,9 @@ html {
 }
 .event-bar:hover { opacity: 0.35; }
 .event-bar.active { opacity: 1; }
+.event-bar--weather { opacity: 0.7; }
+.event-bar--weather:hover { opacity: 0.9; }
+.event-bar--weather.active { opacity: 1; }
 
 /* Live Badge */
 .live-badge {

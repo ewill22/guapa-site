@@ -12,7 +12,7 @@ import { loadEditorial, loadAlbumEditorial, normalizeName } from './data/load-ed
 import { DEV_FIRST_DATE, DEV_COMMITS, DEV_BLURBS } from './data/dev-timeline';
 import {
   COFFEE_REGIONS, COFFEE_SOURCES, COFFEE_PRODUCERS,
-  regionTotal, globalTotal, countriesInRegion, eventsFor,
+  regionTotal, globalTotal, countriesInRegion, eventsFor, eventYears,
   growCalendarFor, growPhaseIn, GROW_CALENDAR_REFS,
 } from './data/coffee-harvest';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
@@ -559,10 +559,12 @@ export default function App() {
     if (src === 'coffee') {
       const totals = Array.from({ length: 97 }, (_, i) => globalTotal(1930 + i));
       const maxVal = Math.max(...totals, 1);
+      const weather = eventYears('weather');
       return totals.map((v, i) => ({
         year: 1930 + i,
         h: v > 0 ? 6 + (v / maxVal) * 50 : 3,
         value: v,
+        event: weather.has(1930 + i) ? 'weather' : null,
       }));
     }
     const data = TIMELINE[src] || {};
@@ -826,17 +828,22 @@ export default function App() {
                           <button className="year-arrow" onClick={() => navYear(1)} aria-label="Next year">&rarr;</button>
                         </div>
                         <div className="event-bars">
-                          {bars.map(b => (
-                            <div key={b.year}
-                              className={`event-bar ${b.year === year ? 'active' : ''}`}
-                              style={{
-                                height: b.h,
-                                background: b.year === year ? lc : undefined,
-                              }}
-                              onClick={() => setYear(b.year, true)}
-                              title={b.value ? `${b.year}: ${b.value}M bags` : undefined}
-                            />
-                          ))}
+                          {bars.map(b => {
+                            const isActive = b.year === year;
+                            const weatherColor = '#88a8d4';
+                            const bg = isActive ? lc : (b.event === 'weather' ? weatherColor : undefined);
+                            const title = b.value
+                              ? `${b.year}: ${b.value}M bags${b.event === 'weather' ? ' · weather event' : ''}`
+                              : undefined;
+                            return (
+                              <div key={b.year}
+                                className={`event-bar ${isActive ? 'active' : ''}${b.event === 'weather' ? ' event-bar--weather' : ''}`}
+                                style={{ height: b.h, background: bg }}
+                                onClick={() => setYear(b.year, true)}
+                                title={title}
+                              />
+                            );
+                          })}
                         </div>
                         <button className={`live-badge ${year === 2026 ? 'live-badge--active' : ''}${nowPlaying?.auxCord ? ' live-badge--aux' : ''}${nowPlaying?.isAux ? ' live-badge--aux-playing' : ''}`} onClick={() => setYear(2026, true)}>
                           <span className="live-dot" />Live

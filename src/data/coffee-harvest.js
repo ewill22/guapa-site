@@ -186,7 +186,30 @@ export const OVERLAY_PRODUCERS = {
 export const COFFEE_EVENTS = [
   {
     country: 'Brazil',
+    year: 1975,
+    kind: 'weather',
+    slug: '1975-brazil-black-frost',
+    headline: '1975 Brazil "Black Frost"',
+    summary: 'On July 17-18, 1975, a catastrophic frost swept Parana and southern Sao Paulo. Whole fields of coffee trees turned black overnight - growers called it the Geada Negra. An estimated 1.5 billion trees were killed or damaged.',
+    note: 'USDA shows Brazil 1976 production collapsing to 9.3M bags (from 23M the year prior). Conab series does not cover pre-2001, so USDA is the only source here. The frost ended Parana as Brazil\'s coffee heartland - production permanently migrated north to Minas Gerais.',
+    preferredSource: 'usda',
+    sources: ['usda'],
+  },
+  {
+    country: 'Brazil',
+    year: 1989,
+    kind: 'economic',
+    slug: '1989-ica-collapse',
+    headline: '1989 ICA Quota Collapse',
+    summary: 'The International Coffee Agreement export quota system collapsed in July 1989 after producing and consuming countries failed to renew it. Global prices fell more than 50% within months and stayed depressed through most of the 1990s.',
+    note: 'Not a weather event - a market structure event. Production volumes hold through 1989-90, but the economic shock reshaped who could afford to farm. Specialty coffee and differentiated origins emerged from this vacuum.',
+    preferredSource: 'usda',
+    sources: ['usda'],
+  },
+  {
+    country: 'Brazil',
     year: 2021,
+    kind: 'weather',
     slug: '2021-brazil-frost',
     headline: '2021 Brazil Frost',
     summary: 'Four rounds of frost hit Minas Gerais between late June and July 2021 - the most severe frost in 40-50 years. Combined with drought, it damaged over 200,000 hectares of coffee trees.',
@@ -195,8 +218,6 @@ export const COFFEE_EVENTS = [
     sources: ['usda', 'conab'],
   },
   // Future events to annotate as we add overlay data:
-  //  - 1975 Brazil "Black Frost" (USDA shows the dip; Conab doesn't cover pre-2001)
-  //  - 1989 ICA collapse (economic, not weather)
   //  - 2014 Brazil drought
   //  - 2024 Vietnam robusta price spike (supply)
 ];
@@ -388,6 +409,14 @@ export function eventsFor(country, year = null) {
   return COFFEE_EVENTS.filter(e =>
     e.country === country && (year === null || e.year === year)
   );
+}
+
+export function eventYears(kind = null) {
+  const out = new Set();
+  for (const e of COFFEE_EVENTS) {
+    if (kind === null || e.kind === kind) out.add(e.year);
+  }
+  return out;
 }
 
 export function sourcesForProducer(country) {
