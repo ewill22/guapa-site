@@ -639,6 +639,17 @@ html {
 .coffee-country-tile.is-active {
   background: rgba(232, 160, 176, 0.04);
 }
+.coffee-country-roaster-count {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border: 1px solid var(--gray-800);
+  border-radius: 3px;
+  color: var(--pink);
+  cursor: help;
+}
 .coffee-country-tile:focus-visible {
   outline: 2px solid var(--yellow, #f0c014);
   outline-offset: 2px;

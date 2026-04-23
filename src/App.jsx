@@ -1063,6 +1063,13 @@ export default function App() {
                 const monthFull = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
                 const regionByName = Object.fromEntries(COFFEE_REGIONS.map(r => [r.name, r]));
                 const allCountries = COFFEE_REGIONS.flatMap(r => countriesInRegion(r.name, coffeeYear).map(c => ({ ...c, regionName: r.name })));
+                const allRoasters = featuredRoasters();
+                const roasterCountByCountry = {};
+                for (const r of allRoasters) {
+                  for (const o of (r.origins || [])) {
+                    roasterCountByCountry[o] = (roasterCountByCountry[o] || 0) + 1;
+                  }
+                }
                 const filtered = selectedCoffeeRegion
                   ? allCountries.filter(c => c.regionName === selectedCoffeeRegion)
                   : allCountries;
@@ -1169,6 +1176,11 @@ export default function App() {
                                 {phase && phase !== 'resting' && (
                                   <span className={`coffee-producer-phase coffee-producer-phase--${phase}`}>
                                     {phase === 'harvest' ? 'harvesting' : 'flowering'}
+                                  </span>
+                                )}
+                                {roasterCountByCountry[p.country] > 0 && (
+                                  <span className="coffee-country-roaster-count" title={`${roasterCountByCountry[p.country]} featured roaster${roasterCountByCountry[p.country] !== 1 ? 's' : ''} source from ${p.country}`}>
+                                    {roasterCountByCountry[p.country]} roaster{roasterCountByCountry[p.country] !== 1 ? 's' : ''}
                                   </span>
                                 )}
                               </div>
