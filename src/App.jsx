@@ -15,6 +15,7 @@ import {
   regionTotal, globalTotal, countriesInRegion, eventsFor, eventYears,
   growCalendarFor, growPhaseIn, GROW_CALENDAR_REFS,
 } from './data/coffee-harvest';
+import { featuredRoasters, ROASTER_SOURCES } from './data/coffee-roasters';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
 
@@ -366,6 +367,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [selectedCoffeeRegion, setSelectedCoffeeRegion] = useState(null);
+  const [selectedRoasterSlug, setSelectedRoasterSlug] = useState(null);
   const searchRef = useRef(null);
   const genreExplorerRef = useRef(null);
 
@@ -1208,6 +1210,98 @@ export default function App() {
                       </div>
                     )}
                   </div>
+
+                  {/* Roasters — hand-picked specialty coffee names with a Guapa take */}
+                  {(() => {
+                    const featured = featuredRoasters();
+                    if (!featured.length) return null;
+                    const activeSlug = selectedRoasterSlug || featured[0].slug;
+                    const active = featured.find(r => r.slug === activeSlug) || featured[0];
+                    return (
+                      <div className="coffee-roasters-block">
+                        <h3 className="coffee-section-label">
+                          <span>
+                            Roasters
+                            <span className="coffee-section-sub"> · {featured.length} featured · Wikidata + OSM + Editorial</span>
+                          </span>
+                        </h3>
+                        <div className="coffee-roaster-pills">
+                          {featured.map(r => (
+                            <button
+                              key={r.slug}
+                              type="button"
+                              className={`coffee-roaster-pill${r.slug === active.slug ? ' is-active' : ''}`}
+                              onClick={() => setSelectedRoasterSlug(r.slug)}
+                            >
+                              <span className="coffee-roaster-pill-name">{r.name}</span>
+                              {r.hq && <span className="coffee-roaster-pill-hq">{r.hq}</span>}
+                            </button>
+                          ))}
+                        </div>
+                        <div className="coffee-roaster-card">
+                          <div className="coffee-roaster-head">
+                            <div className="coffee-roaster-head-main">
+                              <h4 className="coffee-roaster-name">{active.name}</h4>
+                              <div className="coffee-roaster-meta">
+                                {active.hq && <span>{active.hq}{active.country && active.country !== active.hq ? `, ${active.country}` : ''}</span>}
+                                {!active.hq && active.country && <span>{active.country}</span>}
+                                {active.founded && <span> · est. {active.founded}</span>}
+                                {active.founders && active.founders.length > 0 && (
+                                  <span> · {active.founders.join(' & ')}</span>
+                                )}
+                              </div>
+                            </div>
+                            {active.stance && (
+                              <span className="coffee-roaster-stance">{active.stance.replace(/-/g, ' ')}</span>
+                            )}
+                          </div>
+                          {active.take && <p className="coffee-roaster-take">{active.take}</p>}
+                          {active.regions && active.regions.length > 0 && (
+                            <div className="coffee-roaster-regions">
+                              <span className="coffee-roaster-regions-label">Sources from</span>
+                              {active.regions.map(rg => {
+                                const regionObj = COFFEE_REGIONS.find(x => x.name === rg);
+                                const color = regionObj?.color || '#88a8d4';
+                                const isActive = selectedCoffeeRegion === rg;
+                                return (
+                                  <button
+                                    key={rg}
+                                    type="button"
+                                    className={`coffee-roaster-region-chip${isActive ? ' is-active' : ''}`}
+                                    style={{ borderColor: color + '80', color }}
+                                    onClick={() => setSelectedCoffeeRegion(isActive ? null : rg)}
+                                    title={isActive ? 'Clear region filter' : `Filter country grid to ${rg}`}
+                                  >
+                                    {rg}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                          <div className="coffee-roaster-links">
+                            {active.website && (
+                              <a href={active.website} target="_blank" rel="noopener noreferrer" className="coffee-roaster-link">Website</a>
+                            )}
+                            {active.instagram && (
+                              <a href={`https://instagram.com/${active.instagram}`} target="_blank" rel="noopener noreferrer" className="coffee-roaster-link">@{active.instagram}</a>
+                            )}
+                          </div>
+                          <div className="coffee-roaster-sources">
+                            {(active.sources || ['editorial']).map(s => {
+                              const meta = ROASTER_SOURCES[s];
+                              if (!meta) return null;
+                              return (
+                                <span key={s} className={`coffee-source-pill coffee-source-pill--${s}`} title={meta.note}>
+                                  {meta.name}
+                                  <span className="coffee-source-license">{meta.license}</span>
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Year-based coffee blurbs */}
                   {blurbData && (

@@ -990,6 +990,157 @@ html {
   margin-top: -2px;
 }
 
+.coffee-source-pill--wikidata { border-color: rgba(136, 168, 212, 0.35); color: var(--blue, #88a8d4); }
+.coffee-source-pill--osm { border-color: rgba(126, 200, 155, 0.35); color: var(--green, #7ec89b); }
+
+/* Roasters block */
+.coffee-roasters-block {
+  margin-top: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+.coffee-roaster-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.coffee-roaster-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 12px;
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--gray-400);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.15s, color 0.15s;
+}
+.coffee-roaster-pill-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.coffee-roaster-pill-hq {
+  font-size: 0.62rem;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+@media (hover: hover) {
+  .coffee-roaster-pill:hover { border-color: var(--gray-400); color: var(--white); }
+}
+.coffee-roaster-pill:active { border-color: var(--gray-400); color: var(--white); }
+.coffee-roaster-pill.is-active {
+  border-color: var(--pink);
+  color: var(--white);
+  background: rgba(232, 160, 176, 0.06);
+}
+.coffee-roaster-pill.is-active .coffee-roaster-pill-hq { color: var(--pink); }
+
+.coffee-roaster-card {
+  padding: var(--space-md);
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.coffee-roaster-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.coffee-roaster-name {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+  color: var(--white);
+  font-weight: 600;
+}
+.coffee-roaster-meta {
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}
+.coffee-roaster-stance {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border: 1px solid var(--gray-800);
+  border-radius: 3px;
+  color: var(--pink);
+  white-space: nowrap;
+}
+.coffee-roaster-take {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--gray-400);
+}
+.coffee-roaster-regions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.coffee-roaster-regions-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-600);
+  margin-right: 2px;
+}
+.coffee-roaster-region-chip {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border: 1px solid var(--gray-800);
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+@media (hover: hover) {
+  .coffee-roaster-region-chip:hover { background: rgba(255, 255, 255, 0.04); }
+}
+.coffee-roaster-region-chip.is-active {
+  background: rgba(255, 255, 255, 0.06);
+}
+.coffee-roaster-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.coffee-roaster-link {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--gray-800);
+}
+@media (hover: hover) {
+  .coffee-roaster-link:hover { color: var(--pink); border-bottom-color: var(--pink); }
+}
+.coffee-roaster-sources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 4px;
+  border-top: 1px dashed var(--gray-800);
+}
+.coffee-roaster-sources .coffee-source-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: help;
+}
+
 /* Offering cards */
 .coffee-offering-list {
   display: grid;
