@@ -1213,18 +1213,40 @@ export default function App() {
 
                   {/* Roasters — hand-picked specialty coffee names with a Guapa take */}
                   {(() => {
-                    const featured = featuredRoasters();
-                    if (!featured.length) return null;
-                    const activeSlug = selectedRoasterSlug || featured[0].slug;
-                    const active = featured.find(r => r.slug === activeSlug) || featured[0];
+                    const allFeatured = featuredRoasters();
+                    if (!allFeatured.length) return null;
+                    const featured = selectedCoffeeRegion
+                      ? allFeatured.filter(r => (r.regions || []).includes(selectedCoffeeRegion))
+                      : allFeatured;
+                    const fallback = featured[0] || allFeatured[0];
+                    const activeInList = featured.find(r => r.slug === selectedRoasterSlug);
+                    const active = activeInList || fallback;
                     return (
                       <div className="coffee-roasters-block">
                         <h3 className="coffee-section-label">
                           <span>
                             Roasters
-                            <span className="coffee-section-sub"> · {featured.length} featured · Wikidata + OSM + Editorial</span>
+                            <span className="coffee-section-sub">
+                              {selectedCoffeeRegion
+                                ? ` · ${featured.length} of ${allFeatured.length} sourcing from ${selectedCoffeeRegion}`
+                                : ` · ${allFeatured.length} featured · Wikidata + OSM + Editorial`}
+                            </span>
                           </span>
+                          {selectedCoffeeRegion && (
+                            <button
+                              type="button"
+                              className="coffee-clear-filter"
+                              onClick={() => setSelectedCoffeeRegion(null)}
+                            >
+                              clear filter
+                            </button>
+                          )}
                         </h3>
+                        {featured.length === 0 ? (
+                          <div className="coffee-roaster-empty">
+                            No featured roasters sourcing from {selectedCoffeeRegion} yet.
+                          </div>
+                        ) : (
                         <div className="coffee-roaster-pills">
                           {featured.map(r => (
                             <button
@@ -1238,6 +1260,8 @@ export default function App() {
                             </button>
                           ))}
                         </div>
+                        )}
+                        {featured.length > 0 && (
                         <div className="coffee-roaster-card">
                           <div className="coffee-roaster-head">
                             <div className="coffee-roaster-head-main">
@@ -1299,6 +1323,7 @@ export default function App() {
                             })}
                           </div>
                         </div>
+                        )}
                       </div>
                     );
                   })()}
