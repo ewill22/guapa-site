@@ -66,6 +66,7 @@ function composeRoasters() {
       stance: null,
       take: null,
       regions: null,
+      origins: null,
       sources: ['wikidata'],
     });
   }
@@ -116,6 +117,7 @@ function composeRoasters() {
         stance: null,
         take: null,
         regions: null,
+        origins: null,
         sources: ['osm'],
       });
     }
@@ -135,6 +137,7 @@ function composeRoasters() {
       rec.stance = e.stance || rec.stance;
       rec.take = e.take || rec.take;
       rec.regions = e.regions || rec.regions;
+      rec.origins = e.origins || rec.origins;
       rec.founders = (e.founders && e.founders.length) ? e.founders : rec.founders;
       rec.country = rec.country || e.country;
       rec.hq = rec.hq || e.hq;
@@ -159,6 +162,7 @@ function composeRoasters() {
         stance: e.stance || null,
         take: e.take || null,
         regions: e.regions || null,
+        origins: e.origins || null,
         sources: ['editorial'],
       });
     }

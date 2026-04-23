@@ -367,6 +367,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
   const [selectedCoffeeRegion, setSelectedCoffeeRegion] = useState(null);
+  const [selectedCoffeeCountry, setSelectedCoffeeCountry] = useState(null);
   const [selectedRoasterSlug, setSelectedRoasterSlug] = useState(null);
   const searchRef = useRef(null);
   const genreExplorerRef = useRef(null);
@@ -1083,7 +1084,10 @@ export default function App() {
                             type="button"
                             className={`coffee-region-big-tile${isActive ? ' is-active' : ''}${isDimmed ? ' is-dimmed' : ''}`}
                             style={isActive ? { borderColor: region.color } : undefined}
-                            onClick={() => setSelectedCoffeeRegion(isActive ? null : region.name)}
+                            onClick={() => {
+                              setSelectedCoffeeCountry(null);
+                              setSelectedCoffeeRegion(isActive ? null : region.name);
+                            }}
                           >
                             <div className="coffee-region-big-head">
                               <span className="coffee-region-big-dot" style={{ background: region.color }} />
@@ -1140,8 +1144,26 @@ export default function App() {
                           const phase = growPhaseIn(p.country, nowMonth);
                           const src = COFFEE_SOURCES[p.source];
                           const events = eventsFor(p.country, coffeeYear);
+                          const isCountryActive = selectedCoffeeCountry === p.country;
                           return (
-                            <div key={p.country} className="coffee-country-tile" style={{ borderColor: region.color + '40' }}>
+                            <div
+                              key={p.country}
+                              className={`coffee-country-tile${isCountryActive ? ' is-active' : ''}`}
+                              style={{ borderColor: isCountryActive ? region.color : region.color + '40' }}
+                              onClick={(e) => {
+                                if (e.target.closest('a')) return;
+                                setSelectedCoffeeCountry(isCountryActive ? null : p.country);
+                              }}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  setSelectedCoffeeCountry(isCountryActive ? null : p.country);
+                                }
+                              }}
+                              title={isCountryActive ? 'Click to clear country filter' : `Filter roasters sourcing from ${p.country}`}
+                            >
                               <div className="coffee-country-head">
                                 <span className="coffee-country-name" style={{ color: region.color }}>{p.country}</span>
                                 {phase && phase !== 'resting' && (
@@ -1215,28 +1237,38 @@ export default function App() {
                   {(() => {
                     const allFeatured = featuredRoasters();
                     if (!allFeatured.length) return null;
-                    const featured = selectedCoffeeRegion
-                      ? allFeatured.filter(r => (r.regions || []).includes(selectedCoffeeRegion))
-                      : allFeatured;
+                    let featured = allFeatured;
+                    let filterLabel = null;
+                    if (selectedCoffeeCountry) {
+                      featured = allFeatured.filter(r => (r.origins || []).includes(selectedCoffeeCountry));
+                      filterLabel = selectedCoffeeCountry;
+                    } else if (selectedCoffeeRegion) {
+                      featured = allFeatured.filter(r => (r.regions || []).includes(selectedCoffeeRegion));
+                      filterLabel = selectedCoffeeRegion;
+                    }
                     const fallback = featured[0] || allFeatured[0];
                     const activeInList = featured.find(r => r.slug === selectedRoasterSlug);
                     const active = activeInList || fallback;
+                    const hasFilter = !!filterLabel;
                     return (
                       <div className="coffee-roasters-block">
                         <h3 className="coffee-section-label">
                           <span>
                             Roasters
                             <span className="coffee-section-sub">
-                              {selectedCoffeeRegion
-                                ? ` · ${featured.length} of ${allFeatured.length} sourcing from ${selectedCoffeeRegion}`
+                              {hasFilter
+                                ? ` · ${featured.length} of ${allFeatured.length} sourcing from ${filterLabel}`
                                 : ` · ${allFeatured.length} featured · Wikidata + OSM + Editorial`}
                             </span>
                           </span>
-                          {selectedCoffeeRegion && (
+                          {hasFilter && (
                             <button
                               type="button"
                               className="coffee-clear-filter"
-                              onClick={() => setSelectedCoffeeRegion(null)}
+                              onClick={() => {
+                                setSelectedCoffeeCountry(null);
+                                setSelectedCoffeeRegion(null);
+                              }}
                             >
                               clear filter
                             </button>
@@ -1244,7 +1276,7 @@ export default function App() {
                         </h3>
                         {featured.length === 0 ? (
                           <div className="coffee-roaster-empty">
-                            No featured roasters sourcing from {selectedCoffeeRegion} yet.
+                            No featured roasters sourcing from {filterLabel} yet.
                           </div>
                         ) : (
                         <div className="coffee-roaster-pills">
@@ -1282,7 +1314,7 @@ export default function App() {
                           {active.take && <p className="coffee-roaster-take">{active.take}</p>}
                           {active.regions && active.regions.length > 0 && (
                             <div className="coffee-roaster-regions">
-                              <span className="coffee-roaster-regions-label">Sources from</span>
+                              <span className="coffee-roaster-regions-label">Regions</span>
                               {active.regions.map(rg => {
                                 const regionObj = COFFEE_REGIONS.find(x => x.name === rg);
                                 const color = regionObj?.color || '#88a8d4';
@@ -1293,10 +1325,35 @@ export default function App() {
                                     type="button"
                                     className={`coffee-roaster-region-chip${isActive ? ' is-active' : ''}`}
                                     style={{ borderColor: color + '80', color }}
-                                    onClick={() => setSelectedCoffeeRegion(isActive ? null : rg)}
+                                    onClick={() => {
+                                      setSelectedCoffeeCountry(null);
+                                      setSelectedCoffeeRegion(isActive ? null : rg);
+                                    }}
                                     title={isActive ? 'Clear region filter' : `Filter country grid to ${rg}`}
                                   >
                                     {rg}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                          {active.origins && active.origins.length > 0 && (
+                            <div className="coffee-roaster-regions">
+                              <span className="coffee-roaster-regions-label">Origins</span>
+                              {active.origins.map(c => {
+                                const isActive = selectedCoffeeCountry === c;
+                                return (
+                                  <button
+                                    key={c}
+                                    type="button"
+                                    className={`coffee-roaster-origin-chip${isActive ? ' is-active' : ''}`}
+                                    onClick={() => {
+                                      setSelectedCoffeeRegion(null);
+                                      setSelectedCoffeeCountry(isActive ? null : c);
+                                    }}
+                                    title={isActive ? 'Clear country filter' : `Filter roasters sourcing from ${c}`}
+                                  >
+                                    {c}
                                   </button>
                                 );
                               })}

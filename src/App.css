@@ -630,10 +630,18 @@ html {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  transition: border-color 0.15s;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
 }
 @media (hover: hover) {
   .coffee-country-tile:hover { border-color: var(--gray-400); }
+}
+.coffee-country-tile.is-active {
+  background: rgba(232, 160, 176, 0.04);
+}
+.coffee-country-tile:focus-visible {
+  outline: 2px solid var(--yellow, #f0c014);
+  outline-offset: 2px;
 }
 .coffee-country-head {
   display: flex;
@@ -1126,6 +1134,27 @@ html {
 }
 .coffee-roaster-region-chip.is-active {
   background: rgba(255, 255, 255, 0.06);
+}
+.coffee-roaster-origin-chip {
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  border: 1px solid var(--gray-800);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--gray-400);
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+@media (hover: hover) {
+  .coffee-roaster-origin-chip:hover { border-color: var(--pink); color: var(--pink); }
+}
+.coffee-roaster-origin-chip:active { border-color: var(--pink); color: var(--pink); }
+.coffee-roaster-origin-chip.is-active {
+  border-color: var(--pink);
+  color: var(--white);
+  background: rgba(232, 160, 176, 0.08);
 }
 .coffee-roaster-links {
   display: flex;
