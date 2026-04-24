@@ -1013,46 +1013,7 @@ html {
 .coffee-source-pill--wikidata { border-color: rgba(136, 168, 212, 0.35); color: var(--blue, #88a8d4); }
 .coffee-source-pill--osm { border-color: rgba(126, 200, 155, 0.35); color: var(--green, #7ec89b); }
 
-/* Newspaper masthead — dateline + wave + today's journey */
-.coffee-masthead {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid var(--gray-800);
-  margin-bottom: var(--space-md);
-}
-.coffee-masthead-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
-.coffee-masthead-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--white);
-}
-.coffee-masthead-title em {
-  font-family: 'Newsreader', Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  color: var(--yellow, #f0c014);
-}
-.coffee-masthead-date {
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--gray-600);
-}
-.coffee-masthead-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: var(--space-md);
-}
-.coffee-wave-card,
+/* Today's journey — standalone editorial card */
 .coffee-journey-card {
   padding: var(--space-md);
   background: var(--gray-900);
@@ -1062,53 +1023,8 @@ html {
   flex-direction: column;
   gap: var(--space-sm);
 }
-.coffee-wave-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-}
-.coffee-wave-label {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--yellow, #f0c014);
-  font-weight: 600;
-}
-.coffee-wave-tagline {
-  font-size: 0.95rem;
-  color: var(--white);
-}
-.coffee-wave-tagline em {
-  font-family: 'Newsreader', Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-}
-.coffee-wave-body {
-  font-size: 0.88rem;
-  line-height: 1.55;
-  color: var(--gray-400);
-  margin: 0;
-}
-.coffee-wave-pips {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 4px;
-}
-.coffee-wave-pip {
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--gray-600);
-  padding: 3px 8px;
-  border: 1px solid var(--gray-800);
-  border-radius: 999px;
-}
-.coffee-wave-pip.is-active {
-  color: var(--yellow, #f0c014);
-  border-color: var(--yellow, #f0c014);
+.coffee-journey-card--standalone {
+  margin-bottom: var(--space-md);
 }
 .coffee-journey-label {
   font-size: 0.68rem;
@@ -1123,8 +1039,33 @@ html {
   color: var(--gray-400);
   margin: 0;
 }
-@media (max-width: 900px) {
-  .coffee-masthead-grid { grid-template-columns: 1fr; }
+
+/* Coffee wave legend — runs under the timeline bars, sized to each era */
+.coffee-wave-legend {
+  position: relative;
+  height: 16px;
+  margin-top: 2px;
+}
+.coffee-wave-legend-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-top: 1px solid;
+  opacity: 0.55;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+.coffee-wave-legend-band.is-current {
+  opacity: 1;
+  font-weight: 600;
 }
 
 /* Country story — shown when a producer country is selected */
@@ -1815,6 +1756,22 @@ html {
 .event-bar--weather { opacity: 0.7; }
 .event-bar--weather:hover { opacity: 0.9; }
 .event-bar--weather.active { opacity: 1; }
+.event-bar--wave-first,
+.event-bar--wave-second,
+.event-bar--wave-third,
+.event-bar--wave-fourth { opacity: 0.5; }
+.event-bar--wave-first:hover,
+.event-bar--wave-second:hover,
+.event-bar--wave-third:hover,
+.event-bar--wave-fourth:hover { opacity: 0.8; }
+.event-bar--wave-first.active,
+.event-bar--wave-second.active,
+.event-bar--wave-third.active,
+.event-bar--wave-fourth.active { opacity: 1; }
+.event-bar--weather.event-bar--wave-first,
+.event-bar--weather.event-bar--wave-second,
+.event-bar--weather.event-bar--wave-third,
+.event-bar--weather.event-bar--wave-fourth { opacity: 0.8; }
 
 /* Live Badge */
 .live-badge {

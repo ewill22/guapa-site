@@ -23,6 +23,15 @@ import './App.css';
 // Only these three lenses (dev is the default "guapa" view)
 const LENSES = ['music', 'coffee', 'economics', 'sports'];
 
+// Wave tinting for the coffee timeline bars. Muted so bars read as bars first,
+// era second. Ordered: commodity → dark-roast café → craft → process.
+const COFFEE_WAVE_COLORS = {
+  first: '#8a6e5a',
+  second: '#b07a4a',
+  third: '#7ec89b',
+  fourth: '#e8a0b0',
+};
+
 // Smooth scroll to an element — respects scroll-margin-top, avoids iOS quirks.
 // Same helper pattern as GenreExplorer.
 function safeScrollTo(el, block = 'start') {
@@ -586,12 +595,18 @@ export default function App() {
       const totals = Array.from({ length: 97 }, (_, i) => globalTotal(1930 + i));
       const maxVal = Math.max(...totals, 1);
       const weather = eventYears('weather');
-      return totals.map((v, i) => ({
-        year: 1930 + i,
-        h: v > 0 ? 6 + (v / maxVal) * 50 : 3,
-        value: v,
-        event: weather.has(1930 + i) ? 'weather' : null,
-      }));
+      return totals.map((v, i) => {
+        const y = 1930 + i;
+        const w = waveForYear(y);
+        return {
+          year: y,
+          h: v > 0 ? 6 + (v / maxVal) * 50 : 3,
+          value: v,
+          event: weather.has(y) ? 'weather' : null,
+          wave: w.key,
+          waveLabel: w.label,
+        };
+      });
     }
     const data = TIMELINE[src] || {};
     const ey = Object.keys(data).map(Number);
@@ -857,13 +872,17 @@ export default function App() {
                           {bars.map(b => {
                             const isActive = b.year === year;
                             const weatherColor = '#88a8d4';
-                            const bg = isActive ? lc : (b.event === 'weather' ? weatherColor : undefined);
-                            const title = b.value
+                            const waveColor = b.wave ? COFFEE_WAVE_COLORS[b.wave] : undefined;
+                            const bg = isActive ? lc : (b.event === 'weather' ? weatherColor : waveColor);
+                            const baseTitle = b.value
                               ? `${b.year}: ${b.value}M bags${b.event === 'weather' ? ' · weather event' : ''}`
                               : undefined;
+                            const title = b.waveLabel
+                              ? (baseTitle ? `${baseTitle} · ${b.waveLabel}` : `${b.year} · ${b.waveLabel}`)
+                              : baseTitle;
                             return (
                               <div key={b.year}
-                                className={`event-bar ${isActive ? 'active' : ''}${b.event === 'weather' ? ' event-bar--weather' : ''}`}
+                                className={`event-bar ${isActive ? 'active' : ''}${b.event === 'weather' ? ' event-bar--weather' : ''}${b.wave ? ` event-bar--wave-${b.wave}` : ''}`}
                                 style={{ height: b.h, background: bg }}
                                 onClick={() => setYear(b.year, true)}
                                 title={title}
@@ -871,6 +890,27 @@ export default function App() {
                             );
                           })}
                         </div>
+                        {lens === 'coffee' && (
+                          <div className="coffee-wave-legend">
+                            {COFFEE_WAVES.map(w => {
+                              const r0 = Math.max(w.range[0], 1930);
+                              const r1 = Math.min(w.range[1], 2026);
+                              const left = ((r0 - 1930) / 96) * 100;
+                              const width = ((r1 - r0 + 1) / 97) * 100;
+                              const isCurrent = year && year >= w.range[0] && year <= w.range[1];
+                              return (
+                                <span
+                                  key={w.key}
+                                  className={`coffee-wave-legend-band${isCurrent ? ' is-current' : ''}`}
+                                  style={{ left: `${left}%`, width: `${width}%`, color: COFFEE_WAVE_COLORS[w.key], borderColor: COFFEE_WAVE_COLORS[w.key] }}
+                                  title={`${w.label} — ${w.tagline}: ${w.body}`}
+                                >
+                                  {w.label.split(' ')[0]}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        )}
                         <button className={`live-badge ${year === 2026 ? 'live-badge--active' : ''}${nowPlaying?.auxCord ? ' live-badge--aux' : ''}${nowPlaying?.isAux ? ' live-badge--aux-playing' : ''}`} onClick={() => setYear(2026, true)}>
                           <span className="live-dot" />Live
                         </button>
@@ -1113,40 +1153,12 @@ export default function App() {
                   ? allCountries.filter(c => c.regionName === selectedCoffeeRegion)
                   : allCountries;
                 const countryTiles = [...filtered].sort((a, b) => a.country.localeCompare(b.country));
-                const wave = waveForYear(coffeeYear);
                 const todaysJourney = journeyForToday();
-                const dateLabel = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 return (
                 <div className="coffee-section">
-                  <div className="coffee-masthead">
-                    <div className="coffee-masthead-head">
-                      <span className="coffee-masthead-title">The <em>Coffee</em> Daily</span>
-                      <span className="coffee-masthead-date">{dateLabel} · {wave.label}</span>
-                    </div>
-                    <div className="coffee-masthead-grid">
-                      <div className="coffee-wave-card">
-                        <div className="coffee-wave-head">
-                          <span className="coffee-wave-label">{wave.label} · {wave.range[0]}–{wave.range[1] >= 2099 ? 'now' : wave.range[1]}</span>
-                          <span className="coffee-wave-tagline"><em>{wave.tagline}</em></span>
-                        </div>
-                        <p className="coffee-wave-body">{wave.body}</p>
-                        <div className="coffee-wave-pips">
-                          {COFFEE_WAVES.map(w => (
-                            <span
-                              key={w.key}
-                              className={`coffee-wave-pip${w.key === wave.key ? ' is-active' : ''}`}
-                              title={`${w.label} — ${w.range[0]}–${w.range[1] >= 2099 ? 'now' : w.range[1]}`}
-                            >
-                              {w.label.split(' ')[0]}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="coffee-journey-card">
-                        <span className="coffee-journey-label">Today's journey</span>
-                        <p className="coffee-journey-body">{todaysJourney}</p>
-                      </div>
-                    </div>
+                  <div className="coffee-journey-card coffee-journey-card--standalone">
+                    <span className="coffee-journey-label">Today's journey</span>
+                    <p className="coffee-journey-body">{todaysJourney}</p>
                   </div>
                   <div className="coffee-regions-block">
                     <h3 className="coffee-section-label">Regions — {coffeeYear}</h3>
