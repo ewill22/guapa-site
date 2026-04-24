@@ -77,26 +77,32 @@ export function journeyForToday() {
 export const FAMOUS_BEANS = [
   {
     name: 'Panama Geisha',
+    country: 'Panama',
     note: 'The auction king. Rediscovered at Hacienda La Esmeralda in 2004, cupped 95+, broke every record since. $10k/lb lots exist. Jasmine, bergamot, tropical fruit.',
   },
   {
     name: 'Ethiopian Heirloom',
+    country: 'Ethiopia',
     note: 'Not a variety — a catch-all. Ethiopia grows thousands of indigenous arabica cultivars, mostly unnamed, all labeled heirloom on the bag. The original genetic diversity.',
   },
   {
     name: 'Jamaica Blue Mountain',
+    country: 'Jamaica',
     note: 'The marketing story. Grown 3,000–5,500 ft in Jamaica\'s Blue Mountains. Coveted in Japan, sold at premium. Cleanly balanced, rarely spectacular. Reputation doing the lifting.',
   },
   {
     name: 'Hawaiian Kona',
+    country: 'United States',
     note: 'Volcanic soil, small farms, American terroir. Low-acid, nutty, chocolatey — a style unlike the bright washed coffees of specialty. Heavily counterfeited. If it\'s cheap, it\'s not real.',
   },
   {
     name: 'Yemen Mocha',
+    country: 'Yemen',
     note: 'The original. Yemen was coffee\'s first commercial producer centuries before Ethiopia exported. Mocha (the port) gave chocolate-coffee drinks their name. Wild, fermented, funky — and nearly extinct under civil war.',
   },
   {
     name: 'Sumatra Mandheling',
+    country: 'Indonesia',
     note: 'The wet-hulled one. Indonesian processing skips the usual drying step — green beans hulled wet, giving earthy, mushroomy, tobacco character. Loved for body, polarising on acidity.',
   },
 ];

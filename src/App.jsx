@@ -1574,19 +1574,32 @@ export default function App() {
                   })()}
 
                   {/* Famous beans — legendary origin varieties */}
-                  <div className="coffee-famous-beans">
-                    <h3 className="coffee-section-label">
-                      <span>Beans worth knowing<span className="coffee-section-sub"> · editorial picks</span></span>
-                    </h3>
-                    <div className="coffee-famous-beans-row">
-                      {FAMOUS_BEANS.map(b => (
-                        <div key={b.name} className="coffee-famous-bean-card">
-                          <span className="coffee-famous-bean-name">{b.name}</span>
-                          <p className="coffee-famous-bean-note">{b.note}</p>
+                  {(() => {
+                    const beans = selectedCoffeeCountry
+                      ? FAMOUS_BEANS.filter(b => b.country === selectedCoffeeCountry)
+                      : FAMOUS_BEANS;
+                    if (selectedCoffeeCountry && beans.length === 0) return null;
+                    return (
+                      <div className="coffee-famous-beans">
+                        <h3 className="coffee-section-label">
+                          <span>
+                            Beans worth knowing
+                            <span className="coffee-section-sub">
+                              {selectedCoffeeCountry ? ` · from ${selectedCoffeeCountry}` : ' · editorial picks'}
+                            </span>
+                          </span>
+                        </h3>
+                        <div className="coffee-famous-beans-row">
+                          {beans.map(b => (
+                            <div key={b.name} className="coffee-famous-bean-card">
+                              <span className="coffee-famous-bean-name">{b.name}</span>
+                              <p className="coffee-famous-bean-note">{b.note}</p>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Year-based coffee blurbs */}
                   {blurbData && (
