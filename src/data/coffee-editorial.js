@@ -48,20 +48,70 @@ export function waveForYear(year) {
 }
 
 // Bean-to-cup journeys — one rotates daily via hash(today + index).
-// Each journey is a single run-on sentence describing a real-ish route.
+// Each journey has a template with {origin} and {roaster} tokens so the UI
+// can render those tokens as clickable links into the country grid and the
+// roaster card below.
 export const COFFEE_JOURNEYS = [
-  'Cherries picked in Huila, Colombia last November → washed at a family mill → green shipped via Buenaventura → roasted in Copenhagen by The Coffee Collective → pulled as espresso on Jægersborggade.',
-  'Yirgacheffe heirloom picked by smallholders → natural-dried on raised beds → auction in Addis Ababa → container through Djibouti → roasted in Oslo by Tim Wendelboe → brewed as V60.',
-  'Kenyan AA from Nyeri → washed at a coop factory → Mombasa auction → green to Amsterdam → roasted by Lot61 → pulled 1:2.5 at their Kinkerstraat bar.',
-  'Brazilian naturals from Minas Gerais → sun-dried on patios → truck to Santos port → green warehoused in Antwerp → roasted in Berlin by Five Elephant → drip-brewed at Kreuzberg.',
-  'Panama Geisha from Boquete → honey process → Best of Panama auction → airfreighted to Portland → roasted by Heart for filter → brewed at competition ratios.',
-  'Costa Rican micro-lot from Tarrazú → honey-processed → warehoused in San José → green to Arkansas → roasted by Onyx → batch-brewed as their weekend single-origin.',
-  'Rwandan bourbon from Nyamasheke → washed at a station run by women smallholders → Kigali auction → Rotterdam container → roasted by Bocca in Amsterdam → served at a De Pijp café.',
-  'Nicaraguan Pacamara from Jinotega → natural process → bagged in Matagalpa → green to Miami → roasted by Panther → dialed in as their weekend single-origin.',
-  'Ethiopian Sidamo → anaerobic experimental lot → direct contract with the station → green flown to Stockholm → roasted by Drop → extracted 1:16 as pourover.',
-  'Sumatra Mandheling → wet-hulled by local collectors → Medan port → green to New York → roasted by Stumptown → blended into Hair Bender.',
-  'Guatemalan Huehuetenango → washed at a family finca → Puerto Quetzal → container to Boston → roasted by George Howell → brewed as auto-drip at the Acton roastery.',
-  'Burundi Kayanza bourbon → washed at a specialty station → Bujumbura bags → airfreighted to Copenhagen → roasted by La Cabra → cupped on the weekend tasting flight.',
+  {
+    template: 'Cherries picked in {origin} last November → washed at a family mill → green shipped via Buenaventura → roasted in Copenhagen by {roaster} → pulled as espresso on Jægersborggade.',
+    originLabel: 'Huila, Colombia', country: 'Colombia',
+    roasterLabel: 'The Coffee Collective', roasterSlug: 'coffee-collective',
+  },
+  {
+    template: '{origin} heirloom picked by smallholders → natural-dried on raised beds → auction in Addis Ababa → container through Djibouti → roasted in Oslo by {roaster} → brewed as V60.',
+    originLabel: 'Yirgacheffe, Ethiopia', country: 'Ethiopia',
+    roasterLabel: 'Tim Wendelboe', roasterSlug: 'tim-wendelboe',
+  },
+  {
+    template: '{origin} from Nyeri → washed at a coop factory → Mombasa auction → green to Amsterdam → roasted by {roaster} → pulled 1:2.5 at their Kinkerstraat bar.',
+    originLabel: 'Kenyan AA', country: 'Kenya',
+    roasterLabel: 'Lot61', roasterSlug: 'lot61',
+  },
+  {
+    template: 'Brazilian naturals from {origin} → sun-dried on patios → truck to Santos port → green warehoused in Antwerp → roasted in Berlin by {roaster} → drip-brewed at Kreuzberg.',
+    originLabel: 'Minas Gerais', country: 'Brazil',
+    roasterLabel: 'Five Elephant', roasterSlug: 'five-elephant',
+  },
+  {
+    template: '{origin} from Boquete → honey process → Best of Panama auction → airfreighted to Portland → roasted by {roaster} for filter → brewed at competition ratios.',
+    originLabel: 'Panama Geisha', country: 'Panama',
+    roasterLabel: 'Heart', roasterSlug: 'heart-coffee-roasters',
+  },
+  {
+    template: '{origin} micro-lot → honey-processed → warehoused in San José → green to Arkansas → roasted by {roaster} → batch-brewed as their weekend single-origin.',
+    originLabel: 'Costa Rican Tarrazú', country: 'Costa Rica',
+    roasterLabel: 'Onyx', roasterSlug: 'onyx-coffee-lab',
+  },
+  {
+    template: '{origin} bourbon → washed at a station run by women smallholders → Kigali auction → Rotterdam container → roasted by {roaster} in Amsterdam → served at a De Pijp café.',
+    originLabel: 'Rwandan Nyamasheke', country: 'Rwanda',
+    roasterLabel: 'Bocca', roasterSlug: 'bocca',
+  },
+  {
+    template: '{origin} Pacamara → natural process → bagged in Matagalpa → green to Miami → roasted by {roaster} → dialed in as their weekend single-origin.',
+    originLabel: 'Nicaraguan Jinotega', country: 'Nicaragua',
+    roasterLabel: 'Panther', roasterSlug: 'panther-coffee',
+  },
+  {
+    template: '{origin} → anaerobic experimental lot → direct contract with the station → green flown to Stockholm → roasted by {roaster} → extracted 1:16 as pourover.',
+    originLabel: 'Ethiopian Sidamo', country: 'Ethiopia',
+    roasterLabel: 'Drop', roasterSlug: 'drop-coffee',
+  },
+  {
+    template: '{origin} → wet-hulled by local collectors → Medan port → green to New York → roasted by {roaster} → blended into Hair Bender.',
+    originLabel: 'Sumatra Mandheling', country: 'Indonesia',
+    roasterLabel: 'Stumptown', roasterSlug: 'stumptown',
+  },
+  {
+    template: '{origin} → washed at a family finca → Puerto Quetzal → container to Boston → roasted by {roaster} → brewed as auto-drip at the Acton roastery.',
+    originLabel: 'Guatemalan Huehuetenango', country: 'Guatemala',
+    roasterLabel: 'George Howell', roasterSlug: 'george-howell-coffee',
+  },
+  {
+    template: '{origin} bourbon → washed at a specialty station → Bujumbura bags → airfreighted to Copenhagen → roasted by {roaster} → cupped on the weekend tasting flight.',
+    originLabel: 'Burundi Kayanza', country: 'Burundi',
+    roasterLabel: 'La Cabra', roasterSlug: 'la-cabra',
+  },
 ];
 
 export function journeyForToday() {

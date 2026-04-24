@@ -1158,7 +1158,54 @@ export default function App() {
                 <div className="coffee-section">
                   <div className="coffee-journey-card coffee-journey-card--standalone">
                     <span className="coffee-journey-label">Today's journey</span>
-                    <p className="coffee-journey-body">{todaysJourney}</p>
+                    <p className="coffee-journey-body">
+                      {(() => {
+                        const parts = todaysJourney.template.split(/(\{origin\}|\{roaster\})/g);
+                        return parts.map((part, i) => {
+                          if (part === '{origin}') {
+                            return (
+                              <button
+                                key={i}
+                                type="button"
+                                className="coffee-journey-link coffee-journey-link--origin"
+                                onClick={() => {
+                                  setSelectedCoffeeRegion(null);
+                                  setSelectedCoffeeCountry(todaysJourney.country);
+                                  setTimeout(() => {
+                                    const tile = document.querySelector(`[data-coffee-country="${CSS.escape(todaysJourney.country)}"]`);
+                                    safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                  }, 0);
+                                }}
+                                title={`Jump to ${todaysJourney.country} in the country grid`}
+                              >
+                                {todaysJourney.originLabel}
+                              </button>
+                            );
+                          }
+                          if (part === '{roaster}') {
+                            return (
+                              <button
+                                key={i}
+                                type="button"
+                                className="coffee-journey-link coffee-journey-link--roaster"
+                                onClick={() => {
+                                  setSelectedCoffeeRegion(null);
+                                  setSelectedCoffeeCountry(null);
+                                  setSelectedRoasterCountry(null);
+                                  setSelectedRoasterCity(null);
+                                  setSelectedRoasterSlug(todaysJourney.roasterSlug);
+                                  setTimeout(() => safeScrollTo(coffeeRoastersRef.current), 0);
+                                }}
+                                title={`Open ${todaysJourney.roasterLabel} below`}
+                              >
+                                {todaysJourney.roasterLabel}
+                              </button>
+                            );
+                          }
+                          return <span key={i}>{part}</span>;
+                        });
+                      })()}
+                    </p>
                   </div>
                   <div className="coffee-regions-block">
                     <h3 className="coffee-section-label">Regions — {coffeeYear}</h3>

@@ -1039,6 +1039,35 @@ html {
   color: var(--gray-400);
   margin: 0;
 }
+.coffee-journey-link {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  background: none;
+  border: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 0.12s;
+}
+.coffee-journey-link--origin {
+  color: var(--yellow, #f0c014);
+}
+.coffee-journey-link--roaster {
+  color: var(--pink, #e8a0b0);
+}
+@media (hover: hover) {
+  .coffee-journey-link:hover { color: var(--white); }
+}
+.coffee-journey-link:active { color: var(--white); }
+.coffee-journey-link:focus-visible {
+  outline: 2px solid var(--yellow, #f0c014);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 
 /* Coffee wave legend — runs under the timeline bars, sized to each era */
 .coffee-wave-legend {
