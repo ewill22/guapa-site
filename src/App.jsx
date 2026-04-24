@@ -1142,7 +1142,7 @@ export default function App() {
                       <span className="coffee-mode-btn-sub">Where your cup is made</span>
                     </button>
                   </div>
-                  {coffeeMode === 'growing' && (
+                  {coffeeMode === 'growing' && (<>
                   <div className="coffee-regions-block">
                     <h3 className="coffee-section-label">Regions — {coffeeYear}</h3>
                     <div className="coffee-regions-row">
@@ -1323,7 +1323,7 @@ export default function App() {
                       </div>
                     )}
                   </div>
-                  )}
+                  </>)}
 
                   {coffeeMode === 'roasting' && (
                   <div className="coffee-roaster-countries-block" ref={coffeeRoasterCountriesRef}>
