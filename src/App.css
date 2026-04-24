@@ -1018,6 +1018,10 @@ html {
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  scroll-margin-top: 80px;
+}
+.coffee-countries {
+  scroll-margin-top: 80px;
 }
 .coffee-roaster-pills {
   display: flex;

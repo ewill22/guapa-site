@@ -22,6 +22,21 @@ import './App.css';
 // Only these three lenses (dev is the default "guapa" view)
 const LENSES = ['music', 'coffee', 'economics', 'sports'];
 
+// Smooth scroll to an element — respects scroll-margin-top, avoids iOS quirks.
+// Same helper pattern as GenreExplorer.
+function safeScrollTo(el, block = 'start') {
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const scrollMargin = parseInt(getComputedStyle(el).scrollMarginTop) || 0;
+  let top;
+  if (block === 'center') {
+    top = window.scrollY + rect.top - window.innerHeight / 2 + rect.height / 2;
+  } else {
+    top = window.scrollY + rect.top - scrollMargin;
+  }
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
 // Get today's date in EST (UTC-5) so daily picks change at midnight EST, not UTC
 function getTodayEST() {
   const now = new Date();
@@ -371,6 +386,8 @@ export default function App() {
   const [selectedRoasterSlug, setSelectedRoasterSlug] = useState(null);
   const searchRef = useRef(null);
   const genreExplorerRef = useRef(null);
+  const coffeeCountriesRef = useRef(null);
+  const coffeeRoastersRef = useRef(null);
 
   // Search catalog for artists/albums/songs — artists always listed first
   const searchResults = useMemo(() => {
@@ -1093,7 +1110,11 @@ export default function App() {
                             style={isActive ? { borderColor: region.color } : undefined}
                             onClick={() => {
                               setSelectedCoffeeCountry(null);
-                              setSelectedCoffeeRegion(isActive ? null : region.name);
+                              const next = isActive ? null : region.name;
+                              setSelectedCoffeeRegion(next);
+                              if (next) {
+                                setTimeout(() => safeScrollTo(coffeeCountriesRef.current), 0);
+                              }
                             }}
                           >
                             <div className="coffee-region-big-head">
@@ -1121,7 +1142,7 @@ export default function App() {
                       })}
                     </div>
                   </div>
-                  <div className="coffee-countries">
+                  <div className="coffee-countries" ref={coffeeCountriesRef}>
                     <h3 className="coffee-section-label">
                       <span>
                         {selectedCoffeeRegion ? `${selectedCoffeeRegion} — ${coffeeYear}` : `All Producers — ${coffeeYear}`}
@@ -1159,14 +1180,22 @@ export default function App() {
                               style={{ borderColor: isCountryActive ? region.color : region.color + '40' }}
                               onClick={(e) => {
                                 if (e.target.closest('a')) return;
-                                setSelectedCoffeeCountry(isCountryActive ? null : p.country);
+                                const next = isCountryActive ? null : p.country;
+                                setSelectedCoffeeCountry(next);
+                                if (next) {
+                                  setTimeout(() => safeScrollTo(coffeeRoastersRef.current), 0);
+                                }
                               }}
                               role="button"
                               tabIndex={0}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === ' ') {
                                   e.preventDefault();
-                                  setSelectedCoffeeCountry(isCountryActive ? null : p.country);
+                                  const next = isCountryActive ? null : p.country;
+                                  setSelectedCoffeeCountry(next);
+                                  if (next) {
+                                    setTimeout(() => safeScrollTo(coffeeRoastersRef.current), 0);
+                                  }
                                 }
                               }}
                               title={isCountryActive ? 'Click to clear country filter' : `Filter roasters sourcing from ${p.country}`}
@@ -1263,7 +1292,7 @@ export default function App() {
                     const active = activeInList || fallback;
                     const hasFilter = !!filterLabel;
                     return (
-                      <div className="coffee-roasters-block">
+                      <div className="coffee-roasters-block" ref={coffeeRoastersRef}>
                         <h3 className="coffee-section-label">
                           <span>
                             Roasters
