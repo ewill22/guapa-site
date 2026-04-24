@@ -290,27 +290,39 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 - **Timeline**: Year-based (1930–2026), bars driven by `globalTotal(year)` from `coffee-harvest.js` (composed multi-source production totals). `TIMELINE.coffee` is an empty stub — no hand-maintained coffee series.
 - **Counter-bottom**: Intro greeting — "Listen to the world through music. _Explore it through coffee._" with a short sub-line. Full-width, replaces the old Highlighted Roaster section.
 - **Below counter**:
+  - **Today's Journey card** — hash(today) picks one offering from the ~1,090-record pool in `coffee-offerings.js`. Renders as: clickable roaster name (scrolls to that roaster's card in the Roasters section), external link to the Shopify product page, clickable country chip (filters the grid + scrolls to country story), optional process chip (scrolls to Processing primer). Shows `OFFERINGS_FETCHED_ON` as an "updated YYYY-MM-DD" attribution pill.
+  - **Timeline wave tint** — bars colored by coffee wave era (first/second/third/fourth); thin labeled legend strip below the slider.
   - **Region tiles row** — four big tiles (South America, Central America, Africa, Blend) stretched full-width of the container; each shows that region's total harvest for the selected year. Clicking a tile filters the country grid below; clicking again clears.
-  - **Country grid** — one country per row, full-width. Each row: country name (region-colored), phase badge (harvest / flowering / resting), harvest bags + global share, share bar, 12-month calendar strip highlighting the current month, Editorial pill (methodology tooltip + clickable per-country source refs), event note if any, source attribution pill.
+  - **Country grid** — one country per row, full-width. Each row: country name (region-colored), phase badge (harvest / flowering / resting), harvest bags + global share, share bar, 12-month calendar strip highlighting the current month, Editorial pill (methodology tooltip + clickable per-country source refs), event note if any, source attribution pill. Each tile carries `data-coffee-country={name}` so journey-card + roaster-card chips can scroll-target precisely.
+  - **Beans worth knowing** — horizontal card row from `FAMOUS_BEANS` in `coffee-editorial.js`. Filters by selected country; hides section entirely if selection has none.
+  - **Processing primer** — seven cards (Washed, Natural, Honey, Wet-Hulled, Anaerobic, Carbonic, Thermal Shock) from `COFFEE_PROCESSES`. Each card shows aka / tagline / body / flavors + a live "XX live" count of offerings using that process across the 25 tracked roasters. Process chip in Today's Journey deep-links here.
+  - **Roasters section** — `coffeeRoastersRef` target, editorial + Wikidata + OSM + Shopify offerings merged per roaster.
   - **Year-based coffee blurbs** — editorial commentary keyed to the selected year from `BLURBS.coffee`.
 
 #### Data files
 | File | Role | Who edits |
 |---|---|---|
+| `src/data/coffee-editorial.js` | `COFFEE_WAVES` + `waveForYear()`, legacy `COFFEE_JOURNEYS` templates (unused — kept as fallback), `FAMOUS_BEANS` (6 legendary varieties with `country` keys for filtering), `COFFEE_PROCESSES` (7 processing methods — keys match `fetch-offerings.ps1` inference), `COUNTRY_STORIES` (per-country editorial paragraph) | Hand-maintained |
+| `src/data/coffee-offerings.js` | Flat list of ~1,090 live Shopify offerings across 25 roasters: `{ roasterSlug, roasterName, title, handle, url, country, process, summary }`. Country/process inferred via regex; ~64% / ~48% hit rate. | **Auto-generated** by `scripts/coffee-roasters/fetch-offerings.ps1` — do not hand-edit. Refreshed daily via Task Scheduler (see below). |
 | `src/data/coffee-timeline.js` | Panther roaster POC — `FEATURED_ROASTER`, `PANTHER_OFFERINGS`, `PANTHER_REGIONS`, `COFFEE_BLURBS` (daily roast seed). Currently unused in `App.jsx` but kept for phase 3 (roasters as artists). | Hand-maintained |
 | `src/data/coffee-usda.js` | USDA FAS PSD global production (29 producers, 1960–present, public domain) | **Auto-generated** by `scripts/coffee-harvest/refresh.ps1` — do not hand-edit |
 | `src/data/coffee-harvest.js` | Multi-source composer: `COFFEE_SOURCES` catalog, `OVERLAY_PRODUCERS` (Conab seed + stubs), `COFFEE_EVENTS`, `COFFEE_GROW_CALENDAR` (29 countries, flowering/harvest/resting months), `GROW_CALENDAR_REFS` (editorial methodology + per-country source refs), helpers (`regionTotal`, `globalTotal`, `countriesInRegion`, `producerSeries`, `eventsFor`, `growCalendarFor`, `growPhaseIn`) | Hand-maintained |
-| `scripts/coffee-harvest/` | Refresh script + README documenting sources, licenses, and open TODOs for backend handoff | Eric / backend team |
+| `scripts/coffee-harvest/` | USDA refresh script + README documenting sources, licenses, and open TODOs for backend handoff | Eric / backend team |
+| `scripts/coffee-roasters/` | Shopify offerings pipeline: `fetch-offerings.ps1` (pull), `scheduled-refresh.ps1` (cron wrapper — fetch + diff + `[auto]` commit + push), `install-scheduler-task.ps1` (one-time Windows Task Scheduler registration). README documents the 25-roaster list, inference heuristics, and backend handoff path. | Eric / backend team |
+
+#### Scheduled offerings refresh
+Windows Task Scheduler task "Guapa Refresh Coffee Offerings" runs `scheduled-refresh.ps1` daily at 5:15am (offset from backend's 5am `dq_enrich`). Idempotent — only commits when Shopify data actually changed. Auto-registered by `install-scheduler-task.ps1`. Logs to `scripts/coffee-roasters/.logs/refresh-YYYY-MM.log` (gitignored). Backend handoff = drop `scheduled-refresh.ps1` into cron on the same machine, install `pwsh`, unregister the Task Scheduler entry. No code changes.
 
 #### Source principle (see feedback memory "guapa-not-source-of-truth")
 Every number on the coffee lens must carry an attribution to a named source (USDA, Conab, FNC, Cecafé, VICOFA, UCDA, ECTA, ICO, …). When sources disagree on the same country × year, show both with an editorial note rather than picking one silently. The 2021 Brazil frost entry in `COFFEE_EVENTS` is the exemplar: USDA 58.1M vs Conab 47.72M, with a `preferredSource: 'conab'` pointer and a note explaining why Conab is the sharper read for that event.
 
 **Grow calendar** follows the same principle — labeled as **Editorial** in the UI (yellow-tinted pill). Each country carries a `refs` array (base `[ico, usdaFas]`, plus national boards where applicable: Brazil→conab, Colombia→fnc, Vietnam→vicofa, Ethiopia→ecta, Uganda→ucda). The Editorial pill tooltip shows the full methodology statement; source refs underneath are clickable links.
 
-#### Phase status (as of 2026-04-19)
+#### Phase status (as of 2026-04-24)
 - ✅ **Phase 1 (data foundation)** shipped 2026-04-18. USDA ingested; Conab Brazil seeded (4 verified years); rich sources catalog stubbed for FNC, Cecafé, VICOFA, UCDA, ECTA, ICO.
-- ✅ **Phase 2 (UI redesign)** shipped 2026-04-19. Four region tiles + full-width country grid with grow calendars. Roaster / offerings content removed; intro greeting replaces the Highlighted Roaster section.
-- ⏸️ **Phase 3 (roasters as artists / roasts as albums)** — paused. Panther + 1–2 others once we resume.
+- ✅ **Phase 2 (UI redesign)** shipped 2026-04-19. Four region tiles + full-width country grid with grow calendars.
+- ✅ **Phase 3 (newspaper editorial)** shipped 2026-04-23. Today's Journey card, Beans Worth Knowing, timeline wave tint, country stories, editorial cross-linking.
+- ✅ **Phase 4 (real offerings + automation)** shipped 2026-04-24. Shopify offerings pipeline (25 roasters, ~1,090 offerings), Processing primer with live counts, scheduled daily refresh via Task Scheduler.
 
 #### Known TODOs (see `scripts/coffee-harvest/README.md` for full list)
 - Full Conab Brazil historical series (email `conab.geasa@conab.gov.br` or parse Pentaho CDA)
