@@ -391,6 +391,7 @@ export default function App() {
   const genreExplorerRef = useRef(null);
   const coffeeCountriesRef = useRef(null);
   const coffeeRoastersRef = useRef(null);
+  const coffeeCountryStoryRef = useRef(null);
   const coffeeRoasterCountriesRef = useRef(null);
   const coffeeRoasterCitiesRef = useRef(null);
 
@@ -1238,7 +1239,10 @@ export default function App() {
                                 const next = isCountryActive ? null : p.country;
                                 setSelectedCoffeeCountry(next);
                                 if (next) {
-                                  setTimeout(() => safeScrollTo(coffeeRoastersRef.current), 0);
+                                  setTimeout(() => {
+                                    const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
+                                    safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                  }, 0);
                                 }
                               }}
                               role="button"
@@ -1249,7 +1253,10 @@ export default function App() {
                                   const next = isCountryActive ? null : p.country;
                                   setSelectedCoffeeCountry(next);
                                   if (next) {
-                                    setTimeout(() => safeScrollTo(coffeeRoastersRef.current), 0);
+                                    setTimeout(() => {
+                                    const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
+                                    safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                  }, 0);
                                   }
                                 }
                               }}
@@ -1329,7 +1336,7 @@ export default function App() {
                     )}
                   </div>
                   {selectedCoffeeCountry && COUNTRY_STORIES[selectedCoffeeCountry] && (
-                    <div className="coffee-country-story">
+                    <div className="coffee-country-story" ref={coffeeCountryStoryRef}>
                       <div className="coffee-country-story-head">
                         <span className="coffee-country-story-label">On {selectedCoffeeCountry}</span>
                         <button
