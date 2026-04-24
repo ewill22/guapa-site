@@ -28,6 +28,31 @@ Guapa Data is a data solutions company run by Eric, based in New Jersey. Two sid
 
 The creative work sells the serious work. A potential client explores the record store, sees the quality, and clicks into Data Solutions.
 
+## Core Principles (all lenses)
+
+These apply everywhere — music, coffee, economics, sports, data solutions — not just one lens.
+
+### 1. Guapa is never a source of truth
+Guapa displays facts from the best sources we can find, with attribution. When two authoritative sources disagree on the same fact (USDA says Brazil 2021 = 58M bags, Conab says 46.9M), show **both** numbers with attribution and an editorial note explaining which source is sharper for that context. Never pick one and hide the other.
+
+- Data schemas must support **multiple sources per fact** (per country × year, per album attribute, etc.) rather than a single flattened value.
+- Every number rendered carries an **attribution pill + license**.
+- When sources diverge, add an **editorial annotation** calling out which source is best for that specific event and why.
+- Applies to every lens: coffee harvest, music catalog, real estate, economics.
+
+### 2. Never fabricate specific-entity activity
+Never imply a specific roaster/artist/team is currently doing something unless the claim is backed by real, attributable data. Example of what not to do: "Drop Coffee is roasting a Sidamo lot today" (fictional). Defensible rewording: "Drop Coffee typically sources from Ethiopia" (general, true).
+
+- For specific-roaster-doing-specific-thing claims, pull from a real source (Shopify `/products.json`, Wikidata, OSM, editorial-with-citation).
+- Roast dates, batch IDs, and similar bag-side details are not scrapeable — don't imply we know them.
+- If real data isn't available, phrase neutrally or link out to the entity's own page so they are the source, not us.
+
+### 3. No advertising-style "hero" UX patterns
+The lenses should read like newspaper sections, not shop windows. No "Roaster of the Day", "Team in Focus", "Featured Artist" promoted slots. Drill-down UX (broad → specific) is the established pattern instead.
+
+### 4. The music KPI sidebar is constant across every lens
+Artist of the Day / Current Album / Now Playing tiles stay identical on coffee, economics, sports, guapa lens. It's the persistent "what's playing" soundtrack while the main content changes. Never swap, hide, or replace the three tiles with lens-specific content. Lens-specific content goes **below or alongside** the main area, never inside the sidebar.
+
 ## Tech Stack
 
 - **Framework**: Vite + React
@@ -397,6 +422,12 @@ The default lens — shown when no other lens is active (`lens === null`). This 
   - Not integrated into React yet — standalone HTML served by the API
 - `dq_enrich.py`: daily enrichment pipeline (clean, dedup, spotify, wiki, covers, genre classify, release_date)
 - `classify_genres.py`: album-level genre/subgenre classification (10 genres, 56 subgenres)
+- Coffee refresh pipeline (fetch-offerings / fetch-wikidata / fetch-osm / USDA refresh) lives in `guapa-data/coffee/scripts/` — writes outputs to `src/data/coffee-*.js` in this repo via auto-commits (`[auto]` in commit message).
+
+## External services (route through homebase, not direct)
+
+- **Weather**: `C:\Users\eewil\homebase\` already has a weather API connection. When coffee/real-estate/anything needs weather (origin coordinates, current conditions, historical climate), source it through homebase rather than hitting a public weather API directly. Open-Meteo free tier is non-commercial only — don't reach for it. Treat weather as a server-side lookup the backend (guapa-data) proxies.
+- **Email (IMAP)**: `C:\Users\eewil\homebase\gmail.py` is the shared Gmail client (used by `scripts/apply-suggestions.py` to read Formspree submissions). Any other inbox-reading work goes through it.
 
 ## Product Design Principles (Data Solutions)
 
