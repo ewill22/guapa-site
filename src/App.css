@@ -1059,6 +1059,30 @@ html {
 .coffee-journey-link--roaster {
   color: var(--pink, #e8a0b0);
 }
+.coffee-journey-link--offering {
+  color: var(--white);
+}
+.coffee-journey-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+.coffee-journey-attr {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-600);
+}
+.coffee-journey-summary {
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--gray-600);
+  margin: 0;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--gray-800);
+}
 @media (hover: hover) {
   .coffee-journey-link:hover { color: var(--white); }
 }

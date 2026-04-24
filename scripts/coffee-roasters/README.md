@@ -12,6 +12,7 @@ entity we merge them without silently picking one.
 | **Wikidata** | CC0 (public domain) | Named roasting companies with structured facts (founded, founders, HQ, website, Instagram) | `src/data/coffee-roasters-wikidata.js` |
 | **OpenStreetMap** | ODbL (attribution required) | Geographic long tail — every mapped roastery with coordinates + website | `src/data/coffee-roasters-osm.js` |
 | **Editorial** | Guapa | Hand-written voice for featured roasters. Takes, stances, regional personalities. | `src/data/coffee-roasters-editorial.js` |
+| **Shopify offerings** | Roaster's own product page (attribution linked) | Current live bags per roaster — title, origin, process, tasting notes. Pulled from public `/products.json` on each Shopify storefront. | `src/data/coffee-offerings.js` |
 
 The composed dataset lives in `src/data/coffee-roasters.js`, which imports
 all three and merges them. Matching is by Wikidata QID where available,
@@ -26,7 +27,21 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/coffee-roasters/refr
 # individual pulls
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/coffee-roasters/fetch-wikidata.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/coffee-roasters/fetch-osm.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/coffee-roasters/fetch-offerings.ps1
 ```
+
+## Shopify offerings
+
+`fetch-offerings.ps1` pulls `/products.json` from each known Shopify-hosted
+specialty roaster (Panther, Onyx, Heart, La Cabra, The Coffee Collective,
+Tim Wendelboe, Drop, Stumptown, George Howell, April). Public endpoint —
+same data Shopify serves to the storefront. Each record links back to the
+roaster's own product page so the source is always attributable.
+
+Heuristic filtering drops merch/equipment and leaves coffee bags. Country
+inference is a best-effort regex over title + body. Re-run whenever you
+want fresher bags — refresh cadence is currently manual; the backend team
+can put this on cron once we're happy with the shape.
 
 Intermediate JSON lands in `scripts/coffee-roasters/.work/` (gitignored). The
 `.js` outputs are committed and drive the build.

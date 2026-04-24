@@ -47,10 +47,9 @@ export function waveForYear(year) {
   return COFFEE_WAVES[COFFEE_WAVES.length - 1];
 }
 
-// Bean-to-cup journeys — one rotates daily via hash(today + index).
-// Each journey has a template with {origin} and {roaster} tokens so the UI
-// can render those tokens as clickable links into the country grid and the
-// roaster card below.
+// Legacy bean-to-cup journey templates. Retained as a fallback if the live
+// offerings dataset (coffee-offerings.js) is empty. The UI prefers real
+// roaster-published offerings; see journeyForToday() in App.jsx.
 export const COFFEE_JOURNEYS = [
   {
     template: 'Cherries picked in {origin} last November → washed at a family mill → green shipped via Buenaventura → roasted in Copenhagen by {roaster} → pulled as espresso on Jægersborggade.',
