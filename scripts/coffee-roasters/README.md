@@ -50,6 +50,44 @@ team can put this on cron once we're happy with the shape.
 As of the last refresh: ~1,090 offerings, ~64% with country inferred, ~48%
 with process inferred.
 
+## Scheduled refresh
+
+`scheduled-refresh.ps1` is the cron wrapper. It runs `fetch-offerings.ps1`,
+checks whether `src/data/coffee-offerings.js` actually changed, and
+auto-commits + pushes only if it did. Idempotent: re-running produces no
+commit when Shopify returned identical output. Logs land in
+`scripts/coffee-roasters/.logs/refresh-YYYY-MM.log` (gitignored).
+
+To wire it into Windows Task Scheduler on a workstation:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/coffee-roasters/install-scheduler-task.ps1
+```
+
+Defaults to 5:15am daily (offset from backend's 5am `dq_enrich` run).
+Re-run the installer to update the schedule. Task runs as the current user
+with `LogonType Interactive` so `git push` uses the credential helper
+already configured for day-to-day dev.
+
+## Handing off to backend
+
+When guapa-data is ready to own the refresh:
+
+1. Pull this repo on the backend machine (or git-clone just this scripts dir).
+2. Install `pwsh` (PowerShell 7+) — the `fetch-offerings.ps1` heuristics and
+   the wrapper are both pwsh-compatible with no edits.
+3. Drop `scheduled-refresh.ps1` into cron:
+   ```
+   15 5 * * *  pwsh /path/to/guapa-site/scripts/coffee-roasters/scheduled-refresh.ps1
+   ```
+4. Unregister the Task Scheduler entry on the workstation:
+   ```powershell
+   Unregister-ScheduledTask -TaskName 'Guapa Refresh Coffee Offerings' -Confirm:$false
+   ```
+
+Same commit message style (`[auto]`) as the existing music-catalog
+auto-commits so nothing in CI needs to change.
+
 Intermediate JSON lands in `scripts/coffee-roasters/.work/` (gitignored). The
 `.js` outputs are committed and drive the build.
 
