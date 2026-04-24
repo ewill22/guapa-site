@@ -631,6 +631,7 @@ html {
   flex-direction: column;
   gap: 8px;
   cursor: pointer;
+  scroll-margin-top: 80px;
   transition: border-color 0.15s, background 0.15s;
 }
 @media (hover: hover) {

@@ -1230,6 +1230,7 @@ export default function App() {
                           return (
                             <div
                               key={p.country}
+                              data-coffee-country={p.country}
                               className={`coffee-country-tile${isCountryActive ? ' is-active' : ''}`}
                               style={{ borderColor: isCountryActive ? region.color : region.color + '40' }}
                               onClick={(e) => {
@@ -1515,7 +1516,11 @@ export default function App() {
                                     style={{ borderColor: color + '80', color }}
                                     onClick={() => {
                                       setSelectedCoffeeCountry(null);
-                                      setSelectedCoffeeRegion(isActive ? null : rg);
+                                      const next = isActive ? null : rg;
+                                      setSelectedCoffeeRegion(next);
+                                      if (next) {
+                                        setTimeout(() => safeScrollTo(coffeeCountriesRef.current), 0);
+                                      }
                                     }}
                                     title={isActive ? 'Clear region filter' : `Filter country grid to ${rg}`}
                                   >
@@ -1537,7 +1542,14 @@ export default function App() {
                                     className={`coffee-roaster-origin-chip${isActive ? ' is-active' : ''}`}
                                     onClick={() => {
                                       setSelectedCoffeeRegion(null);
-                                      setSelectedCoffeeCountry(isActive ? null : c);
+                                      const next = isActive ? null : c;
+                                      setSelectedCoffeeCountry(next);
+                                      if (next) {
+                                        setTimeout(() => {
+                                          const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
+                                          safeScrollTo(tile || coffeeCountriesRef.current);
+                                        }, 0);
+                                      }
                                     }}
                                     title={isActive ? 'Clear country filter' : `Filter roasters sourcing from ${c}`}
                                   >
