@@ -156,6 +156,68 @@ export const FAMOUS_BEANS = [
   },
 ];
 
+// Processing methods — how the fruit comes off the bean. Order is roughly
+// "classic → experimental". Match keys to what fetch-offerings.ps1 infers
+// from titles/body so Today's Journey can tag an offering's process.
+export const COFFEE_PROCESSES = [
+  {
+    key: 'washed',
+    name: 'Washed',
+    aka: 'wet process',
+    tagline: 'Clean. Bright. The benchmark.',
+    body: 'Pulp the cherry, ferment off the mucilage in tanks (12–48 hours), rinse, dry on patios or beds. Removes the fruit before it can influence the bean. Lets origin, variety, and altitude show through without a filter. The standard in Kenya, Colombia, Ethiopia\'s high-altitude washing stations, most of Central America.',
+    flavors: 'Clarity, acidity, florals, citrus, black tea, tomato (Kenya), jasmine (Ethiopia).',
+  },
+  {
+    key: 'natural',
+    name: 'Natural',
+    aka: 'dry process',
+    tagline: 'Whole cherry, sun-dried. Fruit bomb.',
+    body: 'Skip the pulping. Lay whole cherries on raised beds or patios, let them dry with the fruit still on (2–4 weeks), then hull the dried husk off. The fruit ferments onto the bean. Invented in Ethiopia and Yemen out of necessity — no water to waste — now a global style.',
+    flavors: 'Blueberry, strawberry, jam, wine, funk. Heavier body, lower acidity than washed.',
+  },
+  {
+    key: 'honey',
+    name: 'Honey',
+    aka: 'semi-washed, pulped natural',
+    tagline: 'Split the difference.',
+    body: 'Pulp the cherry but leave some or all of the sticky mucilage on the bean during drying. Named "honey" for the sticky coating, not the flavor. Labeled yellow/red/black honey by how much mucilage stays and how long it dries. Costa Rica built its specialty reputation on this. Also huge in El Salvador and Brazil microlots.',
+    flavors: 'Caramel, brown sugar, stone fruit. Body of a natural, clarity closer to washed.',
+  },
+  {
+    key: 'wet-hulled',
+    name: 'Wet-Hulled',
+    aka: 'giling basah',
+    tagline: 'The Sumatran signature.',
+    body: 'Indonesian specialty. Pulp, ferment briefly, then hull the parchment off while the bean is still wet (30–50% moisture), then dry the naked bean. Cuts drying time in the archipelago\'s humidity but gives the green bean a distinctive blue-green color and a processing-driven flavor no one else has.',
+    flavors: 'Earthy, mushroomy, tobacco, cedar, low-acid, heavy body. Polarizing on purpose.',
+  },
+  {
+    key: 'anaerobic',
+    name: 'Anaerobic',
+    aka: 'sealed fermentation',
+    tagline: 'Tank it. Let the microbes drive.',
+    body: 'Cherries (or depulped beans) sealed in an oxygen-free tank for 48–120 hours. Specific microbes take over, producing flavor compounds that aerobic fermentation can\'t. Arrived in specialty around 2015–2017 via Costa Rica and Colombia competition lots. Now the dominant fourth-wave experimental process.',
+    flavors: 'Tropical fruit, cinnamon, rum, lychee, bubblegum, sometimes boozy. Loved or hated.',
+  },
+  {
+    key: 'carbonic',
+    name: 'Carbonic Maceration',
+    aka: 'CM',
+    tagline: 'Borrowed from Beaujolais.',
+    body: 'Whole cherries sealed in a CO2-purged tank — the fermentation happens inside each intact cherry, cell by cell. Wine technique imported by Sasa Sestic (2015 World Barista Champion) and now used by competition-focused farms in Colombia, Costa Rica, Panama. Extreme fruit character, extreme cost.',
+    flavors: 'Red wine, raspberry, cherry cola, floral, sharply defined fruit.',
+  },
+  {
+    key: 'thermal-shock',
+    name: 'Thermal Shock',
+    aka: 'hot/cold fermentation',
+    tagline: 'New-school experimental.',
+    body: 'Cycle the fermenting lot through hot then cold water baths to stress the microbes into producing specific compounds. Popularized by Colombian producers around 2020. Polarizing — some cuppers call it the next frontier, others call it a flavor additive dressed up as process.',
+    flavors: 'Intense tropical fruit, candy-sweet, sometimes one-note. Unmistakable on the cup table.',
+  },
+];
+
 // Per-country editorial. Keyed by country name exactly as it appears in the
 // producer country grid. Missing entries fall back to no-story rendering.
 export const COUNTRY_STORIES = {

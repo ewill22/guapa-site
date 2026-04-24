@@ -25,7 +25,22 @@ $roasters = @(
     @{ slug = 'drop-coffee';            name = 'Drop Coffee';            base = 'https://www.dropcoffee.com' },
     @{ slug = 'stumptown';              name = 'Stumptown';              base = 'https://www.stumptowncoffee.com' },
     @{ slug = 'george-howell-coffee';   name = 'George Howell';          base = 'https://www.georgehowellcoffee.com' },
-    @{ slug = 'april-coffee';           name = 'April Coffee';           base = 'https://aprilcoffeeroasters.com' }
+    @{ slug = 'april-coffee';           name = 'April Coffee';           base = 'https://aprilcoffeeroasters.com' },
+    @{ slug = 'passenger-coffee';       name = 'Passenger Coffee';       base = 'https://passengercoffee.com' },
+    @{ slug = 'sey-coffee';              name = 'Sey Coffee';              base = 'https://seycoffee.com' },
+    @{ slug = 'proud-mary';              name = 'Proud Mary';              base = 'https://proudmarycoffee.com' },
+    @{ slug = 'black-and-white';         name = 'Black & White Coffee';    base = 'https://blackwhiteroasters.com' },
+    @{ slug = 'prolog-coffee';           name = 'Prolog Coffee';           base = 'https://prologcoffee.com' },
+    @{ slug = 'verve-coffee';            name = 'Verve Coffee Roasters';   base = 'https://www.vervecoffee.com' },
+    @{ slug = 'ruby-coffee';             name = 'Ruby Coffee Roasters';    base = 'https://rubycoffeeroasters.com' },
+    @{ slug = 'sweet-bloom';             name = 'Sweet Bloom Coffee';      base = 'https://sweetbloomcoffee.com' },
+    @{ slug = 'corvus-coffee';           name = 'Corvus Coffee';           base = 'https://corvuscoffee.com' },
+    @{ slug = 'parlor-coffee';           name = 'Parlor Coffee';           base = 'https://parlorcoffee.com' },
+    @{ slug = 'pilot-coffee';            name = 'Pilot Coffee Roasters';   base = 'https://pilotcoffeeroasters.com' },
+    @{ slug = '49th-parallel';           name = '49th Parallel Coffee';    base = 'https://49thcoffee.com' },
+    @{ slug = 'cat-and-cloud';           name = 'Cat & Cloud';             base = 'https://catandcloud.com' },
+    @{ slug = 'roseline-coffee';         name = 'Roseline Coffee';         base = 'https://roselinecoffee.com' },
+    @{ slug = 'methodical-coffee';       name = 'Methodical Coffee';       base = 'https://methodicalcoffee.com' }
 )
 
 # Countries we recognise in titles/body text. Sumatra/Java normalise to
@@ -50,6 +65,20 @@ function StripHtml($html) {
     $t = $t -replace '&ndash;', '-'
     $t = $t -replace '\s+', ' '
     return $t.Trim()
+}
+
+function InferProcess($text) {
+    if (-not $text) { return $null }
+    $t = $text.ToLower()
+    # Order matters: most specific first so "anaerobic natural" wins over "natural".
+    if ($t -match 'thermal[- ]shock|thermic shock') { return 'thermal-shock' }
+    if ($t -match 'carbonic maceration|carbonic macer') { return 'carbonic' }
+    if ($t -match 'anaerobic|anaerobically') { return 'anaerobic' }
+    if ($t -match 'wet[- ]hull|giling basah') { return 'wet-hulled' }
+    if ($t -match '\b(white|yellow|red|black)? ?honey\b|honey process|miel process|semi[- ]washed|semi washed|pulped natural') { return 'honey' }
+    if ($t -match '\bwashed\b|fully washed|wet process') { return 'washed' }
+    if ($t -match '\bnatural\b|dry process|sun[- ]dried') { return 'natural' }
+    return $null
 }
 
 function InferCountry($text) {
@@ -112,6 +141,8 @@ foreach ($r in $roasters) {
         $body = StripHtml $p.body_html
         $country = InferCountry $p.title
         if (-not $country) { $country = InferCountry $body }
+        $process = InferProcess $p.title
+        if (-not $process) { $process = InferProcess $body }
         if ($body.Length -gt 240) {
             $summary = $body.Substring(0, 240).TrimEnd() + '...'
         } else {
@@ -124,6 +155,7 @@ foreach ($r in $roasters) {
             handle      = "$($p.handle)"
             url         = "$($r.base)/products/$($p.handle)"
             country     = $country
+            process     = $process
             summary     = $summary
         }
         $count++
@@ -148,7 +180,7 @@ $sb = [System.Text.StringBuilder]::new()
 [void]$sb.AppendLine('')
 [void]$sb.AppendLine("export const OFFERINGS_FETCHED_ON = '$(Get-Date -Format 'yyyy-MM-dd')';")
 [void]$sb.AppendLine('')
-[void]$sb.AppendLine('// { roasterSlug, roasterName, title, handle, url, country, summary }')
+[void]$sb.AppendLine('// { roasterSlug, roasterName, title, handle, url, country, process, summary }')
 [void]$sb.AppendLine('export const ROASTER_OFFERINGS = [')
 foreach ($o in $allOfferings) {
     [void]$sb.AppendLine('  {')
@@ -158,6 +190,7 @@ foreach ($o in $allOfferings) {
     [void]$sb.AppendLine("    handle: $(EscJs $o.handle),")
     [void]$sb.AppendLine("    url: $(EscJs $o.url),")
     [void]$sb.AppendLine("    country: $(EscJs $o.country),")
+    [void]$sb.AppendLine("    process: $(EscJs $o.process),")
     [void]$sb.AppendLine("    summary: $(EscJs $o.summary),")
     [void]$sb.AppendLine('  },')
 }
@@ -169,3 +202,4 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding $false
 Write-Host ""
 Write-Host "Wrote $outPath"
 Write-Host "  with country inferred: $(($allOfferings | Where-Object { $_.country }).Count) of $($allOfferings.Count)"
+Write-Host "  with process inferred: $(($allOfferings | Where-Object { $_.process }).Count) of $($allOfferings.Count)"

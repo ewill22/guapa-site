@@ -1187,6 +1187,92 @@ html {
   margin: 0;
 }
 
+/* Processing methods — editorial primer cards */
+.coffee-processes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  scroll-margin-top: 80px;
+}
+.coffee-processes-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-sm);
+}
+.coffee-process-card {
+  padding: var(--space-md);
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-left: 3px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.coffee-process-card--washed    { border-left-color: #88a8d4; }
+.coffee-process-card--natural   { border-left-color: #e8a0b0; }
+.coffee-process-card--honey     { border-left-color: #f0c014; }
+.coffee-process-card--wet-hulled { border-left-color: #8a6e5a; }
+.coffee-process-card--anaerobic { border-left-color: #7ec89b; }
+.coffee-process-card--carbonic  { border-left-color: #b07a4a; }
+.coffee-process-card--thermal-shock { border-left-color: #a05050; }
+.coffee-process-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.coffee-process-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--white);
+}
+.coffee-process-count {
+  font-size: 0.7rem;
+  color: var(--gray-600);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.coffee-process-aka {
+  font-size: 0.72rem;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.coffee-process-tagline {
+  font-size: 0.82rem;
+  color: var(--white);
+  font-style: italic;
+}
+.coffee-process-body {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--gray-400);
+  margin: 0;
+}
+.coffee-process-flavors {
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--gray-600);
+  margin: 0;
+}
+.coffee-process-flavors em {
+  color: var(--gray-400);
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* Process chip inside Today's Journey body */
+.coffee-journey-link--process {
+  color: var(--gray-400);
+  font-style: italic;
+}
+@media (hover: hover) {
+  .coffee-journey-link--process:hover { color: var(--white); }
+}
+.coffee-journey-link--process:active { color: var(--white); }
+
 /* Roaster country grid (Roasting mode) */
 .coffee-roaster-countries-block {
   display: flex;

@@ -32,16 +32,23 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/coffee-roasters/fetc
 
 ## Shopify offerings
 
-`fetch-offerings.ps1` pulls `/products.json` from each known Shopify-hosted
-specialty roaster (Panther, Onyx, Heart, La Cabra, The Coffee Collective,
-Tim Wendelboe, Drop, Stumptown, George Howell, April). Public endpoint —
+`fetch-offerings.ps1` pulls `/products.json` from 25 known Shopify-hosted
+specialty roasters across the US, Denmark, Norway, Canada, Australia, and
+the UK (Panther, Onyx, Heart, La Cabra, The Coffee Collective, Tim
+Wendelboe, Drop, Stumptown, George Howell, April, Passenger, Sey, Proud
+Mary, Black & White, Prolog, Verve, Ruby, Sweet Bloom, Corvus, Parlor,
+Pilot, 49th Parallel, Cat & Cloud, Roseline, Methodical). Public endpoint —
 same data Shopify serves to the storefront. Each record links back to the
 roaster's own product page so the source is always attributable.
 
 Heuristic filtering drops merch/equipment and leaves coffee bags. Country
-inference is a best-effort regex over title + body. Re-run whenever you
-want fresher bags — refresh cadence is currently manual; the backend team
-can put this on cron once we're happy with the shape.
+and process (washed / natural / honey / wet-hulled / anaerobic / carbonic /
+thermal-shock) are inferred via regex over title + body. Re-run whenever
+you want fresher bags — refresh cadence is currently manual; the backend
+team can put this on cron once we're happy with the shape.
+
+As of the last refresh: ~1,090 offerings, ~64% with country inferred, ~48%
+with process inferred.
 
 Intermediate JSON lands in `scripts/coffee-roasters/.work/` (gitignored). The
 `.js` outputs are committed and drive the build.

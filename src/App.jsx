@@ -16,7 +16,7 @@ import {
   growCalendarFor, growPhaseIn, GROW_CALENDAR_REFS,
 } from './data/coffee-harvest';
 import { featuredRoasters, ROASTER_SOURCES } from './data/coffee-roasters';
-import { COFFEE_WAVES, waveForYear, FAMOUS_BEANS, COUNTRY_STORIES } from './data/coffee-editorial';
+import { COFFEE_WAVES, waveForYear, FAMOUS_BEANS, COUNTRY_STORIES, COFFEE_PROCESSES } from './data/coffee-editorial';
 import { ROASTER_OFFERINGS, OFFERINGS_FETCHED_ON } from './data/coffee-offerings';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
@@ -402,6 +402,7 @@ export default function App() {
   const coffeeCountriesRef = useRef(null);
   const coffeeRoastersRef = useRef(null);
   const coffeeCountryStoryRef = useRef(null);
+  const coffeeProcessesRef = useRef(null);
   const coffeeRoasterCountriesRef = useRef(null);
   const coffeeRoasterCitiesRef = useRef(null);
 
@@ -1219,6 +1220,25 @@ export default function App() {
                           </button>
                         </>
                       )}
+                      {todaysOffering.process && (() => {
+                        const proc = COFFEE_PROCESSES.find(p => p.key === todaysOffering.process);
+                        if (!proc) return null;
+                        return (
+                          <>
+                            {' · '}
+                            <button
+                              type="button"
+                              className="coffee-journey-link coffee-journey-link--process"
+                              onClick={() => {
+                                setTimeout(() => safeScrollTo(coffeeProcessesRef.current), 0);
+                              }}
+                              title={`${proc.name} process — ${proc.tagline}`}
+                            >
+                              {proc.name.toLowerCase()}
+                            </button>
+                          </>
+                        );
+                      })()}
                       {'. '}
                     </p>
                     {todaysOffering.summary && (
@@ -1693,6 +1713,45 @@ export default function App() {
                               <p className="coffee-famous-bean-note">{b.note}</p>
                             </div>
                           ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Processing methods — editorial primer, cross-linked from Today's Journey */}
+                  {(() => {
+                    const processCounts = {};
+                    for (const o of ROASTER_OFFERINGS) {
+                      if (o.process) processCounts[o.process] = (processCounts[o.process] || 0) + 1;
+                    }
+                    return (
+                      <div className="coffee-processes" ref={coffeeProcessesRef}>
+                        <h3 className="coffee-section-label">
+                          <span>
+                            Processing
+                            <span className="coffee-section-sub"> · how the fruit comes off the bean</span>
+                          </span>
+                        </h3>
+                        <div className="coffee-processes-row">
+                          {COFFEE_PROCESSES.map(p => {
+                            const count = processCounts[p.key] || 0;
+                            return (
+                              <div key={p.key} className={`coffee-process-card coffee-process-card--${p.key}`}>
+                                <div className="coffee-process-head">
+                                  <span className="coffee-process-name">{p.name}</span>
+                                  {count > 0 && (
+                                    <span className="coffee-process-count" title={`${count} current offerings across tracked roasters`}>
+                                      {count} live
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="coffee-process-aka">aka {p.aka}</span>
+                                <span className="coffee-process-tagline">{p.tagline}</span>
+                                <p className="coffee-process-body">{p.body}</p>
+                                <p className="coffee-process-flavors"><em>Flavors:</em> {p.flavors}</p>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     );
