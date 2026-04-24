@@ -16,6 +16,7 @@ import {
   growCalendarFor, growPhaseIn, GROW_CALENDAR_REFS,
 } from './data/coffee-harvest';
 import { featuredRoasters, ROASTER_SOURCES } from './data/coffee-roasters';
+import { COFFEE_WAVES, waveForYear, journeyForToday, FAMOUS_BEANS, COUNTRY_STORIES } from './data/coffee-editorial';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
 
@@ -384,7 +385,6 @@ export default function App() {
   const [selectedCoffeeRegion, setSelectedCoffeeRegion] = useState(null);
   const [selectedCoffeeCountry, setSelectedCoffeeCountry] = useState(null);
   const [selectedRoasterSlug, setSelectedRoasterSlug] = useState(null);
-  const [coffeeMode, setCoffeeMode] = useState('growing');
   const [selectedRoasterCountry, setSelectedRoasterCountry] = useState(null);
   const [selectedRoasterCity, setSelectedRoasterCity] = useState(null);
   const searchRef = useRef(null);
@@ -1112,37 +1112,41 @@ export default function App() {
                   ? allCountries.filter(c => c.regionName === selectedCoffeeRegion)
                   : allCountries;
                 const countryTiles = [...filtered].sort((a, b) => a.country.localeCompare(b.country));
+                const wave = waveForYear(coffeeYear);
+                const todaysJourney = journeyForToday();
+                const dateLabel = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 return (
                 <div className="coffee-section">
-                  <div className="coffee-mode-toggle">
-                    <button
-                      type="button"
-                      className={`coffee-mode-btn${coffeeMode === 'growing' ? ' is-active' : ''}`}
-                      onClick={() => {
-                        setCoffeeMode('growing');
-                        setSelectedRoasterCountry(null);
-                        setSelectedRoasterCity(null);
-                        setSelectedRoasterSlug(null);
-                      }}
-                    >
-                      Growing
-                      <span className="coffee-mode-btn-sub">Where the beans come from</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`coffee-mode-btn${coffeeMode === 'roasting' ? ' is-active' : ''}`}
-                      onClick={() => {
-                        setCoffeeMode('roasting');
-                        setSelectedCoffeeRegion(null);
-                        setSelectedCoffeeCountry(null);
-                        setSelectedRoasterSlug(null);
-                      }}
-                    >
-                      Roasting
-                      <span className="coffee-mode-btn-sub">Where your cup is made</span>
-                    </button>
+                  <div className="coffee-masthead">
+                    <div className="coffee-masthead-head">
+                      <span className="coffee-masthead-title">The <em>Coffee</em> Daily</span>
+                      <span className="coffee-masthead-date">{dateLabel} · {wave.label}</span>
+                    </div>
+                    <div className="coffee-masthead-grid">
+                      <div className="coffee-wave-card">
+                        <div className="coffee-wave-head">
+                          <span className="coffee-wave-label">{wave.label} · {wave.range[0]}–{wave.range[1] >= 2099 ? 'now' : wave.range[1]}</span>
+                          <span className="coffee-wave-tagline"><em>{wave.tagline}</em></span>
+                        </div>
+                        <p className="coffee-wave-body">{wave.body}</p>
+                        <div className="coffee-wave-pips">
+                          {COFFEE_WAVES.map(w => (
+                            <span
+                              key={w.key}
+                              className={`coffee-wave-pip${w.key === wave.key ? ' is-active' : ''}`}
+                              title={`${w.label} — ${w.range[0]}–${w.range[1] >= 2099 ? 'now' : w.range[1]}`}
+                            >
+                              {w.label.split(' ')[0]}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="coffee-journey-card">
+                        <span className="coffee-journey-label">Today's journey</span>
+                        <p className="coffee-journey-body">{todaysJourney}</p>
+                      </div>
+                    </div>
                   </div>
-                  {coffeeMode === 'growing' && (<>
                   <div className="coffee-regions-block">
                     <h3 className="coffee-section-label">Regions — {coffeeYear}</h3>
                     <div className="coffee-regions-row">
@@ -1323,9 +1327,22 @@ export default function App() {
                       </div>
                     )}
                   </div>
-                  </>)}
+                  {selectedCoffeeCountry && COUNTRY_STORIES[selectedCoffeeCountry] && (
+                    <div className="coffee-country-story">
+                      <div className="coffee-country-story-head">
+                        <span className="coffee-country-story-label">On {selectedCoffeeCountry}</span>
+                        <button
+                          type="button"
+                          className="coffee-clear-filter"
+                          onClick={() => setSelectedCoffeeCountry(null)}
+                        >
+                          clear
+                        </button>
+                      </div>
+                      <p className="coffee-country-story-body">{COUNTRY_STORIES[selectedCoffeeCountry]}</p>
+                    </div>
+                  )}
 
-                  {coffeeMode === 'roasting' && (
                   <div className="coffee-roaster-countries-block" ref={coffeeRoasterCountriesRef}>
                     <h3 className="coffee-section-label">
                       <span>
@@ -1392,7 +1409,6 @@ export default function App() {
                       </div>
                     )}
                   </div>
-                  )}
 
                   {/* Roasters — hand-picked specialty coffee names with a Guapa take */}
                   {(() => {
@@ -1401,23 +1417,20 @@ export default function App() {
                     let featured = allFeatured;
                     let filterLabel = null;
                     let filterPrefix = 'sourcing from';
-                    if (coffeeMode === 'roasting') {
+                    if (selectedRoasterCity) {
                       filterPrefix = 'in';
-                      if (selectedRoasterCity) {
-                        featured = allFeatured.filter(r => r.hq === selectedRoasterCity);
-                        filterLabel = selectedRoasterCity;
-                      } else if (selectedRoasterCountry) {
-                        featured = allFeatured.filter(r => r.country === selectedRoasterCountry);
-                        filterLabel = selectedRoasterCountry;
-                      }
-                    } else {
-                      if (selectedCoffeeCountry) {
-                        featured = allFeatured.filter(r => (r.origins || []).includes(selectedCoffeeCountry));
-                        filterLabel = selectedCoffeeCountry;
-                      } else if (selectedCoffeeRegion) {
-                        featured = allFeatured.filter(r => (r.regions || []).includes(selectedCoffeeRegion));
-                        filterLabel = selectedCoffeeRegion;
-                      }
+                      featured = allFeatured.filter(r => r.hq === selectedRoasterCity);
+                      filterLabel = selectedRoasterCity;
+                    } else if (selectedRoasterCountry) {
+                      filterPrefix = 'in';
+                      featured = allFeatured.filter(r => r.country === selectedRoasterCountry);
+                      filterLabel = selectedRoasterCountry;
+                    } else if (selectedCoffeeCountry) {
+                      featured = allFeatured.filter(r => (r.origins || []).includes(selectedCoffeeCountry));
+                      filterLabel = selectedCoffeeCountry;
+                    } else if (selectedCoffeeRegion) {
+                      featured = allFeatured.filter(r => (r.regions || []).includes(selectedCoffeeRegion));
+                      filterLabel = selectedCoffeeRegion;
                     }
                     const fallback = featured[0] || allFeatured[0];
                     const activeInList = featured.find(r => r.slug === selectedRoasterSlug);
@@ -1559,6 +1572,21 @@ export default function App() {
                       </div>
                     );
                   })()}
+
+                  {/* Famous beans — legendary origin varieties */}
+                  <div className="coffee-famous-beans">
+                    <h3 className="coffee-section-label">
+                      <span>Beans worth knowing<span className="coffee-section-sub"> · editorial picks</span></span>
+                    </h3>
+                    <div className="coffee-famous-beans-row">
+                      {FAMOUS_BEANS.map(b => (
+                        <div key={b.name} className="coffee-famous-bean-card">
+                          <span className="coffee-famous-bean-name">{b.name}</span>
+                          <p className="coffee-famous-bean-note">{b.note}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
                   {/* Year-based coffee blurbs */}
                   {blurbData && (

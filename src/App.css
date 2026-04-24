@@ -1012,47 +1012,184 @@ html {
 .coffee-source-pill--wikidata { border-color: rgba(136, 168, 212, 0.35); color: var(--blue, #88a8d4); }
 .coffee-source-pill--osm { border-color: rgba(126, 200, 155, 0.35); color: var(--green, #7ec89b); }
 
-/* Mode toggle (Growing vs Roasting) */
-.coffee-mode-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-.coffee-mode-btn {
+/* Newspaper masthead — dateline + wave + today's journey */
+.coffee-masthead {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
+  gap: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--gray-800);
+  margin-bottom: var(--space-md);
+}
+.coffee-masthead-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.coffee-masthead-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+}
+.coffee-masthead-title em {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--yellow, #f0c014);
+}
+.coffee-masthead-date {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gray-600);
+}
+.coffee-masthead-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: var(--space-md);
+}
+.coffee-wave-card,
+.coffee-journey-card {
+  padding: var(--space-md);
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.coffee-wave-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+.coffee-wave-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--yellow, #f0c014);
+  font-weight: 600;
+}
+.coffee-wave-tagline {
+  font-size: 0.95rem;
+  color: var(--white);
+}
+.coffee-wave-tagline em {
+  font-family: 'Newsreader', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+.coffee-wave-body {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--gray-400);
+  margin: 0;
+}
+.coffee-wave-pips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.coffee-wave-pip {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-600);
+  padding: 3px 8px;
+  border: 1px solid var(--gray-800);
+  border-radius: 999px;
+}
+.coffee-wave-pip.is-active {
+  color: var(--yellow, #f0c014);
+  border-color: var(--yellow, #f0c014);
+}
+.coffee-journey-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--pink, #e8a0b0);
+  font-weight: 600;
+}
+.coffee-journey-body {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--gray-400);
+  margin: 0;
+}
+@media (max-width: 900px) {
+  .coffee-masthead-grid { grid-template-columns: 1fr; }
+}
+
+/* Country story — shown when a producer country is selected */
+.coffee-country-story {
+  padding: var(--space-md);
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-left: 3px solid var(--yellow, #f0c014);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+.coffee-country-story-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+.coffee-country-story-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--yellow, #f0c014);
+  font-weight: 600;
+}
+.coffee-country-story-body {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--gray-400);
+  margin: 0;
+}
+
+/* Famous beans — horizontal card row */
+.coffee-famous-beans {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+.coffee-famous-beans-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-sm);
+}
+.coffee-famous-bean-card {
   padding: var(--space-sm) var(--space-md);
   background: var(--gray-900);
   border: 1px solid var(--gray-800);
   border-radius: var(--radius-md);
-  color: var(--gray-400);
-  font-family: inherit;
-  font-size: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.coffee-famous-bean-name {
+  font-size: 0.92rem;
   font-weight: 600;
-  text-align: left;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-.coffee-mode-btn-sub {
-  font-size: 0.68rem;
-  font-weight: 400;
-  color: var(--gray-600);
-  text-transform: none;
-  letter-spacing: 0;
-}
-@media (hover: hover) {
-  .coffee-mode-btn:hover { border-color: var(--gray-400); color: var(--white); }
-}
-.coffee-mode-btn:active { border-color: var(--gray-400); color: var(--white); }
-.coffee-mode-btn.is-active {
-  border-color: var(--yellow, #f0c014);
   color: var(--white);
-  background: rgba(240, 192, 20, 0.06);
 }
-.coffee-mode-btn.is-active .coffee-mode-btn-sub { color: var(--yellow, #f0c014); }
+.coffee-famous-bean-note {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--gray-400);
+  margin: 0;
+}
 
 /* Roaster country grid (Roasting mode) */
 .coffee-roaster-countries-block {
