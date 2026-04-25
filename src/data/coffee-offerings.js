@@ -7870,6 +7870,16 @@ export const ROASTER_OFFERINGS = [
   {
     roasterSlug: 'sweet-bloom',
     roasterName: 'Sweet Bloom Coffee',
+    title: 'Rigoberto Herrera',
+    handle: 'rigoberto-herrera-cerro-26',
+    url: 'https://sweetbloomcoffee.com/products/rigoberto-herrera-cerro-26',
+    country: 'Colombia',
+    process: null,
+    summary: 'The coffee and producer that changed the way the world thinks about coffee from Colombia.',
+  },
+  {
+    roasterSlug: 'sweet-bloom',
+    roasterName: 'Sweet Bloom Coffee',
     title: 'Ibonia',
     handle: 'ibonia',
     url: 'https://sweetbloomcoffee.com/products/ibonia',
