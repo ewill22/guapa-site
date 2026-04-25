@@ -348,6 +348,7 @@ Every number on the coffee lens must carry an attribution to a named source (USD
 - ✅ **Phase 2 (UI redesign)** shipped 2026-04-19. Four region tiles + full-width country grid with grow calendars.
 - ✅ **Phase 3 (newspaper editorial)** shipped 2026-04-23. Today's Journey card, Beans Worth Knowing, timeline wave tint, country stories, editorial cross-linking.
 - ✅ **Phase 4 (real offerings + automation)** shipped 2026-04-24. Shopify offerings pipeline (25 roasters, ~1,090 offerings), Processing primer with live counts, scheduled daily refresh via Task Scheduler.
+- ✅ **Phase 5 (country drill-down — Colombia)** shipped 2026-04-24. When `selectedCoffeeCountry === 'Colombia'`, a region map renders between the country tile and the country story. Six FNC coffee-axis departments (Cauca, Huila, Nariño, Antioquia, Caldas, Tolima) are highlighted/clickable; each shows capital, altitude band, harvest window, character note, and FNC reference link. Files: `src/components/ColombiaRegionMap.{jsx,css}`, `src/data/coffee-regions-colombia.js`, `public/assets/colombia-departments.svg` (CC BY 4.0, Victor Cazanave). Backend handoff for region inference + FNC per-department production: `docs/colombia-regions-handoff.md`. Pattern is the template for future country drill-downs (Brazil by state, Ethiopia by zone, Vietnam by province).
 
 #### Known TODOs (see `scripts/coffee-harvest/README.md` for full list)
 - Full Conab Brazil historical series (email `conab.geasa@conab.gov.br` or parse Pentaho CDA)

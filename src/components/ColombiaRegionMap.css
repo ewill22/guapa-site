@@ -1,0 +1,211 @@
+.colombia-region-map {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: var(--gray-900);
+  border: 1px solid var(--gray-800);
+  border-radius: 8px;
+}
+
+.colombia-map-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.colombia-map-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+
+.colombia-map-sub {
+  font-size: 0.72rem;
+  color: var(--gray-600);
+}
+
+.colombia-map-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .colombia-map-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.colombia-map-svg {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.colombia-map-svg svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.colombia-map-svg .co-dept {
+  fill: #1f1f1f;
+  stroke: #333;
+  stroke-width: 0.6;
+  transition: fill 0.15s ease;
+}
+
+.colombia-map-svg .co-dept--coffee {
+  fill: #3d2a26;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .colombia-map-svg .co-dept--coffee:hover {
+    fill: var(--pink);
+  }
+}
+
+.colombia-map-svg .co-dept--coffee:active {
+  fill: var(--pink);
+}
+
+.colombia-map-svg .co-dept--selected {
+  fill: var(--yellow) !important;
+  stroke: var(--white);
+  stroke-width: 1;
+}
+
+.colombia-map-panel {
+  background: #161616;
+  border: 1px solid var(--gray-800);
+  border-radius: 6px;
+  padding: 1rem 1.1rem;
+  min-height: 220px;
+}
+
+.colombia-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.colombia-panel-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.colombia-panel-clear {
+  background: transparent;
+  border: 1px solid var(--gray-800);
+  color: var(--gray-400);
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.colombia-panel-clear:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
+.colombia-panel-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0 0 0.85rem 0;
+  padding: 0;
+}
+
+.colombia-panel-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.colombia-panel-meta dt {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-600);
+}
+
+.colombia-panel-meta dd {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--white);
+}
+
+.colombia-panel-body {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--gray-400);
+  margin: 0 0 0.85rem 0;
+}
+
+.colombia-panel-body--muted {
+  color: var(--gray-600);
+}
+
+.colombia-panel-ref {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: var(--pink);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.colombia-panel-ref:hover {
+  border-bottom-color: var(--pink);
+}
+
+.colombia-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.colombia-panel-list-item {
+  background: transparent;
+  border: 1px solid var(--gray-800);
+  color: var(--gray-400);
+  font-size: 0.72rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.colombia-panel-list-item:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
+.colombia-map-attr {
+  margin-top: 0.85rem;
+  font-size: 0.65rem;
+  color: var(--gray-600);
+}
+
+.colombia-map-attr a {
+  color: var(--gray-400);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--gray-800);
+}
+
+.colombia-map-attr a:hover {
+  color: var(--pink);
+  border-bottom-color: var(--pink);
+}

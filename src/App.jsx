@@ -3,6 +3,7 @@ import Nav from './components/Nav';
 import Banner from './components/Banner';
 import Footer from './components/Footer';
 import GenreExplorer from './components/GenreExplorer';
+import ColombiaRegionMap from './components/ColombiaRegionMap';
 import {
   TIMELINE, LENS_COLORS, LENS_ICONS, LENS_LABELS,
   hashStr,
@@ -1433,6 +1434,9 @@ export default function App() {
                       </div>
                     )}
                   </div>
+                  {selectedCoffeeCountry === 'Colombia' && (
+                    <ColombiaRegionMap />
+                  )}
                   {selectedCoffeeCountry && COUNTRY_STORIES[selectedCoffeeCountry] && (
                     <div className="coffee-country-story" ref={coffeeCountryStoryRef}>
                       <div className="coffee-country-story-head">
