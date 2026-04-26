@@ -1242,9 +1242,64 @@ export default function App() {
                       })()}
                       {'. '}
                     </p>
-                    {todaysOffering.summary && (
-                      <p className="coffee-journey-summary">{todaysOffering.summary}</p>
-                    )}
+                    {(() => {
+                      const o = todaysOffering;
+                      const hasFacts =
+                        (o.variety && o.variety.length) ||
+                        o.altitude_masl ||
+                        o.producer ||
+                        o.harvest_year ||
+                        o.cupping_score ||
+                        (o.certifications && o.certifications.length) ||
+                        o.roast_level ||
+                        o.decaf ||
+                        o.bag_size_grams;
+                      const hasNotes = o.tasting_notes && o.tasting_notes.length;
+                      if (!hasFacts && !hasNotes && o.summary) {
+                        return <p className="coffee-journey-summary">{o.summary}</p>;
+                      }
+                      return (
+                        <div className="coffee-journey-facts">
+                          {hasFacts && (
+                            <ul className="coffee-fact-row">
+                              {o.variety && o.variety.length > 0 && o.variety.map(v => (
+                                <li key={`v-${v}`} className="coffee-fact coffee-fact--variety">{v}</li>
+                              ))}
+                              {o.altitude_masl && (
+                                <li className="coffee-fact coffee-fact--altitude">{o.altitude_masl} masl</li>
+                              )}
+                              {o.harvest_year && (
+                                <li className="coffee-fact">harvest {o.harvest_year}</li>
+                              )}
+                              {o.cupping_score && (
+                                <li className="coffee-fact coffee-fact--score">{o.cupping_score} cup</li>
+                              )}
+                              {o.producer && (
+                                <li className="coffee-fact coffee-fact--producer">{o.producer}</li>
+                              )}
+                              {o.roast_level && (
+                                <li className="coffee-fact coffee-fact--roast">{o.roast_level} roast</li>
+                              )}
+                              {o.decaf && (
+                                <li className="coffee-fact coffee-fact--decaf">decaf</li>
+                              )}
+                              {o.certifications && o.certifications.map(c => (
+                                <li key={`c-${c}`} className="coffee-fact coffee-fact--cert">{c}</li>
+                              ))}
+                              {o.bag_size_grams && (
+                                <li className="coffee-fact coffee-fact--bag">{o.bag_size_grams}g bag</li>
+                              )}
+                            </ul>
+                          )}
+                          {hasNotes && (
+                            <p className="coffee-journey-notes">
+                              <span className="coffee-journey-notes-label">Notes</span>
+                              {o.tasting_notes.map(n => n.toLowerCase()).join(' · ')}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                   )}
                   <div className="coffee-regions-block">

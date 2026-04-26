@@ -1083,6 +1083,71 @@ html {
   padding-top: var(--space-sm);
   border-top: 1px solid var(--gray-800);
 }
+.coffee-journey-facts {
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--gray-800);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.coffee-fact-row {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.coffee-fact {
+  font-size: 0.7rem;
+  line-height: 1.2;
+  color: var(--gray-400);
+  background: #141414;
+  border: 1px solid var(--gray-800);
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  letter-spacing: 0.01em;
+}
+.coffee-fact--variety {
+  color: var(--white);
+  border-color: #3a3a3a;
+}
+.coffee-fact--altitude {
+  color: var(--blue);
+  border-color: rgba(136, 168, 212, 0.4);
+}
+.coffee-fact--score {
+  color: var(--yellow);
+  border-color: rgba(240, 192, 20, 0.4);
+}
+.coffee-fact--cert {
+  color: var(--green);
+  border-color: rgba(126, 200, 155, 0.4);
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+}
+.coffee-fact--decaf {
+  color: var(--pink);
+  border-color: rgba(232, 160, 176, 0.4);
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+}
+.coffee-journey-notes {
+  font-size: 0.76rem;
+  line-height: 1.55;
+  color: var(--gray-400);
+  margin: 0;
+}
+.coffee-journey-notes-label {
+  display: inline-block;
+  margin-right: 0.4rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-600);
+}
 @media (hover: hover) {
   .coffee-journey-link:hover { color: var(--white); }
 }
