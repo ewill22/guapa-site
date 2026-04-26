@@ -156,6 +156,79 @@
   color: var(--gray-600);
 }
 
+.colombia-panel-area {
+  border: 1px solid var(--gray-800);
+  border-radius: 6px;
+  padding: 0.7rem 0.8rem;
+  margin: 0 0 0.85rem 0;
+  background: #121212;
+  color: var(--blue);
+}
+
+.colombia-panel-area-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.colombia-panel-area-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gray-600);
+}
+
+.colombia-panel-area-value {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--white);
+}
+
+.colombia-panel-area-year {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--gray-600);
+}
+
+.colombia-spark {
+  width: 100%;
+  height: 36px;
+  display: block;
+  color: var(--blue);
+}
+
+.colombia-panel-area-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--gray-600);
+}
+
+.colombia-trend-up { color: var(--green); }
+.colombia-trend-down { color: #c08070; }
+
+.colombia-source-pill {
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  text-decoration: none;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--gray-800);
+  border-radius: 999px;
+}
+
+.colombia-source-pill:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
 .colombia-panel-ref {
   display: inline-block;
   font-size: 0.75rem;

@@ -4,7 +4,32 @@ import {
   COLOMBIA_COFFEE_DEPARTMENT_LABELS,
   COLOMBIA_MAP_ATTRIBUTION,
 } from '../data/coffee-regions-colombia';
+import {
+  FNC_AREA_BY_DEPARTMENT,
+  FNC_FETCHED_ON,
+  FNC_DATA_FILE_URL,
+} from '../data/coffee-production-colombia';
 import './ColombiaRegionMap.css';
+
+function AreaSparkline({ series }) {
+  if (!series || series.length < 2) return null;
+  const w = 180;
+  const h = 36;
+  const max = Math.max(...series.map(([, v]) => v));
+  const min = Math.min(...series.map(([, v]) => v));
+  const range = max - min || 1;
+  const step = w / (series.length - 1);
+  const pts = series.map(([, v], i) => {
+    const x = i * step;
+    const y = h - ((v - min) / range) * h;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return (
+    <svg className="colombia-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+      <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
+  );
+}
 
 const SVG_PATH = `${import.meta.env.BASE_URL}assets/colombia-departments.svg`;
 
@@ -50,6 +75,15 @@ export default function ColombiaRegionMap() {
   }, [svgMarkup, selected]);
 
   const dept = selected ? COLOMBIA_COFFEE_DEPARTMENTS[selected] : null;
+  const areaByYear = selected ? FNC_AREA_BY_DEPARTMENT[selected] : null;
+  const areaSeries = areaByYear
+    ? Object.entries(areaByYear).map(([y, v]) => [Number(y), v]).sort((a, b) => a[0] - b[0])
+    : null;
+  const latest = areaSeries && areaSeries.length ? areaSeries[areaSeries.length - 1] : null;
+  const earliest = areaSeries && areaSeries.length ? areaSeries[0] : null;
+  const pctChange = latest && earliest && earliest[1]
+    ? Math.round(((latest[1] - earliest[1]) / earliest[1]) * 100)
+    : null;
 
   return (
     <div className="colombia-region-map">
@@ -84,6 +118,36 @@ export default function ColombiaRegionMap() {
                 <div><dt>Harvest</dt><dd>{dept.harvest}</dd></div>
               </dl>
               <p className="colombia-panel-body">{dept.character}</p>
+              {latest && (
+                <div className="colombia-panel-area">
+                  <div className="colombia-panel-area-head">
+                    <span className="colombia-panel-area-label">Cultivated area</span>
+                    <span className="colombia-panel-area-value">
+                      {latest[1].toFixed(1)}k ha
+                      <span className="colombia-panel-area-year"> · {latest[0]}</span>
+                    </span>
+                  </div>
+                  <AreaSparkline series={areaSeries} />
+                  <div className="colombia-panel-area-foot">
+                    <span>
+                      {earliest[0]} → {latest[0]}
+                      {pctChange !== null && (
+                        <span className={pctChange >= 0 ? 'colombia-trend-up' : 'colombia-trend-down'}>
+                          {' '}{pctChange >= 0 ? '+' : ''}{pctChange}%
+                        </span>
+                      )}
+                    </span>
+                    <a
+                      className="colombia-source-pill"
+                      href={FNC_DATA_FILE_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      FNC · {FNC_FETCHED_ON}
+                    </a>
+                  </div>
+                </div>
+              )}
               <a
                 className="colombia-panel-ref"
                 href={dept.fncRef}
