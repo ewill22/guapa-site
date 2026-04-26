@@ -3,7 +3,7 @@
 // Each offering links back to the roaster's own product page.
 // Do not hand-edit - regenerate to refresh.
 
-export const OFFERINGS_FETCHED_ON = '2026-04-25';
+export const OFFERINGS_FETCHED_ON = '2026-04-26';
 
 // { roasterSlug, roasterName, title, handle, url, country, region, process, summary }
 // region is currently only inferred for Colombia (department); null otherwise.
