@@ -13,7 +13,7 @@
 //   summary: string  // factual aggregation built from extracted fields
 // }
 
-export const OFFERINGS_FETCHED_ON = '2026-04-26';
+export const OFFERINGS_FETCHED_ON = '2026-04-27';
 
 export const ROASTER_OFFERINGS = [
   {
