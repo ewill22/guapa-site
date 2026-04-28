@@ -1186,39 +1186,6 @@ html {
   font-weight: 600;
 }
 
-/* Country story — shown when a producer country is selected */
-.coffee-country-story {
-  padding: var(--space-md);
-  background: var(--gray-900);
-  border: 1px solid var(--gray-800);
-  border-left: 3px solid var(--yellow, #f0c014);
-  border-radius: var(--radius-md);
-  margin-top: var(--space-md);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  scroll-margin-top: 80px;
-}
-.coffee-country-story-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-}
-.coffee-country-story-label {
-  font-size: 0.68rem;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--yellow, #f0c014);
-  font-weight: 600;
-}
-.coffee-country-story-body {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--gray-400);
-  margin: 0;
-}
-
 /* Famous beans — horizontal card row */
 .coffee-famous-beans {
   display: flex;

@@ -9,7 +9,10 @@ import {
   FNC_FETCHED_ON,
   FNC_SOURCE_URL,
 } from '../data/coffee-production-colombia';
-import './ColombiaRegionMap.css';
+import './CountryDetailPanel.css';
+
+const COLOMBIA_SVG_PATH = `${import.meta.env.BASE_URL}assets/colombia-departments.svg`;
+const LOGO_PATH = `${import.meta.env.BASE_URL}assets/guapa_logo_dark.png`;
 
 function AreaSparkline({ series }) {
   if (!series || series.length < 2) return null;
@@ -25,22 +28,19 @@ function AreaSparkline({ series }) {
     return `${x.toFixed(1)},${y.toFixed(1)}`;
   }).join(' ');
   return (
-    <svg className="colombia-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+    <svg className="cdp-spark" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
       <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.4" />
     </svg>
   );
 }
 
-const SVG_PATH = `${import.meta.env.BASE_URL}assets/colombia-departments.svg`;
-
-export default function ColombiaRegionMap() {
+function ColombiaMap({ selected, onSelect }) {
   const [svgMarkup, setSvgMarkup] = useState('');
-  const [selected, setSelected] = useState(null);
   const containerRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
-    fetch(SVG_PATH)
+    fetch(COLOMBIA_SVG_PATH)
       .then(r => r.text())
       .then(text => { if (alive) setSvgMarkup(text); })
       .catch(() => {});
@@ -68,14 +68,40 @@ export default function ColombiaRegionMap() {
       if (!t) return;
       const label = t.getAttribute('aria-label');
       if (!COLOMBIA_COFFEE_DEPARTMENT_LABELS.includes(label)) return;
-      setSelected(prev => (prev === label ? null : label));
+      onSelect(prev => (prev === label ? null : label));
     };
     svg.addEventListener('click', onClick);
     return () => { svg.removeEventListener('click', onClick); };
-  }, [svgMarkup, selected]);
+  }, [svgMarkup, selected, onSelect]);
 
-  const dept = selected ? COLOMBIA_COFFEE_DEPARTMENTS[selected] : null;
-  const areaByYear = selected ? FNC_AREA_BY_DEPARTMENT[selected] : null;
+  return (
+    <div
+      className="cdp-map-svg"
+      ref={containerRef}
+      dangerouslySetInnerHTML={{ __html: svgMarkup }}
+    />
+  );
+}
+
+function MapPlaceholder({ country }) {
+  return (
+    <div className="cdp-map-placeholder">
+      <img src={LOGO_PATH} alt="" className="cdp-map-placeholder-logo" />
+      <span className="cdp-map-placeholder-text">
+        {country} drill-down map coming
+      </span>
+    </div>
+  );
+}
+
+export default function CountryDetailPanel({ country, story, onClose }) {
+  const [selected, setSelected] = useState(null);
+  const isColombia = country === 'Colombia';
+
+  useEffect(() => { setSelected(null); }, [country]);
+
+  const dept = isColombia && selected ? COLOMBIA_COFFEE_DEPARTMENTS[selected] : null;
+  const areaByYear = isColombia && selected ? FNC_AREA_BY_DEPARTMENT[selected] : null;
   const areaSeries = areaByYear
     ? Object.entries(areaByYear).map(([y, v]) => [Number(y), v]).sort((a, b) => a[0] - b[0])
     : null;
@@ -86,59 +112,67 @@ export default function ColombiaRegionMap() {
     : null;
 
   return (
-    <div className="colombia-region-map">
-      <div className="colombia-map-head">
-        <span className="colombia-map-label">Colombia · coffee axis</span>
-        <span className="colombia-map-sub">
-          6 departments highlighted · click to drill in · Editorial
-        </span>
+    <div className="country-detail-panel">
+      <div className="cdp-head">
+        <span className="cdp-label">On {country}</span>
+        {isColombia && (
+          <span className="cdp-sub">
+            6 departments highlighted · click to drill in · Editorial
+          </span>
+        )}
+        {onClose && (
+          <button type="button" className="cdp-clear" onClick={onClose}>
+            clear
+          </button>
+        )}
       </div>
-      <div className="colombia-map-grid">
-        <div
-          className="colombia-map-svg"
-          ref={containerRef}
-          dangerouslySetInnerHTML={{ __html: svgMarkup }}
-        />
-        <div className="colombia-map-panel">
-          {dept ? (
-            <>
-              <div className="colombia-panel-head">
-                <span className="colombia-panel-name">{dept.name}</span>
+      <div className="cdp-grid">
+        <div className="cdp-map-area">
+          {isColombia
+            ? <ColombiaMap selected={selected} onSelect={setSelected} />
+            : <MapPlaceholder country={country} />
+          }
+        </div>
+        <div className="cdp-side">
+          {isColombia && dept && (
+            <div className="cdp-dept">
+              <div className="cdp-dept-head">
+                <span className="cdp-dept-name">{dept.name}</span>
                 <button
                   type="button"
-                  className="colombia-panel-clear"
+                  className="cdp-dept-clear"
                   onClick={() => setSelected(null)}
                 >
                   clear
                 </button>
               </div>
-              <dl className="colombia-panel-meta">
+              <dl className="cdp-dept-meta">
                 <div><dt>Capital</dt><dd>{dept.capital}</dd></div>
                 <div><dt>Altitude</dt><dd>{dept.altitude}</dd></div>
                 <div><dt>Harvest</dt><dd>{dept.harvest}</dd></div>
               </dl>
-              <p className="colombia-panel-body">{dept.character}</p>
+              <p className="cdp-dept-body">{dept.character}</p>
               {latest && (
-                <div className="colombia-panel-area">
-                  <div className="colombia-panel-area-head">
-                    <span className="colombia-panel-area-label">Cultivated area</span>
-                    <span className="colombia-panel-area-value">
+                <div className="cdp-area">
+                  <div className="cdp-area-head">
+                    <span className="cdp-area-label">Cultivated area</span>
+                    <span className="cdp-area-value">
                       {latest[1].toFixed(1)}k ha
-                      <span className="colombia-panel-area-year"> · {latest[0]}</span>
+                      <span className="cdp-area-year"> · {latest[0]}</span>
                     </span>
                   </div>
                   <AreaSparkline series={areaSeries} />
-                  <div className="colombia-panel-area-foot">
+                  <div className="cdp-area-foot">
                     <span>
                       {earliest[0]} → {latest[0]}
                       {pctChange !== null && (
-                        <span className={pctChange >= 0 ? 'colombia-trend-up' : 'colombia-trend-down'}>
+                        <span className={pctChange >= 0 ? 'cdp-trend-up' : 'cdp-trend-down'}>
                           {' '}{pctChange >= 0 ? '+' : ''}{pctChange}%
                         </span>
                       )}
                     </span>
                     <a
-                      className="colombia-source-pill"
+                      className="cdp-source-pill"
                       href={FNC_SOURCE_URL}
                       target="_blank"
                       rel="noreferrer"
@@ -149,31 +183,28 @@ export default function ColombiaRegionMap() {
                 </div>
               )}
               <a
-                className="colombia-panel-ref"
+                className="cdp-dept-ref"
                 href={dept.fncRef}
                 target="_blank"
                 rel="noreferrer"
               >
                 FNC regional brief →
               </a>
-            </>
-          ) : (
-            <>
-              <div className="colombia-panel-head">
-                <span className="colombia-panel-name">Pick a department</span>
-              </div>
-              <p className="colombia-panel-body colombia-panel-body--muted">
-                The six highlighted departments carry the FNC coffee axis: Cauca,
-                Huila, Nariño, Antioquia, Caldas, Tolima. Each has its own
-                altitude band, harvest window, and cup profile. Click one to
-                read the editorial note.
+            </div>
+          )}
+          {isColombia && !dept && (
+            <div className="cdp-pills-block">
+              <p className="cdp-pills-intro">
+                The six highlighted departments carry the FNC coffee axis. Each
+                has its own altitude band, harvest window, and cup profile.
+                Click one to read the editorial note.
               </p>
-              <ul className="colombia-panel-list">
+              <ul className="cdp-pills">
                 {COLOMBIA_COFFEE_DEPARTMENT_LABELS.map(name => (
                   <li key={name}>
                     <button
                       type="button"
-                      className="colombia-panel-list-item"
+                      className="cdp-pill"
                       onClick={() => setSelected(name)}
                     >
                       {name}
@@ -181,24 +212,29 @@ export default function ColombiaRegionMap() {
                   </li>
                 ))}
               </ul>
-            </>
+            </div>
+          )}
+          {story && (
+            <p className="cdp-story">{story}</p>
           )}
         </div>
       </div>
-      <div className="colombia-map-attr">
-        Map:{' '}
-        <a href={COLOMBIA_MAP_ATTRIBUTION.url} target="_blank" rel="noreferrer">
-          {COLOMBIA_MAP_ATTRIBUTION.source}
-        </a>{' '}
-        by {COLOMBIA_MAP_ATTRIBUTION.author} ·{' '}
-        <a
-          href={COLOMBIA_MAP_ATTRIBUTION.licenseUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
-          {COLOMBIA_MAP_ATTRIBUTION.license}
-        </a>
-      </div>
+      {isColombia && (
+        <div className="cdp-attr">
+          Map:{' '}
+          <a href={COLOMBIA_MAP_ATTRIBUTION.url} target="_blank" rel="noreferrer">
+            {COLOMBIA_MAP_ATTRIBUTION.source}
+          </a>{' '}
+          by {COLOMBIA_MAP_ATTRIBUTION.author} ·{' '}
+          <a
+            href={COLOMBIA_MAP_ATTRIBUTION.licenseUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {COLOMBIA_MAP_ATTRIBUTION.license}
+          </a>
+        </div>
+      )}
     </div>
   );
 }

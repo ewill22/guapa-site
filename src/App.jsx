@@ -3,7 +3,7 @@ import Nav from './components/Nav';
 import Banner from './components/Banner';
 import Footer from './components/Footer';
 import GenreExplorer from './components/GenreExplorer';
-import ColombiaRegionMap from './components/ColombiaRegionMap';
+import CountryDetailPanel from './components/CountryDetailPanel';
 import {
   TIMELINE, LENS_COLORS, LENS_ICONS, LENS_LABELS,
   hashStr,
@@ -1212,10 +1212,7 @@ export default function App() {
                               setSelectedCoffeeCountry(todaysOffering.country);
                               setTimeout(() => {
                                 const tile = document.querySelector(`[data-coffee-country="${CSS.escape(todaysOffering.country)}"]`);
-                                const target = todaysOffering.country === 'Colombia'
-                                  ? document.querySelector('.colombia-region-map')
-                                  : coffeeCountryStoryRef.current;
-                                safeScrollTo(target || tile);
+                                safeScrollTo(coffeeCountryStoryRef.current || tile);
                               }, 0);
                             }}
                             title={`Jump to ${todaysOffering.country} in the country grid`}
@@ -1398,10 +1395,7 @@ export default function App() {
                                 if (next) {
                                   setTimeout(() => {
                                     const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
-                                    const target = next === 'Colombia'
-                                      ? document.querySelector('.colombia-region-map')
-                                      : coffeeCountryStoryRef.current;
-                                    safeScrollTo(target || tile);
+                                    safeScrollTo(coffeeCountryStoryRef.current || tile);
                                   }, 0);
                                 }
                               }}
@@ -1415,10 +1409,7 @@ export default function App() {
                                   if (next) {
                                     setTimeout(() => {
                                       const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
-                                      const target = next === 'Colombia'
-                                        ? document.querySelector('.colombia-region-map')
-                                        : coffeeCountryStoryRef.current;
-                                      safeScrollTo(target || tile);
+                                      safeScrollTo(coffeeCountryStoryRef.current || tile);
                                     }, 0);
                                   }
                                 }
@@ -1498,22 +1489,13 @@ export default function App() {
                       </div>
                     )}
                   </div>
-                  {selectedCoffeeCountry === 'Colombia' && (
-                    <ColombiaRegionMap />
-                  )}
-                  {selectedCoffeeCountry && COUNTRY_STORIES[selectedCoffeeCountry] && (
-                    <div className="coffee-country-story" ref={coffeeCountryStoryRef}>
-                      <div className="coffee-country-story-head">
-                        <span className="coffee-country-story-label">On {selectedCoffeeCountry}</span>
-                        <button
-                          type="button"
-                          className="coffee-clear-filter"
-                          onClick={() => setSelectedCoffeeCountry(null)}
-                        >
-                          clear
-                        </button>
-                      </div>
-                      <p className="coffee-country-story-body">{COUNTRY_STORIES[selectedCoffeeCountry]}</p>
+                  {selectedCoffeeCountry && (
+                    <div ref={coffeeCountryStoryRef} style={{ scrollMarginTop: '80px' }}>
+                      <CountryDetailPanel
+                        country={selectedCoffeeCountry}
+                        story={COUNTRY_STORIES[selectedCoffeeCountry]}
+                        onClose={() => setSelectedCoffeeCountry(null)}
+                      />
                     </div>
                   )}
 

@@ -1,4 +1,4 @@
-.colombia-region-map {
+.country-detail-panel {
   margin-top: 1.5rem;
   padding: 1.25rem;
   background: var(--gray-900);
@@ -7,7 +7,7 @@
   scroll-margin-top: 80px;
 }
 
-.colombia-map-head {
+.cdp-head {
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
@@ -15,19 +15,36 @@
   margin-bottom: 1rem;
 }
 
-.colombia-map-label {
+.cdp-label {
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--white);
   letter-spacing: 0.02em;
 }
 
-.colombia-map-sub {
+.cdp-sub {
   font-size: 0.72rem;
   color: var(--gray-600);
 }
 
-.colombia-map-grid {
+.cdp-clear {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--gray-800);
+  color: var(--gray-400);
+  font-size: 0.7rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.cdp-clear:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+}
+
+.cdp-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   gap: 1.25rem;
@@ -35,60 +52,97 @@
 }
 
 @media (max-width: 768px) {
-  .colombia-map-grid {
+  .cdp-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.colombia-map-svg {
+.cdp-map-area {
+  width: 100%;
+}
+
+.cdp-map-svg {
   width: 100%;
   max-width: 380px;
   margin: 0 auto;
 }
 
-.colombia-map-svg svg {
+.cdp-map-svg svg {
   width: 100%;
   height: auto;
   display: block;
 }
 
-.colombia-map-svg .co-dept {
+.cdp-map-svg .co-dept {
   fill: #1f1f1f;
   stroke: #333;
   stroke-width: 0.6;
   transition: fill 0.15s ease;
 }
 
-.colombia-map-svg .co-dept--coffee {
+.cdp-map-svg .co-dept--coffee {
   fill: #3d2a26;
   cursor: pointer;
 }
 
 @media (hover: hover) {
-  .colombia-map-svg .co-dept--coffee:hover {
-    fill: var(--pink);
-  }
+  .cdp-map-svg .co-dept--coffee:hover { fill: var(--pink); }
 }
 
-.colombia-map-svg .co-dept--coffee:active {
-  fill: var(--pink);
-}
+.cdp-map-svg .co-dept--coffee:active { fill: var(--pink); }
 
-.colombia-map-svg .co-dept--selected {
+.cdp-map-svg .co-dept--selected {
   fill: var(--yellow) !important;
   stroke: var(--white);
   stroke-width: 1;
 }
 
-.colombia-map-panel {
+.cdp-map-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  aspect-ratio: 613 / 694;
+  border: 1px dashed var(--gray-800);
+  border-radius: 8px;
+  background: #121212;
+  padding: 1rem;
+}
+
+.cdp-map-placeholder-logo {
+  width: 64px;
+  height: auto;
+  opacity: 0.35;
+}
+
+.cdp-map-placeholder-text {
+  font-size: 0.7rem;
+  color: var(--gray-600);
+  text-align: center;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.cdp-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 220px;
+}
+
+.cdp-dept,
+.cdp-pills-block {
   background: #161616;
   border: 1px solid var(--gray-800);
   border-radius: 6px;
   padding: 1rem 1.1rem;
-  min-height: 220px;
 }
 
-.colombia-panel-head {
+.cdp-dept-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -96,13 +150,13 @@
   margin-bottom: 0.75rem;
 }
 
-.colombia-panel-name {
+.cdp-dept-name {
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--white);
 }
 
-.colombia-panel-clear {
+.cdp-dept-clear {
   background: transparent;
   border: 1px solid var(--gray-800);
   color: var(--gray-400);
@@ -113,12 +167,12 @@
   font-family: inherit;
 }
 
-.colombia-panel-clear:hover {
+.cdp-dept-clear:hover {
   border-color: var(--pink);
   color: var(--pink);
 }
 
-.colombia-panel-meta {
+.cdp-dept-meta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.6rem;
@@ -126,13 +180,13 @@
   padding: 0;
 }
 
-.colombia-panel-meta > div {
+.cdp-dept-meta > div {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
 }
 
-.colombia-panel-meta dt {
+.cdp-dept-meta dt {
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -140,24 +194,20 @@
   color: var(--gray-600);
 }
 
-.colombia-panel-meta dd {
+.cdp-dept-meta dd {
   margin: 0;
   font-size: 0.78rem;
   color: var(--white);
 }
 
-.colombia-panel-body {
+.cdp-dept-body {
   font-size: 0.85rem;
   line-height: 1.55;
   color: var(--gray-400);
   margin: 0 0 0.85rem 0;
 }
 
-.colombia-panel-body--muted {
-  color: var(--gray-600);
-}
-
-.colombia-panel-area {
+.cdp-area {
   border: 1px solid var(--gray-800);
   border-radius: 6px;
   padding: 0.7rem 0.8rem;
@@ -166,7 +216,7 @@
   color: var(--blue);
 }
 
-.colombia-panel-area-head {
+.cdp-area-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -174,7 +224,7 @@
   margin-bottom: 0.4rem;
 }
 
-.colombia-panel-area-label {
+.cdp-area-label {
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -182,26 +232,26 @@
   color: var(--gray-600);
 }
 
-.colombia-panel-area-value {
+.cdp-area-value {
   font-size: 0.92rem;
   font-weight: 600;
   color: var(--white);
 }
 
-.colombia-panel-area-year {
+.cdp-area-year {
   font-size: 0.7rem;
   font-weight: 400;
   color: var(--gray-600);
 }
 
-.colombia-spark {
+.cdp-spark {
   width: 100%;
   height: 36px;
   display: block;
   color: var(--blue);
 }
 
-.colombia-panel-area-foot {
+.cdp-area-foot {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -211,10 +261,10 @@
   color: var(--gray-600);
 }
 
-.colombia-trend-up { color: var(--green); }
-.colombia-trend-down { color: #c08070; }
+.cdp-trend-up { color: var(--green); }
+.cdp-trend-down { color: #c08070; }
 
-.colombia-source-pill {
+.cdp-source-pill {
   font-size: 0.62rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -225,12 +275,12 @@
   border-radius: 999px;
 }
 
-.colombia-source-pill:hover {
+.cdp-source-pill:hover {
   border-color: var(--pink);
   color: var(--pink);
 }
 
-.colombia-panel-ref {
+.cdp-dept-ref {
   display: inline-block;
   font-size: 0.75rem;
   color: var(--pink);
@@ -238,11 +288,18 @@
   border-bottom: 1px solid transparent;
 }
 
-.colombia-panel-ref:hover {
+.cdp-dept-ref:hover {
   border-bottom-color: var(--pink);
 }
 
-.colombia-panel-list {
+.cdp-pills-intro {
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--gray-600);
+  margin: 0 0 0.85rem 0;
+}
+
+.cdp-pills {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -251,7 +308,7 @@
   gap: 0.4rem;
 }
 
-.colombia-panel-list-item {
+.cdp-pill {
   background: transparent;
   border: 1px solid var(--gray-800);
   color: var(--gray-400);
@@ -262,24 +319,35 @@
   font-family: inherit;
 }
 
-.colombia-panel-list-item:hover {
+.cdp-pill:hover {
   border-color: var(--pink);
   color: var(--pink);
 }
 
-.colombia-map-attr {
+.cdp-story {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--gray-400);
+  margin: 0;
+  padding: 0.9rem 1rem;
+  background: #121212;
+  border: 1px solid var(--gray-800);
+  border-radius: 6px;
+}
+
+.cdp-attr {
   margin-top: 0.85rem;
   font-size: 0.65rem;
   color: var(--gray-600);
 }
 
-.colombia-map-attr a {
+.cdp-attr a {
   color: var(--gray-400);
   text-decoration: none;
   border-bottom: 1px dotted var(--gray-800);
 }
 
-.colombia-map-attr a:hover {
+.cdp-attr a:hover {
   color: var(--pink);
   border-bottom-color: var(--pink);
 }
