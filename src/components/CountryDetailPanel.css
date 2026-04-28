@@ -3,6 +3,7 @@
   padding: 1.25rem;
   background: var(--gray-900);
   border: 1px solid var(--gray-800);
+  border-left: 3px solid var(--yellow, #f0c014);
   border-radius: 8px;
   scroll-margin-top: 80px;
 }
@@ -16,10 +17,11 @@
 }
 
 .cdp-label {
-  font-size: 0.85rem;
+  font-size: 0.68rem;
   font-weight: 600;
-  color: var(--white);
-  letter-spacing: 0.02em;
+  color: var(--yellow, #f0c014);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
 .cdp-sub {
