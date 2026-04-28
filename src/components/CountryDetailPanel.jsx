@@ -114,7 +114,7 @@ export default function CountryDetailPanel({ country, story, onClose }) {
   return (
     <div className="country-detail-panel">
       <div className="cdp-head">
-        <span className="cdp-label">On {country}</span>
+        <span className="cdp-label">{country}</span>
         {isColombia && (
           <span className="cdp-sub">
             6 departments highlighted · click to drill in · Editorial
@@ -215,7 +215,10 @@ export default function CountryDetailPanel({ country, story, onClose }) {
             </div>
           )}
           {story && (
-            <p className="cdp-story">{story}</p>
+            <div className="cdp-story-block">
+              <span className="cdp-story-label">On {country}</span>
+              <p className="cdp-story">{story}</p>
+            </div>
           )}
         </div>
       </div>

@@ -326,15 +326,29 @@
   color: var(--pink);
 }
 
+.cdp-story-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  background: #121212;
+  border: 1px solid var(--gray-800);
+  border-radius: 6px;
+}
+
+.cdp-story-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--yellow, #f0c014);
+}
+
 .cdp-story {
   font-size: 0.82rem;
   line-height: 1.6;
   color: var(--gray-400);
   margin: 0;
-  padding: 0.9rem 1rem;
-  background: #121212;
-  border: 1px solid var(--gray-800);
-  border-radius: 6px;
 }
 
 .cdp-attr {
