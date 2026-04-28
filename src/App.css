@@ -1090,58 +1090,6 @@ html {
   flex-direction: column;
   gap: 0.55rem;
 }
-.coffee-country-sparkline {
-  margin-top: 0.55rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid var(--gray-800);
-  color: var(--blue);
-}
-.coffee-country-sparkline-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.25rem;
-}
-.coffee-country-sparkline-label {
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--gray-600);
-}
-.coffee-country-sparkline-value {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--white);
-}
-.coffee-country-sparkline-unit {
-  font-size: 0.65rem;
-  font-weight: 400;
-  color: var(--gray-600);
-}
-.coffee-country-spark-svg {
-  width: 100%;
-  height: 28px;
-  display: block;
-  color: var(--blue);
-  cursor: default;
-}
-.coffee-country-spark-svg rect { cursor: help; }
-.coffee-country-sparkline-attr {
-  display: inline-block;
-  margin-top: 0.3rem;
-  font-size: 0.6rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--gray-400);
-  text-decoration: none;
-  border-bottom: 1px dotted var(--gray-800);
-}
-.coffee-country-sparkline-attr:hover {
-  color: var(--pink);
-  border-bottom-color: var(--pink);
-}
 .coffee-fact-row {
   list-style: none;
   margin: 0;
