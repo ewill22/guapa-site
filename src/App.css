@@ -1125,7 +1125,9 @@ html {
   height: 28px;
   display: block;
   color: var(--blue);
+  cursor: default;
 }
+.coffee-country-spark-svg rect { cursor: help; }
 .coffee-country-sparkline-attr {
   display: inline-block;
   margin-top: 0.3rem;

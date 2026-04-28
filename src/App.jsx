@@ -1512,7 +1512,24 @@ export default function App() {
                                       </span>
                                     </div>
                                     <svg className="coffee-country-spark-svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
-                                      <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.4" />
+                                      <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.4" style={{ pointerEvents: 'none' }} />
+                                      {series.map((d, i) => {
+                                        const x = i * step;
+                                        const rectX = i === 0 ? 0 : x - step / 2;
+                                        const rectW = i === 0 || i === series.length - 1 ? step / 2 : step;
+                                        return (
+                                          <rect
+                                            key={d.month}
+                                            x={rectX}
+                                            y={0}
+                                            width={rectW}
+                                            height={h}
+                                            fill="transparent"
+                                          >
+                                            <title>{d.month} · {d.sacks_60kg_thousands.toLocaleString()}k 60kg sacks</title>
+                                          </rect>
+                                        );
+                                      })}
                                     </svg>
                                     <a
                                       className="coffee-country-sparkline-attr"

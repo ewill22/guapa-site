@@ -293,7 +293,7 @@ export const GROW_CALENDAR_REFS = {
   methodology: 'Harvest and flowering windows are editorial approximations of typical seasons. Actual timing varies by region within a country, altitude, and year-to-year weather. Cross-referenced against ICO country profiles, USDA FAS attache reports, and national coffee-authority publications - not a primary-source survey.',
   attribution: 'Editorial reference - ICO + USDA FAS',
   sources: {
-    ico:     { name: 'ICO Country Profiles',   url: 'https://ico.org/countries_e.asp' },
+    ico:     { name: 'ICO Statistics',         url: 'https://ico.org/what-we-do/world-coffee-statistics-database/' },
     usdaFas: { name: 'USDA FAS Coffee',        url: 'https://www.fas.usda.gov/commodities/coffee' },
     fnc:     { name: 'FNC (Colombia)',         url: 'https://federaciondecafeteros.org/' },
     vicofa:  { name: 'VICOFA (Vietnam)',       url: 'https://vicofa.org.vn/' },
