@@ -907,6 +907,8 @@ html {
   font-size: 0.7rem;
   color: var(--gray-600);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .coffee-producer-bar {
   height: 3px;
