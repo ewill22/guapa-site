@@ -1212,7 +1212,10 @@ export default function App() {
                               setSelectedCoffeeCountry(todaysOffering.country);
                               setTimeout(() => {
                                 const tile = document.querySelector(`[data-coffee-country="${CSS.escape(todaysOffering.country)}"]`);
-                                safeScrollTo(tile);
+                                const target = todaysOffering.country === 'Colombia'
+                                  ? document.querySelector('.colombia-region-map')
+                                  : coffeeCountryStoryRef.current;
+                                safeScrollTo(target || tile);
                               }, 0);
                             }}
                             title={`Jump to ${todaysOffering.country} in the country grid`}
@@ -1395,7 +1398,10 @@ export default function App() {
                                 if (next) {
                                   setTimeout(() => {
                                     const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
-                                    safeScrollTo(tile);
+                                    const target = next === 'Colombia'
+                                      ? document.querySelector('.colombia-region-map')
+                                      : coffeeCountryStoryRef.current;
+                                    safeScrollTo(target || tile);
                                   }, 0);
                                 }
                               }}
@@ -1408,9 +1414,12 @@ export default function App() {
                                   setSelectedCoffeeCountry(next);
                                   if (next) {
                                     setTimeout(() => {
-                                    const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
-                                    safeScrollTo(tile);
-                                  }, 0);
+                                      const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
+                                      const target = next === 'Colombia'
+                                        ? document.querySelector('.colombia-region-map')
+                                        : coffeeCountryStoryRef.current;
+                                      safeScrollTo(target || tile);
+                                    }, 0);
                                   }
                                 }
                               }}
