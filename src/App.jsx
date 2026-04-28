@@ -22,7 +22,7 @@ import { ROASTER_OFFERINGS, OFFERINGS_FETCHED_ON } from './data/coffee-offerings
 import {
   FNC_NATIONAL_PRODUCTION_MONTHLY,
   FNC_FETCHED_ON,
-  FNC_DATA_FILE_URL,
+  FNC_SOURCE_URL,
 } from './data/coffee-production-colombia';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
@@ -1516,7 +1516,7 @@ export default function App() {
                                     </svg>
                                     <a
                                       className="coffee-country-sparkline-attr"
-                                      href={FNC_DATA_FILE_URL}
+                                      href={FNC_SOURCE_URL}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       onClick={(e) => e.stopPropagation()}

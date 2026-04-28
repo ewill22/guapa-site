@@ -7,7 +7,7 @@ import {
 import {
   FNC_AREA_BY_DEPARTMENT,
   FNC_FETCHED_ON,
-  FNC_DATA_FILE_URL,
+  FNC_SOURCE_URL,
 } from '../data/coffee-production-colombia';
 import './ColombiaRegionMap.css';
 
@@ -139,7 +139,7 @@ export default function ColombiaRegionMap() {
                     </span>
                     <a
                       className="colombia-source-pill"
-                      href={FNC_DATA_FILE_URL}
+                      href={FNC_SOURCE_URL}
                       target="_blank"
                       rel="noreferrer"
                     >

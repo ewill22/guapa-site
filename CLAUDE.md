@@ -50,7 +50,14 @@ Never imply a specific roaster/artist/team is currently doing something unless t
 ### 3. No advertising-style "hero" UX patterns
 The lenses should read like newspaper sections, not shop windows. No "Roaster of the Day", "Team in Focus", "Featured Artist" promoted slots. Drill-down UX (broad → specific) is the established pattern instead.
 
-### 4. The music KPI sidebar is constant across every lens
+### 4. Source pills link to the page, not the file
+When a source pill (FNC, USDA, Conab, etc.) links out, point it at the source's stats landing page — never at a direct file URL (.xlsx, .pdf, .zip). Triggering a file download from a click on guapa.space looks like we're hosting/distributing the file. Always link to the stats hub or the page that hosts the file, and let the user decide to download from there.
+
+- For FNC: use `FNC_SOURCE_URL` (https://federaciondecafeteros.org/wp/estadisticas-cafeteras/), not `FNC_DATA_FILE_URL`.
+- Same rule for any future producer source (Conab, USDA FAS PSD, VICOFA, etc.) — pill goes to the landing page.
+- The `*_DATA_FILE_URL` exports are kept for the backend pipeline (which fetches the file directly) and for citation in commit messages, but should not be rendered as user-clickable links.
+
+### 5. The music KPI sidebar is constant across every lens
 Artist of the Day / Current Album / Now Playing tiles stay identical on coffee, economics, sports, guapa lens. It's the persistent "what's playing" soundtrack while the main content changes. Never swap, hide, or replace the three tiles with lens-specific content. Lens-specific content goes **below or alongside** the main area, never inside the sidebar.
 
 ## Tech Stack
