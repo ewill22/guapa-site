@@ -1212,7 +1212,7 @@ export default function App() {
                               setSelectedCoffeeCountry(todaysOffering.country);
                               setTimeout(() => {
                                 const tile = document.querySelector(`[data-coffee-country="${CSS.escape(todaysOffering.country)}"]`);
-                                safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                safeScrollTo(tile);
                               }, 0);
                             }}
                             title={`Jump to ${todaysOffering.country} in the country grid`}
@@ -1395,7 +1395,7 @@ export default function App() {
                                 if (next) {
                                   setTimeout(() => {
                                     const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
-                                    safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                    safeScrollTo(tile);
                                   }, 0);
                                 }
                               }}
@@ -1409,7 +1409,7 @@ export default function App() {
                                   if (next) {
                                     setTimeout(() => {
                                     const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
-                                    safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                    safeScrollTo(tile);
                                   }, 0);
                                   }
                                 }
