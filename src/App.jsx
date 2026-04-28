@@ -19,6 +19,11 @@ import {
 import { featuredRoasters, ROASTER_SOURCES } from './data/coffee-roasters';
 import { COFFEE_WAVES, waveForYear, FAMOUS_BEANS, COUNTRY_STORIES, COFFEE_PROCESSES } from './data/coffee-editorial';
 import { ROASTER_OFFERINGS, OFFERINGS_FETCHED_ON } from './data/coffee-offerings';
+import {
+  FNC_NATIONAL_PRODUCTION_MONTHLY,
+  FNC_FETCHED_ON,
+  FNC_DATA_FILE_URL,
+} from './data/coffee-production-colombia';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
 
@@ -1483,6 +1488,44 @@ export default function App() {
                                   <span className="coffee-source-license">{src.license}</span>
                                 </div>
                               )}
+                              {p.country === 'Colombia' && FNC_NATIONAL_PRODUCTION_MONTHLY.length > 1 && (() => {
+                                const series = FNC_NATIONAL_PRODUCTION_MONTHLY.slice(-24);
+                                const vals = series.map(d => d.sacks_60kg_thousands);
+                                const max = Math.max(...vals);
+                                const min = Math.min(...vals);
+                                const range = max - min || 1;
+                                const w = 200, h = 28;
+                                const step = w / (series.length - 1);
+                                const pts = series.map((d, i) => {
+                                  const x = i * step;
+                                  const y = h - ((d.sacks_60kg_thousands - min) / range) * h;
+                                  return `${x.toFixed(1)},${y.toFixed(1)}`;
+                                }).join(' ');
+                                const last = series[series.length - 1];
+                                return (
+                                  <div className="coffee-country-sparkline" onClick={(e) => e.stopPropagation()}>
+                                    <div className="coffee-country-sparkline-head">
+                                      <span className="coffee-country-sparkline-label">National production · 24 mo</span>
+                                      <span className="coffee-country-sparkline-value">
+                                        {last.sacks_60kg_thousands.toLocaleString()}k
+                                        <span className="coffee-country-sparkline-unit"> sacks · {last.month}</span>
+                                      </span>
+                                    </div>
+                                    <svg className="coffee-country-spark-svg" viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none">
+                                      <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.4" />
+                                    </svg>
+                                    <a
+                                      className="coffee-country-sparkline-attr"
+                                      href={FNC_DATA_FILE_URL}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      FNC · {FNC_FETCHED_ON}
+                                    </a>
+                                  </div>
+                                );
+                              })()}
                             </div>
                           );
                         })}
