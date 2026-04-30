@@ -396,16 +396,12 @@ export default function App() {
   const [selectedCoffeeRegion, setSelectedCoffeeRegion] = useState(null);
   const [selectedCoffeeCountry, setSelectedCoffeeCountry] = useState(null);
   const [selectedRoasterSlug, setSelectedRoasterSlug] = useState(null);
-  const [selectedRoasterCountry, setSelectedRoasterCountry] = useState(null);
-  const [selectedRoasterCity, setSelectedRoasterCity] = useState(null);
   const searchRef = useRef(null);
   const genreExplorerRef = useRef(null);
   const coffeeCountriesRef = useRef(null);
   const coffeeRoastersRef = useRef(null);
   const coffeeCountryStoryRef = useRef(null);
   const coffeeProcessesRef = useRef(null);
-  const coffeeRoasterCountriesRef = useRef(null);
-  const coffeeRoasterCitiesRef = useRef(null);
 
   // Search catalog for artists/albums/songs — artists always listed first
   const searchResults = useMemo(() => {
@@ -1136,22 +1132,6 @@ export default function App() {
                     roasterCountByCountry[o] = (roasterCountByCountry[o] || 0) + 1;
                   }
                 }
-                // Roasting-mode geography: group roasters by HQ country, then by city within.
-                const roasterHqByCountry = {};
-                for (const r of allRoasters) {
-                  if (!r.country) continue;
-                  if (!roasterHqByCountry[r.country]) {
-                    roasterHqByCountry[r.country] = { country: r.country, count: 0, cities: {} };
-                  }
-                  roasterHqByCountry[r.country].count++;
-                  if (r.hq) {
-                    roasterHqByCountry[r.country].cities[r.hq] = (roasterHqByCountry[r.country].cities[r.hq] || 0) + 1;
-                  }
-                }
-                const roasterCountrySummary = Object.values(roasterHqByCountry).sort((a, b) => b.count - a.count || a.country.localeCompare(b.country));
-                const activeRoasterCitiesList = selectedRoasterCountry && roasterHqByCountry[selectedRoasterCountry]
-                  ? Object.entries(roasterHqByCountry[selectedRoasterCountry].cities).map(([city, count]) => ({ city, count })).sort((a, b) => b.count - a.count || a.city.localeCompare(b.city))
-                  : [];
                 const filtered = selectedCoffeeRegion
                   ? allCountries.filter(c => c.regionName === selectedCoffeeRegion)
                   : allCountries;
@@ -1499,119 +1479,52 @@ export default function App() {
                     </div>
                   )}
 
-                  <div className="coffee-roaster-countries-block" ref={coffeeRoasterCountriesRef}>
-                    <h3 className="coffee-section-label">
-                      <span>
-                        Roasting countries
-                        <span className="coffee-section-sub"> · {roasterCountrySummary.length} countries · {allRoasters.length} featured roasters · Editorial</span>
-                      </span>
-                      {(selectedRoasterCountry || selectedRoasterCity) && (
-                        <button
-                          type="button"
-                          className="coffee-clear-filter"
-                          onClick={() => { setSelectedRoasterCountry(null); setSelectedRoasterCity(null); }}
-                        >
-                          clear filter
-                        </button>
-                      )}
-                    </h3>
-                    <div className="coffee-roaster-country-grid">
-                      {roasterCountrySummary.map(rc => {
-                        const isActive = selectedRoasterCountry === rc.country;
-                        return (
-                          <button
-                            key={rc.country}
-                            type="button"
-                            className={`coffee-roaster-country-tile${isActive ? ' is-active' : ''}`}
-                            onClick={() => {
-                              const next = isActive ? null : rc.country;
-                              setSelectedRoasterCountry(next);
-                              setSelectedRoasterCity(null);
-                              if (next) {
-                                setTimeout(() => safeScrollTo(coffeeRoasterCitiesRef.current || coffeeRoastersRef.current), 0);
-                              }
-                            }}
-                          >
-                            <span className="coffee-roaster-country-name">{rc.country}</span>
-                            <span className="coffee-roaster-country-count">{rc.count} roaster{rc.count !== 1 ? 's' : ''}</span>
-                            <span className="coffee-roaster-country-cities">
-                              {Object.keys(rc.cities).slice(0, 3).join(' · ')}
-                              {Object.keys(rc.cities).length > 3 ? ` · +${Object.keys(rc.cities).length - 3}` : ''}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {selectedRoasterCountry && activeRoasterCitiesList.length > 0 && (
-                      <div className="coffee-roaster-cities" ref={coffeeRoasterCitiesRef}>
-                        <span className="coffee-roaster-cities-label">Cities in {selectedRoasterCountry}</span>
-                        {activeRoasterCitiesList.map(({ city, count }) => {
-                          const isActive = selectedRoasterCity === city;
-                          return (
-                            <button
-                              key={city}
-                              type="button"
-                              className={`coffee-roaster-city-chip${isActive ? ' is-active' : ''}`}
-                              onClick={() => {
-                                const next = isActive ? null : city;
-                                setSelectedRoasterCity(next);
-                                setTimeout(() => safeScrollTo(coffeeRoastersRef.current), 0);
-                              }}
-                            >
-                              {city} <span className="coffee-roaster-city-count">({count})</span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Roasters — hand-picked specialty coffee names with a Guapa take */}
+                  {/* Roasters — filtered by producing country (defaults to a daily-stable origin) */}
                   {(() => {
                     const allFeatured = featuredRoasters();
                     if (!allFeatured.length) return null;
+                    const eligibleOrigins = Object.keys(roasterCountByCountry).sort();
+                    const defaultOrigin = eligibleOrigins.length
+                      ? eligibleOrigins[hashStr(todayStr + 'roaster-origin') % eligibleOrigins.length]
+                      : null;
                     let featured = allFeatured;
                     let filterLabel = null;
-                    let filterPrefix = 'sourcing from';
-                    if (selectedRoasterCity) {
-                      filterPrefix = 'in';
-                      featured = allFeatured.filter(r => r.hq === selectedRoasterCity);
-                      filterLabel = selectedRoasterCity;
-                    } else if (selectedRoasterCountry) {
-                      filterPrefix = 'in';
-                      featured = allFeatured.filter(r => r.country === selectedRoasterCountry);
-                      filterLabel = selectedRoasterCountry;
-                    } else if (selectedCoffeeCountry) {
+                    let usingDefault = false;
+                    if (selectedCoffeeCountry) {
                       featured = allFeatured.filter(r => (r.origins || []).includes(selectedCoffeeCountry));
                       filterLabel = selectedCoffeeCountry;
                     } else if (selectedCoffeeRegion) {
                       featured = allFeatured.filter(r => (r.regions || []).includes(selectedCoffeeRegion));
                       filterLabel = selectedCoffeeRegion;
+                    } else if (defaultOrigin) {
+                      featured = allFeatured.filter(r => (r.origins || []).includes(defaultOrigin));
+                      filterLabel = defaultOrigin;
+                      usingDefault = true;
                     }
                     const fallback = featured[0] || allFeatured[0];
                     const activeInList = featured.find(r => r.slug === selectedRoasterSlug);
                     const active = activeInList || fallback;
-                    const hasFilter = !!filterLabel;
+                    const userFiltered = !!(selectedCoffeeCountry || selectedCoffeeRegion);
                     return (
                       <div className="coffee-roasters-block" ref={coffeeRoastersRef}>
                         <h3 className="coffee-section-label">
                           <span>
-                            Roasters
+                            {filterLabel ? `Roasters carrying ${filterLabel}` : 'Roasters'}
                             <span className="coffee-section-sub">
-                              {hasFilter
-                                ? ` · ${featured.length} of ${allFeatured.length} ${filterPrefix} ${filterLabel}`
-                                : ` · ${allFeatured.length} featured · Wikidata + OSM + Editorial`}
+                              {usingDefault
+                                ? ` · ${featured.length} of ${allFeatured.length} featured · today's origin · Wikidata + OSM + Editorial`
+                                : userFiltered
+                                  ? ` · ${featured.length} of ${allFeatured.length} sourcing from ${filterLabel}`
+                                  : ` · ${allFeatured.length} featured · Wikidata + OSM + Editorial`}
                             </span>
                           </span>
-                          {hasFilter && (
+                          {userFiltered && (
                             <button
                               type="button"
                               className="coffee-clear-filter"
                               onClick={() => {
                                 setSelectedCoffeeCountry(null);
                                 setSelectedCoffeeRegion(null);
-                                setSelectedRoasterCountry(null);
-                                setSelectedRoasterCity(null);
                               }}
                             >
                               clear filter
@@ -1620,7 +1533,7 @@ export default function App() {
                         </h3>
                         {featured.length === 0 ? (
                           <div className="coffee-roaster-empty">
-                            No featured roasters {filterPrefix} {filterLabel} yet.
+                            No featured roasters sourcing from {filterLabel} yet.
                           </div>
                         ) : (
                         <div className="coffee-roaster-pills">
