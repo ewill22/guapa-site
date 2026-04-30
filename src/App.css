@@ -1318,6 +1318,43 @@ html {
 .coffee-countries {
   scroll-margin-top: 80px;
 }
+.coffee-roaster-origin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--space-sm);
+}
+.coffee-roaster-origin-tile {
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--gray-800);
+  border-radius: var(--radius-md);
+  background: var(--gray-900);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+@media (hover: hover) {
+  .coffee-roaster-origin-tile:hover { border-color: var(--gray-400); }
+}
+.coffee-roaster-origin-tile.is-active {
+  border-color: var(--pink);
+  background: rgba(232, 160, 176, 0.06);
+}
+.coffee-roaster-origin-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--white);
+}
+.coffee-roaster-origin-count {
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pink);
+}
 .coffee-roaster-pills {
   display: flex;
   flex-wrap: wrap;

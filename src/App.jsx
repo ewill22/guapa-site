@@ -1531,6 +1531,29 @@ export default function App() {
                             </button>
                           )}
                         </h3>
+                        <div className="coffee-roaster-origin-grid">
+                          {eligibleOrigins
+                            .map(c => ({ country: c, count: roasterCountByCountry[c] }))
+                            .sort((a, b) => b.count - a.count || a.country.localeCompare(b.country))
+                            .map(({ country, count }) => {
+                              const isActive = selectedCoffeeCountry === country;
+                              return (
+                                <button
+                                  key={country}
+                                  type="button"
+                                  className={`coffee-roaster-origin-tile${isActive ? ' is-active' : ''}`}
+                                  onClick={() => {
+                                    setSelectedCoffeeRegion(null);
+                                    setSelectedCoffeeCountry(isActive ? null : country);
+                                  }}
+                                  title={isActive ? 'Clear country filter' : `Show roasters carrying ${country}`}
+                                >
+                                  <span className="coffee-roaster-origin-name">{country}</span>
+                                  <span className="coffee-roaster-origin-count">{count} roaster{count !== 1 ? 's' : ''}</span>
+                                </button>
+                              );
+                            })}
+                        </div>
                         {featured.length === 0 ? (
                           <div className="coffee-roaster-empty">
                             No featured roasters sourcing from {filterLabel} yet.
