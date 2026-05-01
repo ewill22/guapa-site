@@ -1048,6 +1048,13 @@ html {
 }
 .coffee-journey-card--counter {
   margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  border-left: 1px solid var(--gray-800);
+  padding-left: var(--space-md);
+  gap: 4px;
 }
 .coffee-journey-label {
   font-size: 0.68rem;
