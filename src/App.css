@@ -476,6 +476,15 @@ html {
   grid-column: auto;
   padding: 0;
   justify-content: center;
+  gap: 2px;
+}
+.counter-coffee-row .counter-coffee-intro-headline {
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+.counter-coffee-row .counter-coffee-intro-sub {
+  font-size: 0.72rem;
+  line-height: 1.35;
 }
 .counter-coffee-intro-headline {
   font-family: var(--font-main);
@@ -1054,7 +1063,18 @@ html {
   border-radius: 0;
   border-left: 1px solid var(--gray-800);
   padding-left: var(--space-md);
-  gap: 4px;
+  gap: 2px;
+  justify-content: center;
+}
+.coffee-journey-card--counter .coffee-journey-body {
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+.coffee-journey-card--counter .coffee-journey-label {
+  font-size: 0.62rem;
+}
+.coffee-journey-card--counter .coffee-journey-attr {
+  font-size: 0.62rem;
 }
 .coffee-journey-label {
   font-size: 0.68rem;
