@@ -1073,8 +1073,8 @@ html {
 .coffee-journey-card--counter .coffee-journey-label {
   font-size: 0.62rem;
 }
-.coffee-journey-card--counter .coffee-journey-head {
-  display: none;
+.coffee-journey-card--counter .coffee-journey-attr {
+  font-size: 0.62rem;
 }
 .coffee-journey-label {
   font-size: 0.68rem;
