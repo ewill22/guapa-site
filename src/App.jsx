@@ -1027,7 +1027,7 @@ export default function App() {
                       <div className="coffee-journey-head">
                         <span className="coffee-journey-label">On the bar today</span>
                         <span className="coffee-journey-attr" title={`Fetched from ${todaysOffering.roasterName}'s Shopify storefront on ${OFFERINGS_FETCHED_ON}`}>
-                          {todaysOffering.roasterName} · updated {OFFERINGS_FETCHED_ON}
+                          updated {OFFERINGS_FETCHED_ON}
                         </span>
                       </div>
                       <p className="coffee-journey-body">
