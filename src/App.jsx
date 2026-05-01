@@ -1654,6 +1654,114 @@ export default function App() {
                     );
                   })()}
 
+                  {/* Beans section — processing primer with live offerings, then famous varieties */}
+                  {(() => {
+                    const filterRoaster = selectedRoasterSlug || null;
+                    const filterCountry = selectedCoffeeCountry || null;
+                    const filterRoasterName = filterRoaster
+                      ? (featuredRoasters().find(r => r.slug === filterRoaster)?.name || filterRoaster)
+                      : null;
+                    const sub = filterRoaster && filterCountry
+                      ? ` · ${filterRoasterName} · ${filterCountry}`
+                      : filterRoaster
+                        ? ` · ${filterRoasterName}`
+                        : filterCountry
+                          ? ` · ${filterCountry}`
+                          : ' · all tracked roasters';
+                    return (
+                      <div className="coffee-processes" ref={coffeeProcessesRef}>
+                        <h3 className="coffee-section-label">
+                          <span>
+                            Processing
+                            <span className="coffee-section-sub">{sub}</span>
+                          </span>
+                          {(filterRoaster || filterCountry) && (
+                            <button
+                              type="button"
+                              className="coffee-clear-filter"
+                              onClick={() => {
+                                setSelectedRoasterSlug(null);
+                                setSelectedCoffeeCountry(null);
+                              }}
+                            >
+                              clear filter
+                            </button>
+                          )}
+                        </h3>
+                        <div className="coffee-processes-stack">
+                          {COFFEE_PROCESSES.map(p => {
+                            const matches = ROASTER_OFFERINGS.filter(o => {
+                              if (o.process !== p.key) return false;
+                              if (filterRoaster && o.roasterSlug !== filterRoaster) return false;
+                              if (filterCountry && o.country !== filterCountry) return false;
+                              return true;
+                            });
+                            return (
+                              <div key={p.key} className="coffee-process-row">
+                                <div className={`coffee-process-card coffee-process-card--${p.key}`}>
+                                  <div className="coffee-process-head">
+                                    <span className="coffee-process-name">{p.name}</span>
+                                    {matches.length > 0 && (
+                                      <span className="coffee-process-count" title={`${matches.length} matching offering${matches.length === 1 ? '' : 's'}`}>
+                                        {matches.length} live
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="coffee-process-aka">aka {p.aka}</span>
+                                  <span className="coffee-process-tagline">{p.tagline}</span>
+                                  <p className="coffee-process-body">{p.body}</p>
+                                  <p className="coffee-process-flavors"><em>Flavors:</em> {p.flavors}</p>
+                                </div>
+                                <div className="coffee-process-offerings">
+                                  {matches.length === 0 ? (
+                                    <span className="coffee-process-offerings-empty">
+                                      No live offerings{filterRoaster ? ` from ${filterRoasterName}` : ''}{filterCountry ? ` · ${filterCountry}` : ''}.
+                                    </span>
+                                  ) : (
+                                    <ul className="coffee-process-offerings-list">
+                                      {matches.map((o, i) => (
+                                        <li key={`${o.roasterSlug}-${o.handle}-${i}`} className="coffee-process-offering">
+                                          <a
+                                            href={o.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="coffee-process-offering-title"
+                                            title={`Open ${o.title} on ${o.roasterName}'s site`}
+                                          >
+                                            {o.title}
+                                          </a>
+                                          <span className="coffee-process-offering-meta">
+                                            {o.roasterName}
+                                            {o.country && (
+                                              <>
+                                                {' · '}
+                                                <button
+                                                  type="button"
+                                                  className="coffee-process-offering-country"
+                                                  onClick={() => {
+                                                    setSelectedCoffeeRegion(null);
+                                                    setSelectedCoffeeCountry(o.country);
+                                                  }}
+                                                  title={`Filter by ${o.country}`}
+                                                >
+                                                  {o.country}
+                                                </button>
+                                              </>
+                                            )}
+                                          </span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   {/* Famous beans — legendary origin varieties */}
                   {(() => {
                     const beans = selectedCoffeeCountry
@@ -1677,45 +1785,6 @@ export default function App() {
                               <p className="coffee-famous-bean-note">{b.note}</p>
                             </div>
                           ))}
-                        </div>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Processing methods — editorial primer, cross-linked from Today's Journey */}
-                  {(() => {
-                    const processCounts = {};
-                    for (const o of ROASTER_OFFERINGS) {
-                      if (o.process) processCounts[o.process] = (processCounts[o.process] || 0) + 1;
-                    }
-                    return (
-                      <div className="coffee-processes" ref={coffeeProcessesRef}>
-                        <h3 className="coffee-section-label">
-                          <span>
-                            Processing
-                            <span className="coffee-section-sub"> · how the fruit comes off the bean</span>
-                          </span>
-                        </h3>
-                        <div className="coffee-processes-row">
-                          {COFFEE_PROCESSES.map(p => {
-                            const count = processCounts[p.key] || 0;
-                            return (
-                              <div key={p.key} className={`coffee-process-card coffee-process-card--${p.key}`}>
-                                <div className="coffee-process-head">
-                                  <span className="coffee-process-name">{p.name}</span>
-                                  {count > 0 && (
-                                    <span className="coffee-process-count" title={`${count} current offerings across tracked roasters`}>
-                                      {count} live
-                                    </span>
-                                  )}
-                                </div>
-                                <span className="coffee-process-aka">aka {p.aka}</span>
-                                <span className="coffee-process-tagline">{p.tagline}</span>
-                                <p className="coffee-process-body">{p.body}</p>
-                                <p className="coffee-process-flavors"><em>Flavors:</em> {p.flavors}</p>
-                              </div>
-                            );
-                          })}
                         </div>
                       </div>
                     );
