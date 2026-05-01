@@ -1076,6 +1076,18 @@ html {
 .coffee-journey-card--counter .coffee-journey-attr {
   font-size: 0.62rem;
 }
+.coffee-journey-card--counter .coffee-journey-head {
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-width: 0;
+}
+.coffee-journey-card--counter .coffee-journey-attr {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
 .coffee-journey-label {
   font-size: 0.68rem;
   text-transform: uppercase;
