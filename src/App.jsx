@@ -678,6 +678,19 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKey);
   }, [navYear]);
 
+  // Escape on coffee lens with a country selected → close panel + scroll to top
+  useEffect(() => {
+    if (lens !== 'coffee' || !selectedCoffeeCountry) return;
+    const handleKey = (e) => {
+      if (e.key !== 'Escape') return;
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      setSelectedCoffeeCountry(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [lens, selectedCoffeeCountry]);
+
   return (
     <>
       <Nav />
@@ -1191,10 +1204,12 @@ export default function App() {
                             onClick={() => {
                               setSelectedCoffeeRegion(null);
                               setSelectedCoffeeCountry(todaysOffering.country);
-                              setTimeout(() => {
-                                const tile = document.querySelector(`[data-coffee-country="${CSS.escape(todaysOffering.country)}"]`);
-                                safeScrollTo(coffeeCountryStoryRef.current || tile);
-                              }, 0);
+                              requestAnimationFrame(() => {
+                                requestAnimationFrame(() => {
+                                  const tile = document.querySelector(`[data-coffee-country="${CSS.escape(todaysOffering.country)}"]`);
+                                  safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                });
+                              });
                             }}
                             title={`Jump to ${todaysOffering.country} in the country grid`}
                           >
@@ -1374,10 +1389,12 @@ export default function App() {
                                 const next = isCountryActive ? null : p.country;
                                 setSelectedCoffeeCountry(next);
                                 if (next) {
-                                  setTimeout(() => {
-                                    const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
-                                    safeScrollTo(coffeeCountryStoryRef.current || tile);
-                                  }, 0);
+                                  requestAnimationFrame(() => {
+                                    requestAnimationFrame(() => {
+                                      const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
+                                      safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                    });
+                                  });
                                 }
                               }}
                               role="button"
@@ -1388,10 +1405,12 @@ export default function App() {
                                   const next = isCountryActive ? null : p.country;
                                   setSelectedCoffeeCountry(next);
                                   if (next) {
-                                    setTimeout(() => {
-                                      const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
-                                      safeScrollTo(coffeeCountryStoryRef.current || tile);
-                                    }, 0);
+                                    requestAnimationFrame(() => {
+                                      requestAnimationFrame(() => {
+                                        const tile = document.querySelector(`[data-coffee-country="${CSS.escape(next)}"]`);
+                                        safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                      });
+                                    });
                                   }
                                 }
                               }}
