@@ -700,7 +700,8 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
                   // Open Spotify for earliest album with tracks (last in descending list)
                   if (discoAlbums?.length) {
                     const first = [...discoAlbums].reverse().find(a => a.tracks?.length > 0) || discoAlbums[discoAlbums.length - 1];
-                    const sp = first.url_spotify || (first.spotify_id ? `https://open.spotify.com/album/${first.spotify_id}` : null);
+                    const searchQ = encodeURIComponent(`${first.artistName || discoArtist.name || ''} ${first.title || ''}`.trim());
+                    const sp = first.url_spotify || (first.spotify_id ? `https://open.spotify.com/album/${first.spotify_id}` : `https://open.spotify.com/search/${searchQ}`);
                     if (sp) window.open(sp, '_blank');
                   }
                   onAuxPick(discoArtist.name);
@@ -719,7 +720,8 @@ export default function GenreExplorer({ year, catalog, editorial, albumEditorial
               <div className="ge-disco-list" ref={discoListRef}>
                 {discoAlbums.map((album, idx) => {
                   const art = album.cover_art_large || album.cover_art_small;
-                  const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : (album.artistSpotify || '#'));
+                  const spotifySearchQ = encodeURIComponent(`${album.artistName || ''} ${album.title}`.trim());
+                  const spotifyUrl = album.url_spotify || (album.spotify_id ? `https://open.spotify.com/album/${album.spotify_id}` : `https://open.spotify.com/search/${spotifySearchQ}`);
                   const wikiTitle = (album.title || '').replace(/ /g, '_');
                   const wikiUrl = album.url_wikipedia || `https://en.wikipedia.org/wiki/${encodeURIComponent(wikiTitle)}`;
                   const amazonVinylQ = encodeURIComponent(`${album.artistName || ''} ${album.title} vinyl`);
