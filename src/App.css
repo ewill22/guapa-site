@@ -454,11 +454,11 @@ html {
 /* Counter-bottom coffee intro - spans full width of counter-bottom grid */
 .counter-coffee-row {
   grid-column: 1 / -1;
-  padding: var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-lg);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-md);
-  align-items: stretch;
+  align-items: center;
 }
 @media (max-width: 900px) {
   .counter-coffee-row {
