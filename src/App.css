@@ -485,6 +485,22 @@ html {
 .counter-coffee-row .counter-coffee-intro-sub {
   font-size: 0.72rem;
   line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.counter-coffee-row .counter-coffee-intro-headline {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.counter-coffee-row .coffee-journey-body {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .counter-coffee-intro-headline {
   font-family: var(--font-main);
