@@ -454,11 +454,13 @@ html {
 /* Counter-bottom coffee intro - spans full width of counter-bottom grid */
 .counter-coffee-row {
   grid-column: 1 / -1;
-  padding: var(--space-sm) var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-md);
   align-items: center;
+  max-height: 86px;
+  overflow: hidden;
 }
 @media (max-width: 900px) {
   .counter-coffee-row {
@@ -498,7 +500,7 @@ html {
 }
 .counter-coffee-row .coffee-journey-body {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
