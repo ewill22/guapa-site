@@ -404,6 +404,16 @@ export default function App() {
   const coffeeCountryStoryRef = useRef(null);
   const coffeeProcessesRef = useRef(null);
 
+  // Today's coffee offering — daily-stable hash pick from offerings with country
+  const todaysOffering = useMemo(() => {
+    const offeringsWithCountry = ROASTER_OFFERINGS.filter(o => o.country);
+    if (!offeringsWithCountry.length) return null;
+    const todayStr = new Date().toISOString().slice(0, 10);
+    let h = 0;
+    for (let i = 0; i < todayStr.length; i++) h = (h * 31 + todayStr.charCodeAt(i)) | 0;
+    return offeringsWithCountry[Math.abs(h) % offeringsWithCountry.length];
+  }, []);
+
   // Search catalog for artists/albums/songs — artists always listed first
   const searchResults = useMemo(() => {
     if (!catalog || searchQuery.length < 2) return [];
@@ -992,13 +1002,151 @@ export default function App() {
                   )}
                 </div>
               ) : lens === 'coffee' ? (
-                <div className="counter-coffee-intro">
-                  <h2 className="counter-coffee-intro-headline">
-                    Listen to the world through music. <em>Explore it through coffee.</em>
-                  </h2>
-                  <p className="counter-coffee-intro-sub">
-                    Every country a tile, every tile a harvest. Pick a region below to zoom in, or scroll the full producer list.
-                  </p>
+                <div className="counter-coffee-row">
+                  <div className="counter-coffee-intro">
+                    <h2 className="counter-coffee-intro-headline">
+                      Listen to the world through music. <em>Explore it through coffee.</em>
+                    </h2>
+                    <p className="counter-coffee-intro-sub">
+                      Every country a tile, every tile a harvest. Pick a region below to zoom in, or scroll the full producer list.
+                    </p>
+                  </div>
+                  {todaysOffering && (
+                    <div className="coffee-journey-card coffee-journey-card--counter">
+                      <div className="coffee-journey-head">
+                        <span className="coffee-journey-label">On the bar today</span>
+                        <span className="coffee-journey-attr" title={`Fetched from ${todaysOffering.roasterName}'s Shopify storefront on ${OFFERINGS_FETCHED_ON}`}>
+                          {todaysOffering.roasterName} · updated {OFFERINGS_FETCHED_ON}
+                        </span>
+                      </div>
+                      <p className="coffee-journey-body">
+                        <button
+                          type="button"
+                          className="coffee-journey-link coffee-journey-link--roaster"
+                          onClick={() => {
+                            setSelectedCoffeeRegion(null);
+                            setSelectedCoffeeCountry(null);
+                            setSelectedRoasterCountry(null);
+                            setSelectedRoasterSlug(todaysOffering.roasterSlug);
+                            setTimeout(() => safeScrollTo(coffeeRoastersRef.current), 0);
+                          }}
+                          title={`Open ${todaysOffering.roasterName} below`}
+                        >
+                          {todaysOffering.roasterName}
+                        </button>
+                        {' is pouring '}
+                        <a
+                          href={todaysOffering.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="coffee-journey-link coffee-journey-link--offering"
+                          title="Open this product page on the roaster's site"
+                        >
+                          {todaysOffering.title}
+                        </a>
+                        {todaysOffering.country && (
+                          <>
+                            {' from '}
+                            <button
+                              type="button"
+                              className="coffee-journey-link coffee-journey-link--origin"
+                              onClick={() => {
+                                setSelectedCoffeeRegion(null);
+                                setSelectedCoffeeCountry(todaysOffering.country);
+                                requestAnimationFrame(() => {
+                                  requestAnimationFrame(() => {
+                                    const tile = document.querySelector(`[data-coffee-country="${CSS.escape(todaysOffering.country)}"]`);
+                                    safeScrollTo(coffeeCountryStoryRef.current || tile);
+                                  });
+                                });
+                              }}
+                              title={`Jump to ${todaysOffering.country} in the country grid`}
+                            >
+                              {todaysOffering.country}
+                            </button>
+                          </>
+                        )}
+                        {todaysOffering.process && (() => {
+                          const proc = COFFEE_PROCESSES.find(p => p.key === todaysOffering.process);
+                          if (!proc) return null;
+                          return (
+                            <>
+                              {' · '}
+                              <button
+                                type="button"
+                                className="coffee-journey-link coffee-journey-link--process"
+                                onClick={() => {
+                                  setTimeout(() => safeScrollTo(coffeeProcessesRef.current), 0);
+                                }}
+                                title={`${proc.name} process — ${proc.tagline}`}
+                              >
+                                {proc.name.toLowerCase()}
+                              </button>
+                            </>
+                          );
+                        })()}
+                        {'. '}
+                      </p>
+                      {(() => {
+                        const o = todaysOffering;
+                        const hasFacts =
+                          (o.variety && o.variety.length) ||
+                          o.altitude_masl ||
+                          o.producer ||
+                          o.harvest_year ||
+                          o.cupping_score ||
+                          (o.certifications && o.certifications.length) ||
+                          o.roast_level ||
+                          o.decaf ||
+                          o.bag_size_grams;
+                        const hasNotes = o.tasting_notes && o.tasting_notes.length;
+                        if (!hasFacts && !hasNotes && o.summary) {
+                          return <p className="coffee-journey-summary">{o.summary}</p>;
+                        }
+                        return (
+                          <div className="coffee-journey-facts">
+                            {hasFacts && (
+                              <ul className="coffee-fact-row">
+                                {o.variety && o.variety.length > 0 && o.variety.map(v => (
+                                  <li key={`v-${v}`} className="coffee-fact coffee-fact--variety">{v}</li>
+                                ))}
+                                {o.altitude_masl && (
+                                  <li className="coffee-fact coffee-fact--altitude">{o.altitude_masl} masl</li>
+                                )}
+                                {o.harvest_year && (
+                                  <li className="coffee-fact">harvest {o.harvest_year}</li>
+                                )}
+                                {o.cupping_score && (
+                                  <li className="coffee-fact coffee-fact--score">{o.cupping_score} cup</li>
+                                )}
+                                {o.producer && (
+                                  <li className="coffee-fact coffee-fact--producer">{o.producer}</li>
+                                )}
+                                {o.roast_level && (
+                                  <li className="coffee-fact coffee-fact--roast">{o.roast_level} roast</li>
+                                )}
+                                {o.decaf && (
+                                  <li className="coffee-fact coffee-fact--decaf">decaf</li>
+                                )}
+                                {o.certifications && o.certifications.map(c => (
+                                  <li key={`c-${c}`} className="coffee-fact coffee-fact--cert">{c}</li>
+                                ))}
+                                {o.bag_size_grams && (
+                                  <li className="coffee-fact coffee-fact--bag">{o.bag_size_grams}g bag</li>
+                                )}
+                              </ul>
+                            )}
+                            {hasNotes && (
+                              <p className="coffee-journey-notes">
+                                <span className="coffee-journey-notes-label">Notes</span>
+                                {o.tasting_notes.map(n => n.toLowerCase()).join(' · ')}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  )}
                 </div>
               ) : lens === 'economics' ? (
                 <div className="counter-bean counter-roaster">
@@ -1150,154 +1298,9 @@ export default function App() {
                   ? allCountries.filter(c => c.regionName === selectedCoffeeRegion)
                   : allCountries;
                 const countryTiles = [...filtered].sort((a, b) => a.country.localeCompare(b.country));
-                // Pick today's offering: hash(today) into the subset of
-                // offerings where we inferred a country (so the origin link works).
-                const offeringsWithCountry = ROASTER_OFFERINGS.filter(o => o.country);
                 const todayStr = new Date().toISOString().slice(0, 10);
-                let __jh = 0;
-                for (let i = 0; i < todayStr.length; i++) __jh = (__jh * 31 + todayStr.charCodeAt(i)) | 0;
-                const todaysOffering = offeringsWithCountry.length
-                  ? offeringsWithCountry[Math.abs(__jh) % offeringsWithCountry.length]
-                  : null;
                 return (
                 <div className="coffee-section">
-                  {todaysOffering && (
-                  <div className="coffee-journey-card coffee-journey-card--standalone">
-                    <div className="coffee-journey-head">
-                      <span className="coffee-journey-label">On the bar today</span>
-                      <span className="coffee-journey-attr" title={`Fetched from ${todaysOffering.roasterName}'s Shopify storefront on ${OFFERINGS_FETCHED_ON}`}>
-                        {todaysOffering.roasterName} · updated {OFFERINGS_FETCHED_ON}
-                      </span>
-                    </div>
-                    <p className="coffee-journey-body">
-                      <button
-                        type="button"
-                        className="coffee-journey-link coffee-journey-link--roaster"
-                        onClick={() => {
-                          setSelectedCoffeeRegion(null);
-                          setSelectedCoffeeCountry(null);
-                          setSelectedRoasterCountry(null);
-                          setSelectedRoasterCity(null);
-                          setSelectedRoasterSlug(todaysOffering.roasterSlug);
-                          setTimeout(() => safeScrollTo(coffeeRoastersRef.current), 0);
-                        }}
-                        title={`Open ${todaysOffering.roasterName} below`}
-                      >
-                        {todaysOffering.roasterName}
-                      </button>
-                      {' is pouring '}
-                      <a
-                        href={todaysOffering.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="coffee-journey-link coffee-journey-link--offering"
-                        title="Open this product page on the roaster's site"
-                      >
-                        {todaysOffering.title}
-                      </a>
-                      {todaysOffering.country && (
-                        <>
-                          {' from '}
-                          <button
-                            type="button"
-                            className="coffee-journey-link coffee-journey-link--origin"
-                            onClick={() => {
-                              setSelectedCoffeeRegion(null);
-                              setSelectedCoffeeCountry(todaysOffering.country);
-                              requestAnimationFrame(() => {
-                                requestAnimationFrame(() => {
-                                  const tile = document.querySelector(`[data-coffee-country="${CSS.escape(todaysOffering.country)}"]`);
-                                  safeScrollTo(coffeeCountryStoryRef.current || tile);
-                                });
-                              });
-                            }}
-                            title={`Jump to ${todaysOffering.country} in the country grid`}
-                          >
-                            {todaysOffering.country}
-                          </button>
-                        </>
-                      )}
-                      {todaysOffering.process && (() => {
-                        const proc = COFFEE_PROCESSES.find(p => p.key === todaysOffering.process);
-                        if (!proc) return null;
-                        return (
-                          <>
-                            {' · '}
-                            <button
-                              type="button"
-                              className="coffee-journey-link coffee-journey-link--process"
-                              onClick={() => {
-                                setTimeout(() => safeScrollTo(coffeeProcessesRef.current), 0);
-                              }}
-                              title={`${proc.name} process — ${proc.tagline}`}
-                            >
-                              {proc.name.toLowerCase()}
-                            </button>
-                          </>
-                        );
-                      })()}
-                      {'. '}
-                    </p>
-                    {(() => {
-                      const o = todaysOffering;
-                      const hasFacts =
-                        (o.variety && o.variety.length) ||
-                        o.altitude_masl ||
-                        o.producer ||
-                        o.harvest_year ||
-                        o.cupping_score ||
-                        (o.certifications && o.certifications.length) ||
-                        o.roast_level ||
-                        o.decaf ||
-                        o.bag_size_grams;
-                      const hasNotes = o.tasting_notes && o.tasting_notes.length;
-                      if (!hasFacts && !hasNotes && o.summary) {
-                        return <p className="coffee-journey-summary">{o.summary}</p>;
-                      }
-                      return (
-                        <div className="coffee-journey-facts">
-                          {hasFacts && (
-                            <ul className="coffee-fact-row">
-                              {o.variety && o.variety.length > 0 && o.variety.map(v => (
-                                <li key={`v-${v}`} className="coffee-fact coffee-fact--variety">{v}</li>
-                              ))}
-                              {o.altitude_masl && (
-                                <li className="coffee-fact coffee-fact--altitude">{o.altitude_masl} masl</li>
-                              )}
-                              {o.harvest_year && (
-                                <li className="coffee-fact">harvest {o.harvest_year}</li>
-                              )}
-                              {o.cupping_score && (
-                                <li className="coffee-fact coffee-fact--score">{o.cupping_score} cup</li>
-                              )}
-                              {o.producer && (
-                                <li className="coffee-fact coffee-fact--producer">{o.producer}</li>
-                              )}
-                              {o.roast_level && (
-                                <li className="coffee-fact coffee-fact--roast">{o.roast_level} roast</li>
-                              )}
-                              {o.decaf && (
-                                <li className="coffee-fact coffee-fact--decaf">decaf</li>
-                              )}
-                              {o.certifications && o.certifications.map(c => (
-                                <li key={`c-${c}`} className="coffee-fact coffee-fact--cert">{c}</li>
-                              ))}
-                              {o.bag_size_grams && (
-                                <li className="coffee-fact coffee-fact--bag">{o.bag_size_grams}g bag</li>
-                              )}
-                            </ul>
-                          )}
-                          {hasNotes && (
-                            <p className="coffee-journey-notes">
-                              <span className="coffee-journey-notes-label">Notes</span>
-                              {o.tasting_notes.map(n => n.toLowerCase()).join(' · ')}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })()}
-                  </div>
-                  )}
                   <div className="coffee-regions-block">
                     <h3 className="coffee-section-label">Regions — {coffeeYear}</h3>
                     <div className="coffee-regions-row">

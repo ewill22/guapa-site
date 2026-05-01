@@ -452,12 +452,30 @@ html {
 }
 
 /* Counter-bottom coffee intro - spans full width of counter-bottom grid */
+.counter-coffee-row {
+  grid-column: 1 / -1;
+  padding: var(--space-md) var(--space-lg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-md);
+  align-items: stretch;
+}
+@media (max-width: 900px) {
+  .counter-coffee-row {
+    grid-template-columns: 1fr;
+  }
+}
 .counter-coffee-intro {
   grid-column: 1 / -1;
   padding: var(--space-md) var(--space-lg);
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+.counter-coffee-row .counter-coffee-intro {
+  grid-column: auto;
+  padding: 0;
+  justify-content: center;
 }
 .counter-coffee-intro-headline {
   font-family: var(--font-main);
@@ -1027,6 +1045,9 @@ html {
 }
 .coffee-journey-card--standalone {
   margin-bottom: var(--space-md);
+}
+.coffee-journey-card--counter {
+  margin: 0;
 }
 .coffee-journey-label {
   font-size: 0.68rem;
