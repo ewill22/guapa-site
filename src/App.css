@@ -308,6 +308,7 @@ html {
   border-top: 1px solid var(--gray-800);
   align-items: center;
   flex-shrink: 0;
+  min-height: 96px;
 }
 
 .counter-search-footer {
@@ -459,6 +460,9 @@ html {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: var(--space-md);
   align-items: center;
+  height: 96px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 @media (max-width: 900px) {
   .counter-coffee-row {
