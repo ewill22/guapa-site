@@ -414,6 +414,17 @@ export default function App() {
     return offeringsWithCountry[Math.abs(h) % offeringsWithCountry.length];
   }, []);
 
+  // If the selected roaster doesn't carry the newly selected country, clear it.
+  // Keeps the roaster sticky when it does carry that origin.
+  useEffect(() => {
+    if (!selectedRoasterSlug || !selectedCoffeeCountry) return;
+    const roaster = featuredRoasters().find(r => r.slug === selectedRoasterSlug);
+    if (!roaster) return;
+    if (!(roaster.origins || []).includes(selectedCoffeeCountry)) {
+      setSelectedRoasterSlug(null);
+    }
+  }, [selectedCoffeeCountry, selectedRoasterSlug]);
+
   // Search catalog for artists/albums/songs — artists always listed first
   const searchResults = useMemo(() => {
     if (!catalog || searchQuery.length < 2) return [];
