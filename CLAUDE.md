@@ -98,7 +98,7 @@ guapa-site receives push
 - Frontend owns: how that data is displayed, UX, editorial content, styling
 - Catalog: 824 artists, ~16K albums, 10 genres, 56 subgenres
 - `release_date` backfill: 2,989 albums done (17%), all editorial artists covered, 50/day until complete (source: MusicBrainz CC0)
-- Spotify enrichment needed for 680 newer catalog artists (artist-level Spotify URL exists as fallback)
+- Spotify enrichment ongoing for ~10,900 catalog albums without `url_spotify`. Frontend fallback when an album URL is missing: open `https://open.spotify.com/search/<artist>+<album>` (Spotify's search results), not the artist page. Same fallback used by the ▶ Aux Cord button on artist pages.
 
 ## Editorial / Content Pipeline
 
