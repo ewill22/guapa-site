@@ -50,6 +50,19 @@ export const DEV_COMMITS = {
   '2026-04-17': 15,
   '2026-04-18': 14,
   '2026-04-19': 12,
+  '2026-04-20': 1,
+  '2026-04-21': 3,
+  '2026-04-22': 3,
+  '2026-04-23': 14,
+  '2026-04-24': 18,
+  '2026-04-25': 9,
+  '2026-04-26': 12,
+  '2026-04-27': 6,
+  '2026-04-28': 18,
+  '2026-04-29': 16,
+  '2026-04-30': 11,
+  '2026-05-01': 27,
+  '2026-05-02': 4,
 };
 
 // Daily summaries — what got done each active day
@@ -234,5 +247,55 @@ export const DEV_BLURBS = {
     { type: 'update', text: 'Grow calendar labeled editorial — every country has per-country refs (ICO + USDA + national boards where applicable). Methodology and source links clickable from the Editorial pill.' },
     { type: 'update', text: 'Intro greeting: "Listen to the world through music. Explore it through coffee." Region tiles stretch full width of the counter-bottom.' },
     { type: 'metric', label: 'Commits', value: '12', change: 'Coffee lens phase 2 live' },
+  ],
+  '2026-04-23': [
+    { type: 'news', text: 'Coffee lens phase 3 ships — newspaper-style redesign. Country → roaster bridge, growing vs roasting toggle, drill-down scroll mirroring the music click-around flow.' },
+    { type: 'update', text: 'Roasters filter by selected coffee region. Country tiles carry a roaster-count pill linking back to producers.' },
+    { type: 'metric', label: 'Commits', value: '14', change: 'Coffee newspaper redesign' },
+  ],
+  '2026-04-24': [
+    { type: 'news', text: 'Coffee lens phase 4 ships — real Shopify offerings live. 25 roasters, ~1,090 offerings, schema v2 (variety, altitude, harvest year, cupping, certifications). Today\'s Journey card swaps from editorial templates to a real daily-stable offering pick.' },
+    { type: 'update', text: 'Processing primer cards (Washed, Natural, Honey, Wet-Hulled, Anaerobic, Carbonic, Thermal Shock) get live counts of matching offerings across roasters.' },
+    { type: 'update', text: 'Self-installing scheduled refresh — "Guapa Refresh Coffee Offerings" Task Scheduler job runs daily at 5:15am. Coffee pipeline scripts move to guapa-data.' },
+    { type: 'update', text: 'Timeline bars tinted by coffee wave era; legend strip below the slider. Journey card origin and roaster name are clickable cross-links.' },
+    { type: 'metric', label: 'Commits', value: '18', change: 'Coffee lens phase 4 + offerings automation' },
+  ],
+  '2026-04-25': [
+    { type: 'news', text: 'Coffee lens phase 5 lands — Colombia drill-down. Selecting Colombia opens a CountryDetailPanel with an SVG map of departments (CC BY 4.0, Victor Cazanave). Click a department to read its editorial profile.' },
+    { type: 'metric', label: 'Commits', value: '9', change: 'Colombia drill-down' },
+  ],
+  '2026-04-26': [
+    { type: 'news', text: 'FNC Colombia production data wired into the department panel — per-department cultivated area, sparkline trend, source pill.' },
+    { type: 'update', text: 'Today\'s Journey card surfaces offerings v2 fields: variety chips, altitude band, harvest year, cupping score, producer, roast level, decaf, certifications, bag size, tasting notes.' },
+    { type: 'metric', label: 'Commits', value: '12', change: 'FNC area data + journey v2 fields' },
+  ],
+  '2026-04-28': [
+    { type: 'news', text: 'Country detail panel refactored — Colombia (with map) and every other producer (logo placeholder) now share one component. Country story folds into the panel; faded yellow country label sits above it.' },
+    { type: 'update', text: 'Source pills point at producer landing pages, not file URLs (FNC stats hub instead of the xlsx). Established as a core principle: "source pills link to the page, not the file."' },
+    { type: 'update', text: 'Drill-down upgrade pattern documented for Brazil-by-state, Ethiopia-by-zone, Vietnam-by-province handoff.' },
+    { type: 'metric', label: 'Commits', value: '18', change: 'Unified country detail panel + source-pill principle' },
+  ],
+  '2026-04-29': [
+    { type: 'update', text: 'Roasters section consolidated — origin filter (header) ANDed with HQ-country tile filter. Daily-stable default origin when nothing is selected.' },
+    { type: 'update', text: 'Editorial: Wiz Khalifa and Metric shipped to catalog with confirmed editorial entries.' },
+    { type: 'metric', label: 'Commits', value: '16', change: 'Roasters AND-filter + editorial ships' },
+  ],
+  '2026-04-30': [
+    { type: 'news', text: 'Editorial backfill blitz — 53 confirmed-but-empty artists filled, 50 unconfirmed A-B drafts, then all 201 drafted=yes flipped to confirmed=yes in one sweep. Audit fixes for the new descriptions.' },
+    { type: 'metric', label: 'Commits', value: '11', change: 'Editorial coverage push' },
+  ],
+  '2026-05-01': [
+    { type: 'news', text: 'Catalog editorial coverage hits 100% — drafted 100 (Bl-Ed batch) plus the remaining 426 unconfirmed artists. Every artist in the catalog now has an icon + description.' },
+    { type: 'update', text: 'Spotify backfill +179 album URLs. Albums missing a URL now fall back to Spotify search (artist+album) instead of the artist page; same fallback for the ▶ Aux Cord button.' },
+    { type: 'update', text: 'Coffee: Today\'s Journey card moves from a standalone slot below the timeline up into the counter-bottom row, sitting next to the greeting. Card chrome stripped in counter variant.' },
+    { type: 'update', text: 'Coffee: Processing primer becomes the head of a new "Beans" section under Roasters — process cards stacked vertically with filtered live offerings to the right of each.' },
+    { type: 'update', text: 'Coffee: clicking a country scrolls to the country detail panel; Escape clears and returns to top. Roaster pick auto-clears when the new country isn\'t in their origins.' },
+    { type: 'update', text: 'Country stories added for 22 missing producer origins.' },
+    { type: 'metric', label: 'Commits', value: '27', change: 'Editorial 100% + coffee counter consolidation' },
+  ],
+  '2026-05-02': [
+    { type: 'news', text: 'Coffee lens goes cascade-only. Country grid is hidden until a region tile is picked; roaster card no longer has an alphabetical fallback (April Coffee was auto-appearing for any country).' },
+    { type: 'update', text: 'Beans Worth Knowing section and year-based coffee blurbs removed — coffee lens reads as a single producer-to-roaster-to-bean drill-down.' },
+    { type: 'metric', label: 'Commits', value: '4', change: 'Cascade-only producers + roaster' },
   ],
 };
