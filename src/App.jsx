@@ -17,7 +17,7 @@ import {
   growCalendarFor, growPhaseIn, GROW_CALENDAR_REFS,
 } from './data/coffee-harvest';
 import { featuredRoasters, ROASTER_SOURCES } from './data/coffee-roasters';
-import { COFFEE_WAVES, waveForYear, FAMOUS_BEANS, COUNTRY_STORIES, COFFEE_PROCESSES } from './data/coffee-editorial';
+import { COFFEE_WAVES, waveForYear, COUNTRY_STORIES, COFFEE_PROCESSES } from './data/coffee-editorial';
 import { ROASTER_OFFERINGS, OFFERINGS_FETCHED_ON } from './data/coffee-offerings';
 import { sortAlbumsAsc, sortAlbumsDesc } from './data/album-sort';
 import './App.css';
@@ -1304,22 +1304,22 @@ export default function App() {
                     </div>
                   </div>
                   <div className="coffee-countries" ref={coffeeCountriesRef}>
+                    {selectedCoffeeRegion ? (
+                    <>
                     <h3 className="coffee-section-label">
                       <span>
-                        {selectedCoffeeRegion ? `${selectedCoffeeRegion} — ${coffeeYear}` : `All Producers — ${coffeeYear}`}
+                        {selectedCoffeeRegion} — {coffeeYear}
                         <span className="coffee-section-sub">
                           {' '}· {countryTiles.length} countries · Global {globalTotal(coffeeYear).toFixed(1)}M bags · USDA FAS PSD
                         </span>
                       </span>
-                      {selectedCoffeeRegion && (
-                        <button
-                          type="button"
-                          className="coffee-clear-filter"
-                          onClick={() => setSelectedCoffeeRegion(null)}
-                        >
-                          clear filter
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        className="coffee-clear-filter"
+                        onClick={() => setSelectedCoffeeRegion(null)}
+                      >
+                        clear filter
+                      </button>
                     </h3>
                     {countryTiles.length === 0 ? (
                       <div className="coffee-producer-empty">No tracked data for {coffeeYear}</div>
@@ -1444,6 +1444,12 @@ export default function App() {
                         })}
                       </div>
                     )}
+                    </>
+                    ) : (
+                      <div className="coffee-producer-empty">
+                        Pick a region above to see its producers.
+                      </div>
+                    )}
                   </div>
                   {selectedCoffeeCountry && (
                     <div ref={coffeeCountryStoryRef} style={{ scrollMarginTop: '80px' }}>
@@ -1490,9 +1496,7 @@ export default function App() {
                     const featured = selectedRoasterCountry
                       ? originFiltered.filter(r => r.country === selectedRoasterCountry)
                       : originFiltered;
-                    const fallback = featured[0] || originFiltered[0] || allFeatured[0];
-                    const activeInList = featured.find(r => r.slug === selectedRoasterSlug);
-                    const active = activeInList || fallback;
+                    const active = featured.find(r => r.slug === selectedRoasterSlug) || null;
                     const userFiltered = !!(selectedCoffeeCountry || selectedCoffeeRegion || selectedRoasterCountry);
                     const headerLabel = originLabel
                       ? `Roasters carrying ${originLabel}${selectedRoasterCountry ? `, located in ${selectedRoasterCountry}` : ''}`
@@ -1553,7 +1557,7 @@ export default function App() {
                             <button
                               key={r.slug}
                               type="button"
-                              className={`coffee-roaster-pill${r.slug === active.slug ? ' is-active' : ''}`}
+                              className={`coffee-roaster-pill${active && r.slug === active.slug ? ' is-active' : ''}`}
                               onClick={() => setSelectedRoasterSlug(r.slug)}
                             >
                               <span className="coffee-roaster-pill-name">{r.name}</span>
@@ -1562,7 +1566,7 @@ export default function App() {
                           ))}
                         </div>
                         )}
-                        {featured.length > 0 && (
+                        {featured.length > 0 && active && (
                         <div className="coffee-roaster-card">
                           <div className="coffee-roaster-head">
                             <div className="coffee-roaster-head-main">
@@ -1773,57 +1777,6 @@ export default function App() {
                     );
                   })()}
 
-                  {/* Famous beans — legendary origin varieties */}
-                  {(() => {
-                    const beans = selectedCoffeeCountry
-                      ? FAMOUS_BEANS.filter(b => b.country === selectedCoffeeCountry)
-                      : FAMOUS_BEANS;
-                    if (selectedCoffeeCountry && beans.length === 0) return null;
-                    return (
-                      <div className="coffee-famous-beans">
-                        <h3 className="coffee-section-label">
-                          <span>
-                            Beans worth knowing
-                            <span className="coffee-section-sub">
-                              {selectedCoffeeCountry ? ` · from ${selectedCoffeeCountry}` : ' · editorial picks'}
-                            </span>
-                          </span>
-                        </h3>
-                        <div className="coffee-famous-beans-row">
-                          {beans.map(b => (
-                            <div key={b.name} className="coffee-famous-bean-card">
-                              <span className="coffee-famous-bean-name">{b.name}</span>
-                              <p className="coffee-famous-bean-note">{b.note}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })()}
-
-                  {/* Year-based coffee blurbs */}
-                  {blurbData && (
-                    <div className="coffee-activity">
-                      <div className="blurbs-list">
-                        {blurbData.items.map((blurb, i) => (
-                          <div key={i} className={`blurb-card blurb-card--${blurb.type}`}>
-                            {blurb.type === 'metric' ? (
-                              <div className="blurb-metric">
-                                <span className="blurb-metric-label">{blurb.label}</span>
-                                <span className="blurb-metric-value" style={{ color: lc }}>{blurb.value}</span>
-                                <span className="blurb-metric-change">{blurb.change}</span>
-                              </div>
-                            ) : (
-                              <div className="blurb-content">
-                                <span className={`blurb-type blurb-type--${blurb.type}`}>{blurb.type}</span>
-                                <p>{blurb.text}</p>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
                 );
               })()}
