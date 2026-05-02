@@ -326,7 +326,6 @@ Three tiles stacked vertically, each with a color-matched progress bar:
   - **Timeline wave tint** — bars colored by coffee wave era (first/second/third/fourth); thin labeled legend strip below the slider.
   - **Region tiles row** — four big tiles (South America, Central America, Africa, Blend) stretched full-width of the container; each shows that region's total harvest for the selected year. Clicking a tile filters the country grid below; clicking again clears.
   - **Country grid** — one country per row, full-width. Each row: country name (region-colored), phase badge (harvest / flowering / resting), harvest bags + global share, share bar, 12-month calendar strip highlighting the current month, Editorial pill (methodology tooltip + clickable per-country source refs), event note if any, source attribution pill. Each tile carries `data-coffee-country={name}` so journey-card + roaster-card chips can scroll-target precisely.
-  - **Beans worth knowing** — horizontal card row from `FAMOUS_BEANS` in `coffee-editorial.js`. Filters by selected country; hides section entirely if selection has none.
   - **Processing primer** — seven cards (Washed, Natural, Honey, Wet-Hulled, Anaerobic, Carbonic, Thermal Shock) from `COFFEE_PROCESSES`. Each card shows aka / tagline / body / flavors + a live "XX live" count of offerings using that process across the 25 tracked roasters. Process chip in Today's Journey deep-links here.
   - **Roasters section** — `coffeeRoastersRef` target, editorial + Wikidata + OSM + Shopify offerings merged per roaster.
   - **Year-based coffee blurbs** — editorial commentary keyed to the selected year from `BLURBS.coffee`.
@@ -334,7 +333,7 @@ Three tiles stacked vertically, each with a color-matched progress bar:
 #### Data files
 | File | Role | Who edits |
 |---|---|---|
-| `src/data/coffee-editorial.js` | `COFFEE_WAVES` + `waveForYear()`, legacy `COFFEE_JOURNEYS` templates (unused — kept as fallback), `FAMOUS_BEANS` (6 legendary varieties with `country` keys for filtering), `COFFEE_PROCESSES` (7 processing methods — keys match `fetch-offerings.ps1` inference), `COUNTRY_STORIES` (per-country editorial paragraph) | Hand-maintained |
+| `src/data/coffee-editorial.js` | `COFFEE_WAVES` + `waveForYear()`, legacy `COFFEE_JOURNEYS` templates (unused — kept as fallback), `COFFEE_PROCESSES` (7 processing methods — keys match `fetch-offerings.ps1` inference), `COUNTRY_STORIES` (per-country editorial paragraph) | Hand-maintained |
 | `src/data/coffee-offerings.js` | Flat list of ~1,090 live Shopify offerings across 25 roasters: `{ roasterSlug, roasterName, title, handle, url, country, process, summary }`. Country/process inferred via regex; ~64% / ~48% hit rate. | **Auto-generated** by the **backend team** (pipeline lives in `guapa-data/coffee/scripts/`, not in this repo) — do not hand-edit. Auto-pushed daily via their Task Scheduler job. |
 | `src/data/coffee-timeline.js` | Panther roaster POC — `FEATURED_ROASTER`, `PANTHER_OFFERINGS`, `PANTHER_REGIONS`, `COFFEE_BLURBS` (daily roast seed). Currently unused in `App.jsx` but kept for phase 3 (roasters as artists). | Hand-maintained |
 | `src/data/coffee-usda.js` | USDA FAS PSD global production (29 producers, 1960–present, public domain) | **Auto-generated** by backend team (pipeline in `guapa-data`) — do not hand-edit |
