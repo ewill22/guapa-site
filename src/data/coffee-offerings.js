@@ -13,7 +13,7 @@
 //   summary: string  // factual aggregation built from extracted fields
 // }
 
-export const OFFERINGS_FETCHED_ON = '2026-05-02';
+export const OFFERINGS_FETCHED_ON = '2026-05-03';
 
 export const ROASTER_OFFERINGS = [
   {
@@ -16477,6 +16477,27 @@ export const ROASTER_OFFERINGS = [
     roast_level: null,
     decaf: false,
     bag_size_grams: 454,
+    tasting_notes: [],
+    summary: null,
+  },
+  {
+    roasterSlug: 'sweet-bloom',
+    roasterName: 'Sweet Bloom Coffee',
+    title: 'Antonio Medina',
+    handle: 'antonio-medina-26',
+    url: 'https://sweetbloomcoffee.com/products/antonio-medina-26',
+    country: 'Guatemala',
+    region: null,
+    process: null,
+    variety: [],
+    altitude_masl: null,
+    producer: null,
+    harvest_year: null,
+    cupping_score: null,
+    certifications: [],
+    roast_level: null,
+    decaf: false,
+    bag_size_grams: 301,
     tasting_notes: [],
     summary: null,
   },
