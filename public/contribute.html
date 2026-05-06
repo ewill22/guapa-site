@@ -341,6 +341,27 @@
       transform: translateX(16px);
       background: var(--green);
     }
+    .btn-save-editorial {
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--yellow);
+      color: var(--black);
+      border: none;
+      border-radius: 4px;
+      padding: 0.3rem 0.7rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    @media (hover: hover) {
+      .btn-save-editorial:hover { opacity: 0.9; }
+    }
+    .btn-save-editorial[disabled] { opacity: 0.5; cursor: default; }
+    .editorial-status {
+      font-size: 0.72rem;
+      color: var(--gray-600);
+    }
+    .editorial-status.ok  { color: var(--green); }
+    .editorial-status.err { color: #e08080; }
     /* ── Empty state ─────────────────────────────────── */
     .empty-state {
       text-align: center;
@@ -523,8 +544,11 @@ function render(artists) {
           <button class="toggle-switch${a.confirmed === 'yes' ? ' on' : ''}"
                   data-artist="${esc(a.name)}"
                   data-confirmed="${a.confirmed === 'yes' ? 'yes' : 'no'}"
+                  data-original-confirmed="${a.confirmed === 'yes' ? 'yes' : 'no'}"
                   onclick="toggleLocal(this)"></button>
           <span class="editorial-toggle-label">In Editorial</span>
+          <button class="btn-save-editorial" onclick="submitEditorialOnly(this)" style="display:none;">Save change</button>
+          <span class="editorial-status"></span>
         </div>
         <div class="edit-section icon-edit-section">
           <div class="edit-section-label">Icon</div>
@@ -711,11 +735,88 @@ async function submitForm(submitBtn) {
   }
 }
 
-// ── Toggle editorial (local only — submitted with the description form) ──
+// ── Toggle editorial ──────────────────────────────────────────────────
+// Updates local state. If the new state differs from the original (load-time)
+// state, reveals a "Save change" button that submits just the editorial flag
+// to Formspree. The same toggle state is also bundled into any icon /
+// description suggestion submitted from the same card.
 function toggleLocal(btn) {
   const wasOn = btn.dataset.confirmed === 'yes';
   btn.dataset.confirmed = wasOn ? 'no' : 'yes';
   btn.classList.toggle('on', !wasOn);
+
+  const wrapper = btn.closest('.editorial-toggle');
+  const saveBtn = wrapper.querySelector('.btn-save-editorial');
+  const status  = wrapper.querySelector('.editorial-status');
+  const changed = btn.dataset.confirmed !== btn.dataset.originalConfirmed;
+  if (saveBtn) saveBtn.style.display = changed ? '' : 'none';
+  if (status)  { status.textContent = ''; status.className = 'editorial-status'; }
+}
+
+// ── Submit editorial-only change ──────────────────────────────────────
+async function submitEditorialOnly(saveBtn) {
+  const wrapper = saveBtn.closest('.editorial-toggle');
+  const toggle  = wrapper.querySelector('.toggle-switch');
+  const status  = wrapper.querySelector('.editorial-status');
+  const newState = toggle.dataset.confirmed;
+  const oldState = toggle.dataset.originalConfirmed;
+  const artist   = toggle.dataset.artist;
+
+  saveBtn.disabled = true;
+  status.textContent = 'Submitting…';
+  status.className = 'editorial-status';
+
+  const payload = {
+    artist_name: artist,
+    album_title: '',
+    field: 'confirmed',
+    old_value: oldState,
+    suggested_value: newState,
+    confirmed: newState,
+    _subject: `Editorial toggle: ${artist} → ${newState}`,
+  };
+
+  try {
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error();
+    status.textContent = 'Submitted. Thanks!';
+    status.className = 'editorial-status ok';
+    toggle.dataset.originalConfirmed = newState;
+    saveBtn.style.display = 'none';
+    syncEditorialBadgeFromToggle(toggle);
+  } catch {
+    status.textContent = 'Couldn’t submit. Try again.';
+    status.className = 'editorial-status err';
+    saveBtn.disabled = false;
+  }
+}
+
+// Like syncEditorialBadge but reads from the toggle directly (no form context).
+function syncEditorialBadgeFromToggle(toggle) {
+  const card = toggle.closest('.artist-card');
+  const isOn = toggle.dataset.confirmed === 'yes';
+  const badge = card.querySelector('.artist-name .missing-badge');
+  if (badge) {
+    if (isOn) {
+      badge.textContent = 'editorial';
+      badge.style.borderStyle = 'solid';
+      badge.style.color = 'var(--green)';
+      badge.style.borderColor = 'var(--green)';
+    } else {
+      badge.textContent = 'not in editorial';
+      badge.style.borderStyle = 'dashed';
+      badge.style.color = '';
+      badge.style.borderColor = '';
+    }
+  }
+  const artist = toggle.dataset.artist;
+  const entry = artistData.find(a => a.name === artist);
+  if (entry) entry.confirmed = toggle.dataset.confirmed;
+  updateCounts();
 }
 
 // Helper: get editorial toggle state for an artist card
@@ -750,6 +851,15 @@ function syncEditorialBadge(form) {
   const entry = artistData.find(a => a.name === artist);
   if (entry) entry.confirmed = toggle.dataset.confirmed;
   updateCounts();
+
+  // The toggle change has now been transmitted (bundled into the form
+  // submission). Refresh the load-time baseline and clear the save button
+  // so it doesn't linger as if there's still a pending change.
+  toggle.dataset.originalConfirmed = toggle.dataset.confirmed;
+  const saveBtn = card.querySelector('.btn-save-editorial');
+  if (saveBtn) saveBtn.style.display = 'none';
+  const editorialStatus = card.querySelector('.editorial-status');
+  if (editorialStatus) { editorialStatus.textContent = ''; editorialStatus.className = 'editorial-status'; }
 }
 
 // ── Search ────────────────────────────────────────────────────────────
