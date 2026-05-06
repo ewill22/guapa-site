@@ -132,6 +132,21 @@ The Content team maintains two CSV files in `public/data/`:
 6. Eric reviews via the contribute page — can submit corrections same-day if anything is off
 7. `sync-editorial-csv.py` (runs in CI) auto-adds new catalog artists as `confirmed=no`
 
+### The editorial gate is effectively decorative (as of 2026-05-06)
+
+**What that means:** the auto-confirm rule below has flipped 931 of 932 artists to `confirmed=yes`. The "Eric reviews and confirms" workflow above has been overridden by automation — only manually-flipped exceptions (King Gizzard, currently the only one) sit at `confirmed=no`. So in practice the editorial gate filters almost nothing.
+
+**The actual automatic cleanup** is `phase_spotify_presence` in the backend repo (`guapa-data`) — it auto-flags discovered artists who have zero Spotify presence based on the daily rotation's own match outcomes, and the export filter drops them from `music-catalog.json`. **That mechanism is load-bearing — don't remove it.** Without it, artists like Joanna Newsom (auto-confirmed but no Spotify catalog) stay on the site forever.
+
+**Two different "is editorial" definitions** to be aware of:
+- **Frontend rendering** (search, Genre Explorer, daily artist rotation): reads CSV `confirmed` field. With 931/932 = yes, this gate is open.
+- **Backend export filter** (`export_from_json.py`): reads names from `music.html` (the founding ~145), NOT the CSV. So `phase_spotify_presence` can drop CSV-confirmed-yes artists who aren't in the founding list. Intentional and useful — that's how Joanna Newsom-style cases get removed.
+
+**Future cleanup ideas parked:**
+- Unify the two "editorial" definitions (CSV `confirmed` vs `music.html` parse) so there's one source of truth.
+- Tighten the auto-confirm rule below — e.g., only auto-confirm artists with both an editorial CSV description AND Spotify URL coverage above some threshold.
+- Surface auto-flagged removals (the artists `phase_spotify_presence` dropped this week) in the morning email or a small admin view, so removal isn't silent.
+
 ### Community Suggestions (guapa.space/contribute)
 Visitors can suggest description edits via the contribute page. Submissions go to Formspree (form ID: `mykbdnak`) → emailed to `eewilliamsremote@gmail.com`.
 
